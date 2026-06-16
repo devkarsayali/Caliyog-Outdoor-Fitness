@@ -12,6 +12,12 @@ html {
   scroll-behavior: smooth;
 }
 
+html,
+body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -26,14 +32,8 @@ img {
   display: block;
 }
 
+/* Tablet + Mobile */
 @media (max-width: 768px) {
-
-  html,
-  body {
-    width: 100%;
-    overflow-x: hidden;
-  }
-
   section {
     padding-left: 20px !important;
     padding-right: 20px !important;
@@ -64,6 +64,42 @@ img {
     max-width: 100%;
   }
 
+  .navbar {
+    flex-direction: column !important;
+    gap: 12px !important;
+    padding: 15px 20px !important;
+  }
+
+  .nav-links {
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 12px !important;
+  }
+
+  .about-container,
+  .calisthenics-content,
+  .contact-container,
+  .timing-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .membership-grid,
+  .events-grid,
+  .transform-grid,
+  .feedback-container,
+  .experts-info-container {
+    grid-template-columns: 1fr !important;
+  }
+
+  .batch-card,
+  .plan-card,
+  .event-card,
+  .transform-card,
+  .feedback-card,
+  .expert-info-card {
+    width: 100% !important;
+  }
+
   .container,
   .wrapper,
   .section,
@@ -72,7 +108,12 @@ img {
   }
 }
 
+/* Small Mobile */
 @media (max-width: 480px) {
+  section {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
 
   h1 {
     font-size: 30px !important;
