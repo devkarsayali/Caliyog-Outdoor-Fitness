@@ -156,6 +156,14 @@
   animation-delay: 1s;
 }
 
+.transform-card:nth-child(11) {
+  animation-delay: 1.1s;
+}
+
+.transform-card:nth-child(12) {
+  animation-delay: 1.2s;
+}
+
 @media (max-width: 768px) {
   .transform-section {
     padding: 60px 5%;

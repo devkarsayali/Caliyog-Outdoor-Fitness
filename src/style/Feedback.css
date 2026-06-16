@@ -6,16 +6,26 @@
 .feedback-heading {
   text-align: center;
   margin-bottom: 45px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .feedback-heading img {
-  width: 70px;
-  margin-bottom: 10px;
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  margin: 0 auto 18px auto;
+  display: block;
+  border-radius: 50%;
 }
 
 .feedback-heading h2 {
   font-size: 42px;
   color: #1f3d2b;
+  font-weight: 900;
+  text-transform: uppercase;
 }
 
 .feedback-heading p {
@@ -98,6 +108,7 @@
 .feedback-footer img {
   width: 35px;
   height: 35px;
+  object-fit: contain;
 }
 
 .feedback-footer span {
@@ -109,6 +120,11 @@
 @media (max-width: 768px) {
   .feedback-section {
     padding: 60px 20px;
+  }
+
+  .feedback-heading img {
+    width: 70px;
+    height: 70px;
   }
 
   .feedback-heading h2 {

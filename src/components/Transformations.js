@@ -11,6 +11,8 @@ import t7 from "../assets/t7.png";
 import t8 from "../assets/t8.png";
 import t9 from "../assets/t9.png";
 import t10 from "../assets/t10.png";
+import t11 from "../assets/t11.png";
+import t12 from "../assets/t12.png";
 
 function Transformations() {
   const data = [
@@ -24,21 +26,22 @@ function Transformations() {
     { img: t8, title: "Transformation 8" },
     { img: t9, title: "Transformation 9" },
     { img: t10, title: "Transformation 10" },
+    { img: t11, title: "Transformation 11" },
+    { img: t12, title: "Transformation 12" },
   ];
 
   return (
     <section className="transform-section" id="transformations">
       <div className="transform-heading">
         <h2>Transformations We Did</h2>
-        <p>
-          Real fitness journeys and amazing results achieved by our members.
-        </p>
+        <p>Real fitness journeys and amazing results achieved by our members.</p>
       </div>
 
       <div className="transform-grid">
         {data.map((item, index) => (
           <div className="transform-card" key={index}>
             <img src={item.img} alt={item.title} />
+
             <div className="transform-content">
               <h3>{item.title}</h3>
             </div>

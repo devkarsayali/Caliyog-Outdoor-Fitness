@@ -22,6 +22,19 @@ function Events() {
     { img: e8, title: "Team Motivation" },
   ];
 
+  const organisedEvents = [
+    "CaliYog National Championship 2024",
+    "CaliYog Hyrox Competition",
+    "Small Treks × 3",
+    "Calisthenics Community Meet-Up",
+    "Calisthenics Workshop By Celebrity Coach Kirsten Varela",
+    "CaliYog Premier League Cricket × 2",
+    "Gala Night Celebration",
+    "In-House Championship 2023",
+    "CaliYog Run Club 2025",
+    "CaliYog Marathon 2025 5K",
+  ];
+
   return (
     <section className="events-section" id="events">
       <div className="events-heading">
@@ -42,6 +55,53 @@ function Events() {
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="events-achievements">
+        <div className="achievement-header">
+          <span>MAJOR EVENTS</span>
+          <h2>Events We Organised In Last Two Years</h2>
+          <p>Organised more than 10 big fitness events.</p>
+        </div>
+
+        <div className="achievement-list">
+          {organisedEvents.map((event, index) => (
+            <div className="achievement-item" key={index}>
+              <span>{index + 1}</span>
+              <p>{event}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="achievement-stats">
+          <div className="stat-card">
+            <h3>1000+</h3>
+            <p>Members Trained</p>
+          </div>
+
+          <div className="stat-card">
+            <h3>100+</h3>
+            <p>Transformations</p>
+          </div>
+
+          <div className="stat-card">
+            <h3>15+</h3>
+            <p>National Competitions</p>
+          </div>
+
+          <div className="stat-card">
+            <h3>20+</h3>
+            <p>Trophies Won</p>
+          </div>
+        </div>
+
+        <div className="coach-message">
+          <h3>10+ Coaches Dedicated To One Mission</h3>
+          <p>
+            Introducing fitness into everyone's life through outdoor training,
+            community support, discipline, and performance-based fitness.
+          </p>
+        </div>
       </div>
     </section>
   );

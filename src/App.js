@@ -1,24 +1,32 @@
 import { useEffect, useState } from "react";
 
+import AOS from "aos";
+import "aos/dist/aos.css";
+
 import SplashScreen from "./components/SplashScreen";
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
-import WhyChooseUs from "./components/WhyChooseUs";
 import About from "./components/About";
+import WhyChooseUs from "./components/WhyChooseUs";
 import Batches from "./components/Batches";
 import Membership from "./components/Membership";
-import Experts from "./components/Experts";
-import Feedback from "./components/Feedback";
 import Transformations from "./components/Transformations";
+import Experts from "./components/Experts";
 import Events from "./components/Events";
+import Feedback from "./components/Feedback";
 import Contact from "./components/Contact";
-
+import Footer from "./components/Footer";
 
 function App() {
   const [showSplash, setShowSplash] = useState(true);
-  const [showWebsite, setShowWebsite] = useState(false);
 
   useEffect(() => {
+    AOS.init({
+      duration: 1200,
+      once: true,
+      offset: 100,
+    });
+
     const timer = setTimeout(() => {
       setShowSplash(false);
     }, 3000);
@@ -30,25 +38,51 @@ function App() {
     return <SplashScreen />;
   }
 
-  if (!showWebsite) {
-    return <Home onJoin={() => setShowWebsite(true)} />;
-  }
-
   return (
     <div>
       <Navbar />
 
-      <Home />
-       <About />
-      <WhyChooseUs />
-      <Batches />
-      <Membership />
-<Transformations />
+      <div data-aos="fade-up">
+        <Home />
+      </div>
 
-<Experts />
-<Events />
-<Feedback />
-<Contact />
+      <div data-aos="fade-right">
+        <About />
+      </div>
+
+      <div data-aos="fade-left">
+        <WhyChooseUs />
+      </div>
+
+      <div data-aos="zoom-in">
+        <Batches />
+      </div>
+
+      <div data-aos="flip-up">
+        <Membership />
+      </div>
+
+      <div data-aos="fade-up">
+        <Transformations />
+      </div>
+
+      <div data-aos="zoom-in-up">
+        <Experts />
+      </div>
+
+      <div data-aos="fade-up">
+        <Events />
+      </div>
+
+      <div data-aos="flip-left">
+        <Feedback />
+      </div>
+
+      <div data-aos="fade-up">
+        <Contact />
+      </div>
+
+      <Footer />
     </div>
   );
 }
