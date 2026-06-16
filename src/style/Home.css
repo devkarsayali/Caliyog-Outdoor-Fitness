@@ -9,6 +9,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 }
 
 .background-image {
@@ -19,6 +20,7 @@
   height: 100%;
 
   object-fit: cover;
+  z-index: 0;
 }
 
 .overlay {
@@ -29,6 +31,8 @@
     rgba(0, 0, 0, 0.35),
     rgba(0, 0, 0, 0.70)
   );
+
+  z-index: 1;
 }
 
 .home-content {
@@ -229,6 +233,8 @@
   line-height: 1.7;
 
   color: rgba(255, 255, 255, 0.9);
+
+  word-break: break-word;
 }
 
 /* ================= RESPONSIVE ================= */
@@ -241,9 +247,22 @@
   .home-title {
     font-size: 55px;
   }
+
+  .home-content {
+    margin-bottom: 330px;
+  }
 }
 
 @media (max-width: 900px) {
+  .home-section {
+    min-height: auto;
+    padding-top: 90px;
+  }
+
+  .background-image {
+    height: 100%;
+  }
+
   .contact-info-section {
     position: relative;
 
@@ -255,6 +274,8 @@
     width: 100%;
 
     padding: 20px;
+
+    margin-top: 20px;
   }
 
   .contact-info-box {
@@ -263,6 +284,7 @@
 
   .home-content {
     margin-bottom: 40px;
+    padding: 40px 20px 10px;
   }
 
   .home-title {
@@ -275,15 +297,64 @@
 }
 
 @media (max-width: 600px) {
-  .contact-info-box {
-    grid-template-columns: 1fr;
+  .home-section {
+    padding-top: 80px;
+  }
+
+  .home-content {
+    padding: 35px 18px 10px;
+    margin-bottom: 25px;
+  }
+
+  .hero-badge {
+    font-size: 13px;
+    padding: 8px 18px;
+    margin-bottom: 18px;
   }
 
   .home-title {
     font-size: 32px;
+    line-height: 1.25;
+    letter-spacing: 1px;
+  }
+
+  .home-subtitle {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 25px;
   }
 
   .join-btn {
     width: 100%;
+    padding: 14px 30px;
+    font-size: 16px;
+  }
+
+  .contact-info-box {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .contact-info-section {
+    padding: 15px 18px 35px;
+  }
+
+  .info-card {
+    padding: 22px 18px;
+    border-radius: 20px;
+  }
+
+  .info-card span {
+    width: 58px;
+    height: 58px;
+    font-size: 24px;
+  }
+
+  .info-card h3 {
+    font-size: 18px;
+  }
+
+  .info-card p {
+    font-size: 13px;
   }
 }
