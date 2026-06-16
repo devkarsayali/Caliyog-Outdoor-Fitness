@@ -8,9 +8,17 @@ html {
   scroll-behavior: smooth;
 }
 
+body {
+  overflow-x: hidden;
+  padding-top: 75px;
+}
+
+/* Navbar */
 .navbar {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  width: 100%;
   z-index: 1000;
 
   display: flex;
@@ -23,6 +31,7 @@ html {
   box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
 }
 
+/* Logo */
 .logo-section {
   display: flex;
   align-items: center;
@@ -43,6 +52,7 @@ html {
   letter-spacing: 2px;
 }
 
+/* Links */
 .nav-links {
   display: flex;
   list-style: none;
@@ -61,6 +71,7 @@ html {
   color: #2ecc71;
 }
 
+/* Button */
 .navbar-btn {
   background: linear-gradient(135deg, #2ecc71, #27ae60);
   color: white;
@@ -89,7 +100,12 @@ section {
   scroll-margin-top: 90px;
 }
 
+/* Mobile */
 @media (max-width: 768px) {
+  body {
+    padding-top: 68px;
+  }
+
   .navbar {
     padding: 12px 20px;
   }
