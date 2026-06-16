@@ -1,0 +1,289 @@
+/* ================= HERO SECTION ================= */
+
+.home-section {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.background-image {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    rgba(0, 0, 0, 0.35),
+    rgba(0, 0, 0, 0.70)
+  );
+}
+
+.home-content {
+  position: relative;
+  z-index: 2;
+
+  text-align: center;
+  color: white;
+
+  margin-bottom: 250px;
+
+  max-width: 1000px;
+  padding: 20px;
+}
+
+/* ================= BADGE ================= */
+
+.hero-badge {
+  display: inline-block;
+
+  background: rgba(34, 197, 94, 0.15);
+
+  border: 1px solid rgba(34, 197, 94, 0.4);
+
+  backdrop-filter: blur(10px);
+
+  padding: 10px 25px;
+
+  border-radius: 30px;
+
+  color: white;
+
+  font-weight: 600;
+
+  margin-bottom: 25px;
+}
+
+/* ================= TITLE ================= */
+
+.home-title {
+  font-size: 72px;
+  font-weight: 800;
+
+  line-height: 1.2;
+
+  letter-spacing: 2px;
+
+  text-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.5);
+
+  margin-bottom: 20px;
+}
+
+/* ================= SUBTITLE ================= */
+
+.home-subtitle {
+  font-size: 24px;
+
+  color: rgba(255, 255, 255, 0.95);
+
+  margin-bottom: 35px;
+
+  line-height: 1.8;
+}
+
+/* ================= BUTTON ================= */
+
+.join-btn {
+  background: #22c55e;
+  color: white;
+
+  border: none;
+
+  padding: 16px 45px;
+
+  font-size: 18px;
+  font-weight: 700;
+
+  border-radius: 50px;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+.join-btn:hover {
+  background: #16a34a;
+
+  transform: translateY(-4px);
+
+  box-shadow: 0 15px 30px rgba(34, 197, 94, 0.4);
+}
+
+/* ================= CONTACT SECTION ================= */
+
+.contact-info-section {
+  position: absolute;
+
+  bottom: 40px;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  width: 95%;
+
+  z-index: 5;
+}
+
+.contact-info-box {
+  display: grid;
+
+  grid-template-columns: repeat(5, 1fr);
+
+  gap: 20px;
+
+  max-width: 1400px;
+
+  margin: auto;
+}
+
+/* ================= CARD ================= */
+
+.info-card {
+  background: rgba(255, 255, 255, 0.15);
+
+  backdrop-filter: blur(15px);
+
+  -webkit-backdrop-filter: blur(15px);
+
+  border: 1px solid rgba(255, 255, 255, 0.25);
+
+  border-radius: 25px;
+
+  padding: 25px 20px;
+
+  text-align: center;
+
+  color: white;
+
+  transition: all 0.4s ease;
+
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.info-card:hover {
+  transform: translateY(-10px);
+
+  background: rgba(34, 197, 94, 0.20);
+
+  box-shadow:
+    0 20px 40px rgba(34, 197, 94, 0.25);
+}
+
+/* ================= ICON ================= */
+
+.info-card span {
+  width: 70px;
+  height: 70px;
+
+  display: inline-flex;
+
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 50%;
+
+  background: linear-gradient(
+    135deg,
+    #22c55e,
+    #16a34a
+  );
+
+  color: white;
+
+  font-size: 30px;
+
+  margin-bottom: 15px;
+
+  box-shadow:
+    0 10px 25px rgba(34, 197, 94, 0.4);
+}
+
+.info-card h3 {
+  font-size: 20px;
+
+  font-weight: 700;
+
+  margin-bottom: 10px;
+
+  color: white;
+}
+
+.info-card p {
+  font-size: 14px;
+
+  line-height: 1.7;
+
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 1200px) {
+  .contact-info-box {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .home-title {
+    font-size: 55px;
+  }
+}
+
+@media (max-width: 900px) {
+  .contact-info-section {
+    position: relative;
+
+    left: auto;
+    bottom: auto;
+
+    transform: none;
+
+    width: 100%;
+
+    padding: 20px;
+  }
+
+  .contact-info-box {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .home-content {
+    margin-bottom: 40px;
+  }
+
+  .home-title {
+    font-size: 42px;
+  }
+
+  .home-subtitle {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 600px) {
+  .contact-info-box {
+    grid-template-columns: 1fr;
+  }
+
+  .home-title {
+    font-size: 32px;
+  }
+
+  .join-btn {
+    width: 100%;
+  }
+}

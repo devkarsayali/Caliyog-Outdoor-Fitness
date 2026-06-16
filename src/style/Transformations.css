@@ -1,0 +1,175 @@
+.transform-section {
+  padding: 90px 8%;
+  background: linear-gradient(135deg, #f8fff9, #eef5ef);
+  overflow: hidden;
+}
+
+.transform-heading {
+  text-align: center;
+  margin-bottom: 55px;
+}
+
+.transform-heading h2 {
+  font-size: 44px;
+  color: #12351f;
+  font-weight: 900;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.transform-heading p {
+  color: #555;
+  font-size: 18px;
+  max-width: 750px;
+  margin: auto;
+  line-height: 1.7;
+}
+
+.transform-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 35px;
+}
+
+.transform-card {
+  position: relative;
+  background: white;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 60, 25, 0.18);
+  transition: all 0.45s ease;
+  animation: cardFadeUp 0.9s ease forwards;
+}
+
+.transform-card:hover {
+  transform: translateY(-14px) scale(1.03);
+  box-shadow: 0 25px 50px rgba(0, 60, 25, 0.28);
+}
+
+.transform-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  transform: translateX(-100%);
+  transition: 0.7s;
+  z-index: 2;
+}
+
+.transform-card:hover::before {
+  transform: translateX(100%);
+}
+
+.transform-card img {
+  width: 100%;
+  height: 390px;
+  object-fit: cover;
+  transition: 0.5s ease;
+}
+
+.transform-card:hover img {
+  transform: scale(1.08);
+  filter: brightness(0.85);
+}
+
+.transform-content {
+  position: relative;
+  padding: 20px;
+  text-align: center;
+  background: linear-gradient(135deg, #12351f, #2e7d32);
+}
+
+.transform-content h3 {
+  color: white;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.transform-content::after {
+  content: "Real Results";
+  display: inline-block;
+  margin-top: 8px;
+  padding: 5px 15px;
+  background: white;
+  color: #1f3d2b;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+@keyframes cardFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(35px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.transform-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.transform-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.transform-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.transform-card:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.transform-card:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+.transform-card:nth-child(6) {
+  animation-delay: 0.6s;
+}
+
+.transform-card:nth-child(7) {
+  animation-delay: 0.7s;
+}
+
+.transform-card:nth-child(8) {
+  animation-delay: 0.8s;
+}
+
+.transform-card:nth-child(9) {
+  animation-delay: 0.9s;
+}
+
+.transform-card:nth-child(10) {
+  animation-delay: 1s;
+}
+
+@media (max-width: 768px) {
+  .transform-section {
+    padding: 60px 5%;
+  }
+
+  .transform-heading h2 {
+    font-size: 31px;
+  }
+
+  .transform-heading p {
+    font-size: 15px;
+  }
+
+  .transform-card img {
+    height: 310px;
+  }
+}

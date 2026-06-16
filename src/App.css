@@ -1,0 +1,38 @@
+.join-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1f2f26, #3f5138);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.join-card {
+  text-align: center;
+  color: white;
+}
+
+.join-card h1 {
+  font-size: 42px;
+  margin-bottom: 15px;
+}
+
+.join-card p {
+  font-size: 20px;
+  margin-bottom: 30px;
+}
+
+.join-btn {
+  padding: 14px 40px;
+  border: none;
+  border-radius: 30px;
+  background: #22c55e;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.join-btn:hover {
+  background: #16a34a;
+}
