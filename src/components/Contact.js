@@ -2,14 +2,23 @@ import React from "react";
 import "../style/Contact.css";
 
 function Contact() {
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    alert("Thank you! Your message has been submitted.");
+  };
+
   return (
-    <section className="contact-section" id="contact">
+    <section
+      className="contact-section"
+      id="contact"
+    >
       <div className="contact-heading">
         <h2>Contact Us</h2>
 
         <p>
-          Join CALIYOG Outdoor Fitness Club and start your fitness
-          journey today.
+          Join CALIYOG Outdoor Fitness Club and start
+          your fitness journey today.
         </p>
       </div>
 
@@ -26,17 +35,21 @@ function Contact() {
           </p>
 
           <p>
-            <strong>📞 Phone:</strong>
-            +91 98765 43210
+            <strong>📞 Phone:</strong>{" "}
+            <a href="tel:+919876543210">
+              +91 98765 43210
+            </a>
           </p>
 
           <p>
-            <strong>📧 Email:</strong>
-            caliyogfitness@gmail.com
+            <strong>📧 Email:</strong>{" "}
+            <a href="mailto:caliyogfitness@gmail.com">
+              caliyogfitness@gmail.com
+            </a>
           </p>
 
           <p>
-            <strong>🌐 Website:</strong>
+            <strong>🌐 Website:</strong>{" "}
             <a
               href="https://www.caliyogfitness.com"
               target="_blank"
@@ -47,7 +60,7 @@ function Contact() {
           </p>
 
           <p>
-            <strong>📸 Instagram:</strong>
+            <strong>📸 Instagram:</strong>{" "}
             <a
               href="https://www.instagram.com/caliyog_fitness_club"
               target="_blank"
@@ -58,7 +71,7 @@ function Contact() {
           </p>
 
           <p>
-            <strong>📘 Facebook:</strong>
+            <strong>📘 Facebook:</strong>{" "}
             <a
               href="https://www.facebook.com"
               target="_blank"
@@ -69,7 +82,7 @@ function Contact() {
           </p>
 
           <p>
-            <strong>💬 WhatsApp:</strong>
+            <strong>💬 WhatsApp:</strong>{" "}
             <a
               href="https://wa.me/919876543210"
               target="_blank"
@@ -87,7 +100,10 @@ function Contact() {
         </div>
 
         {/* Contact Form */}
-        <form className="contact-form">
+        <form
+          className="contact-form"
+          onSubmit={handleSubmit}
+        >
 
           <input
             type="text"

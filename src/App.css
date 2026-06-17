@@ -36,3 +36,135 @@
 .join-btn:hover {
   background: #16a34a;
 }
+/* =========================
+   MOBILE RESPONSIVE FIX
+   Paste at bottom of index.css/App.css
+========================= */
+
+html,
+body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Tablet */
+@media (max-width: 992px) {
+  section {
+    padding: 60px 30px !important;
+  }
+
+  h1 {
+    font-size: 42px !important;
+  }
+
+  h2 {
+    font-size: 34px !important;
+  }
+
+  p {
+    font-size: 16px !important;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px 20px !important;
+  }
+
+  .logo-section {
+    justify-content: center;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 0;
+  }
+
+  .nav-links li a {
+    font-size: 15px;
+  }
+
+  section,
+  .home-section,
+  .about-section,
+  .experts-section,
+  .batches-section,
+  .membership-section,
+  .transformations-section,
+  .contact-section {
+    padding: 50px 20px !important;
+  }
+
+  .home-content {
+    text-align: center;
+    width: 100%;
+  }
+
+  .home-content h1 {
+    font-size: 34px !important;
+    line-height: 1.2;
+  }
+
+  .home-content p {
+    font-size: 16px !important;
+  }
+
+  .join-btn,
+  button {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .card,
+  .batch-card,
+  .membership-card,
+  .transformation-card {
+    width: 100% !important;
+  }
+
+  .cards-container,
+  .batches-container,
+  .membership-container,
+  .transformations-container {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 20px;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  h1 {
+    font-size: 30px !important;
+  }
+
+  h2 {
+    font-size: 26px !important;
+  }
+
+  .logo {
+    font-size: 22px !important;
+  }
+
+  .logo-img {
+    width: 40px !important;
+    height: 40px !important;
+  }
+}

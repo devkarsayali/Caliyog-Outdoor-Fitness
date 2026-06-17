@@ -17,7 +17,7 @@ function Events() {
     { img: e3, title: "Fitness Challenge" },
     { img: e4, title: "Community Training" },
     { img: e5, title: "Club Celebration" },
-    { img: e6, title: "Caliyog Memories" },
+    { img: e6, title: "CaliYog Memories" },
     { img: e7, title: "Fitness Community" },
     { img: e8, title: "Team Motivation" },
   ];
@@ -39,14 +39,21 @@ function Events() {
     <section className="events-section" id="events">
       <div className="events-heading">
         <h2>Events and Clicks</h2>
-        <p>Memorable moments from our fitness events and group activities.</p>
+
+        <p>
+          Memorable moments from our fitness events and group activities.
+        </p>
       </div>
 
       <div className="events-grid">
         {events.map((item, index) => (
           <div className="event-card" key={index}>
             <div className="event-img-box">
-              <img src={item.img} alt={item.title} />
+              <img
+                src={item.img}
+                alt={item.title}
+                loading="lazy"
+              />
             </div>
 
             <div className="event-content">
@@ -60,8 +67,12 @@ function Events() {
       <div className="events-achievements">
         <div className="achievement-header">
           <span>MAJOR EVENTS</span>
+
           <h2>Events We Organised In Last Two Years</h2>
-          <p>Organised more than 10 big fitness events.</p>
+
+          <p>
+            Organised more than 10 big fitness events.
+          </p>
         </div>
 
         <div className="achievement-list">
@@ -97,6 +108,7 @@ function Events() {
 
         <div className="coach-message">
           <h3>10+ Coaches Dedicated To One Mission</h3>
+
           <p>
             Introducing fitness into everyone's life through outdoor training,
             community support, discipline, and performance-based fitness.

@@ -38,8 +38,10 @@ function WhyChooseUs() {
     <section id="whychooseus" className="why-section">
       <div className="why-title">
         <h2>WHY CHOOSE US?</h2>
+
         <p>
-          We work for fitness, strength, and performance — not just looks.
+          We work for fitness, strength, and performance —
+          not just looks.
         </p>
       </div>
 
@@ -47,11 +49,16 @@ function WhyChooseUs() {
         {features.map((item, index) => (
           <div className="why-card" key={index}>
             <div className="why-image">
-              <img src={item.image} alt={item.title} />
+              <img
+                src={item.image}
+                alt={item.title}
+                loading="lazy"
+              />
             </div>
 
             <div className="why-content">
               <h3>{item.title}</h3>
+
               <p>{item.description}</p>
             </div>
           </div>

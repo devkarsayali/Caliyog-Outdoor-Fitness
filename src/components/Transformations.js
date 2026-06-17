@@ -31,16 +31,30 @@ function Transformations() {
   ];
 
   return (
-    <section className="transform-section" id="transformations">
+    <section
+      className="transform-section"
+      id="transformations"
+    >
       <div className="transform-heading">
         <h2>Transformations We Did</h2>
-        <p>Real fitness journeys and amazing results achieved by our members.</p>
+
+        <p>
+          Real fitness journeys and amazing results
+          achieved by our members.
+        </p>
       </div>
 
       <div className="transform-grid">
         {data.map((item, index) => (
-          <div className="transform-card" key={index}>
-            <img src={item.img} alt={item.title} />
+          <div
+            className="transform-card"
+            key={index}
+          >
+            <img
+              src={item.img}
+              alt={item.title}
+              loading="lazy"
+            />
 
             <div className="transform-content">
               <h3>{item.title}</h3>

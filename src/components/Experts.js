@@ -59,12 +59,17 @@ function Experts() {
   ];
 
   return (
-    <section id="experts" className="experts-section">
+    <section
+      id="experts"
+      className="experts-section"
+    >
       <div className="experts-heading">
         <h2>MEET OUR FITNESS EXPERTS</h2>
+
         <p>
-          Learn from certified coaches, athletes, and fitness professionals
-          dedicated to helping you achieve your fitness goals.
+          Learn from certified coaches, athletes, and fitness
+          professionals dedicated to helping you achieve your
+          fitness goals.
         </p>
       </div>
 
@@ -73,24 +78,32 @@ function Experts() {
           src={expertsImage}
           alt="CaliYog Fitness Experts"
           className="experts-image"
+          loading="lazy"
         />
       </div>
 
       <div className="expert-btn-box">
         <button
           className="expert-info-btn"
-          onClick={() => setShowInfo(!showInfo)}
+          onClick={() => setShowInfo((prev) => !prev)}
         >
-          {showInfo ? "Hide Information" : "All Information"}
+          {showInfo
+            ? "Hide Information"
+            : "All Information"}
         </button>
       </div>
 
       {showInfo && (
         <div className="experts-info-container">
           {experts.map((expert, index) => (
-            <div className="expert-info-card" key={index}>
+            <div
+              className="expert-info-card"
+              key={index}
+            >
               <h3>{expert.name}</h3>
+
               <h4>{expert.role}</h4>
+
               <p>{expert.info}</p>
             </div>
           ))}

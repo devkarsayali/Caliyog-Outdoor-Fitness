@@ -59,41 +59,55 @@ function Feedback() {
       text: "More than a gym and fitness club. Join and forget about health worries.",
     },
     {
-  name: "Tarachand Ratavase",
-  image: "https://i.pravatar.cc/100?img=25",
-  rating: 5,
-  reviews: "10 reviews",
-  photos: "4 photos",
-  date: "11 months ago",
-  text: "One of the finest fitness centers. Excellent coaching, supportive trainers, and a great atmosphere for everyone.",
-},
-{
-  name: "Prasad Nandanikar",
-  image: "https://i.pravatar.cc/100?img=30",
-  rating: 5,
-  reviews: "2 reviews",
-  photos: "3 photos",
-  date: "1 year ago",
-  text: "A unique fitness concept. Perfect for those who want to improve strength, flexibility, and overall health.",
-},
+      name: "Tarachand Ratavase",
+      image: "https://i.pravatar.cc/100?img=25",
+      rating: 5,
+      reviews: "10 reviews",
+      photos: "4 photos",
+      date: "11 months ago",
+      text: "One of the finest fitness centers. Excellent coaching, supportive trainers, and a great atmosphere for everyone.",
+    },
+    {
+      name: "Prasad Nandanikar",
+      image: "https://i.pravatar.cc/100?img=30",
+      rating: 5,
+      reviews: "2 reviews",
+      photos: "3 photos",
+      date: "1 year ago",
+      text: "A unique fitness concept. Perfect for those who want to improve strength, flexibility, and overall health.",
+    },
   ];
 
   return (
     <section id="feedback" className="feedback-section">
       <div className="feedback-heading">
-        <img src={logo} alt="CaliYog Logo" />
+        <img
+          src={logo}
+          alt="CaliYog Logo"
+          loading="lazy"
+        />
+
         <h2>MEMBER FEEDBACKS</h2>
-        <p>Real words from our CaliYog fitness community</p>
+
+        <p>
+          Real words from our CaliYog fitness community
+        </p>
       </div>
 
       <div className="feedback-container">
         {feedbacks.map((item, index) => (
           <div className="feedback-card" key={index}>
             <div className="feedback-top">
-              <img src={item.image} alt={item.name} className="user-img" />
+              <img
+                src={item.image}
+                alt={item.name}
+                className="user-img"
+                loading="lazy"
+              />
 
               <div>
                 <h3>{item.name}</h3>
+
                 <span>
                   {item.reviews} • {item.photos}
                 </span>
@@ -102,14 +116,27 @@ function Feedback() {
 
             <div className="stars">
               {"★".repeat(item.rating)}
-              <span className="date"> {item.date}</span>
+
+              <span className="date">
+                {" "}
+                {item.date}
+              </span>
             </div>
 
-            <p className="feedback-text">{item.text}</p>
+            <p className="feedback-text">
+              {item.text}
+            </p>
 
             <div className="feedback-footer">
-              <img src={logo} alt="CaliYog" />
-              <span>CALIYOG FITNESS CLUB</span>
+              <img
+                src={logo}
+                alt="CaliYog"
+                loading="lazy"
+              />
+
+              <span>
+                CALIYOG FITNESS CLUB
+              </span>
             </div>
           </div>
         ))}

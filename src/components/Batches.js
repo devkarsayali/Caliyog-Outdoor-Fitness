@@ -64,20 +64,28 @@ function Batches() {
     <section className="batches-section" id="batches">
       <div className="section-title">
         <span>TRAINING PROGRAMS</span>
+
         <h2>Batches We Provide</h2>
-        <p>Professional fitness programs designed for all age groups.</p>
+
+        <p>
+          Professional fitness programs designed for all age groups.
+        </p>
       </div>
 
       <div className="batch-details">
         {batches.map((batch, index) => (
           <div className="batch-card" key={index}>
-            <div className="batch-icon">{batch.icon}</div>
+            <div className="batch-icon">
+              {batch.icon}
+            </div>
 
             <h3>{batch.title}</h3>
 
             <ul>
               {batch.points.map((point, i) => (
-                <li key={i}>{point}</li>
+                <li key={i}>
+                  {point}
+                </li>
               ))}
             </ul>
           </div>
@@ -87,13 +95,20 @@ function Batches() {
       <div className="timing-section">
         <div className="section-title">
           <span>BATCH TIMINGS</span>
+
           <h2>Choose Your Perfect Time Slot</h2>
-          <p>Morning and evening batches available for all age groups.</p>
+
+          <p>
+            Morning and evening batches available for all age groups.
+          </p>
         </div>
 
         <div className="timing-grid">
           <div className="timing-box">
-            <div className="timing-icon">☀️</div>
+            <div className="timing-icon">
+              ☀️
+            </div>
+
             <h4>Morning Batch</h4>
 
             <p>6:00 AM - 7:00 AM</p>
@@ -103,7 +118,10 @@ function Batches() {
           </div>
 
           <div className="timing-box">
-            <div className="timing-icon">🌇</div>
+            <div className="timing-icon">
+              🌇
+            </div>
+
             <h4>Evening Batch</h4>
 
             <p>5:00 PM - 6:00 PM</p>

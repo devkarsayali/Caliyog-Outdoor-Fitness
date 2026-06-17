@@ -8,7 +8,12 @@ function About() {
     <section className="about-section" id="about">
       <div className="about-container">
         <div className="about-image">
-          <img src={aboutImage} alt="About CaliYog" className="about-img" />
+          <img
+            src={aboutImage}
+            alt="About CaliYog"
+            className="about-img"
+            loading="lazy"
+          />
         </div>
 
         <div className="about-content">
@@ -83,6 +88,7 @@ function About() {
               src={calisthenicsImage}
               alt="About Calisthenics"
               className="about-img"
+              loading="lazy"
             />
           </div>
         </div>
