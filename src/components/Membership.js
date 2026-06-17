@@ -1,7 +1,7 @@
 import React from "react";
 import "../style/Membership.css";
 
-function Membership() {
+function Membership({ openJoinForm }) {
   const plans = [
     {
       title: "Yearly Membership",
@@ -84,20 +84,13 @@ function Membership() {
   ];
 
   return (
-    <section
-      className="membership-section"
-      id="membership"
-    >
+    <section className="membership-section" id="membership">
       <div className="membership-header">
         <span>MEMBERSHIP PLANS</span>
 
-        <h2>
-          Choose Your Fitness Journey
-        </h2>
+        <h2>Choose Your Fitness Journey</h2>
 
-        <p>
-          Flexible plans designed for every fitness goal.
-        </p>
+        <p>Flexible plans designed for every fitness goal.</p>
       </div>
 
       <div className="membership-grid">
@@ -112,24 +105,21 @@ function Membership() {
 
             <h1>{plan.price}</h1>
 
-            <p className="plan-subtitle">
-              {plan.subtitle}
-            </p>
+            <p className="plan-subtitle">{plan.subtitle}</p>
 
             <ul>
               {plan.features.map((feature, i) => (
-                <li key={i}>
-                  {feature}
-                </li>
+                <li key={i}>{feature}</li>
               ))}
             </ul>
 
-            <a
-              href="#contact"
+            <button
+              type="button"
               className="plan-btn"
+              onClick={() => openJoinForm(plan.title)}
             >
               Join Now
-            </a>
+            </button>
           </div>
         ))}
       </div>
@@ -138,8 +128,8 @@ function Membership() {
         <h4>Personal Training Available</h4>
 
         <p>
-          Personal training fees vary according
-          to the coach and training program.
+          Personal training fees vary according to the coach and training
+          program.
         </p>
       </div>
     </section>

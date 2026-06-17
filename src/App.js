@@ -16,9 +16,22 @@ import Events from "./components/Events";
 import Feedback from "./components/Feedback";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
+import JoinForm from "./components/JoinForm";
 
 function App() {
   const [showSplash, setShowSplash] = useState(true);
+  const [showJoinForm, setShowJoinForm] = useState(false);
+  const [selectedMembership, setSelectedMembership] = useState("");
+
+  const openJoinForm = (membershipName = "") => {
+    setSelectedMembership(membershipName);
+    setShowJoinForm(true);
+  };
+
+  const closeJoinForm = () => {
+    setShowJoinForm(false);
+    setSelectedMembership("");
+  };
 
   useEffect(() => {
     AOS.init({
@@ -40,10 +53,10 @@ function App() {
 
   return (
     <div>
-      <Navbar />
+      <Navbar onJoin={() => openJoinForm()} />
 
       <div data-aos="fade-up">
-        <Home />
+        <Home onJoin={() => openJoinForm()} />
       </div>
 
       <div data-aos="fade-right">
@@ -59,7 +72,7 @@ function App() {
       </div>
 
       <div data-aos="flip-up">
-        <Membership />
+        <Membership openJoinForm={openJoinForm} />
       </div>
 
       <div data-aos="fade-up">
@@ -81,6 +94,13 @@ function App() {
       <div data-aos="fade-up">
         <Contact />
       </div>
+
+      {showJoinForm && (
+        <JoinForm
+          closeForm={closeJoinForm}
+          selectedMembership={selectedMembership}
+        />
+      )}
 
       <Footer />
     </div>

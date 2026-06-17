@@ -2,11 +2,16 @@ import React, { useState } from "react";
 import "./Navbar.css";
 import logo from "../assets/CaliYog-Logo.png";
 
-function Navbar() {
+function Navbar({ onJoin }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const closeMenu = () => {
     setMenuOpen(false);
+  };
+
+  const handleJoinClick = () => {
+    setMenuOpen(false);
+    onJoin();
   };
 
   return (
@@ -36,9 +41,17 @@ function Navbar() {
       {/* Navigation */}
       <ul className={`nav-links ${menuOpen ? "active" : ""}`}>
 
-        <li><a href="#home" onClick={closeMenu}>Home</a></li>
+        <li>
+          <a href="#home" onClick={closeMenu}>
+            Home
+          </a>
+        </li>
 
-        <li><a href="#about" onClick={closeMenu}>About</a></li>
+        <li>
+          <a href="#about" onClick={closeMenu}>
+            About
+          </a>
+        </li>
 
         <li>
           <a href="#whychooseus" onClick={closeMenu}>
@@ -46,7 +59,11 @@ function Navbar() {
           </a>
         </li>
 
-        <li><a href="#batches" onClick={closeMenu}>Batches</a></li>
+        <li>
+          <a href="#batches" onClick={closeMenu}>
+            Batches
+          </a>
+        </li>
 
         <li>
           <a href="#membership" onClick={closeMenu}>
@@ -86,12 +103,13 @@ function Navbar() {
 
       </ul>
 
-      {/* Button */}
-      <a href="#contact" className="join-link">
-        <button className="navbar-btn">
-          Join Now
-        </button>
-      </a>
+      {/* Join Now Button */}
+      <button
+        className="navbar-btn join-link"
+        onClick={handleJoinClick}
+      >
+        Join Now
+      </button>
 
     </nav>
   );
