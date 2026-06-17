@@ -231,6 +231,11 @@
     text-align: center;
   }
 
+  .about-btn {
+  border: none;
+  cursor: pointer;
+}
+
   .calisthenics-section {
     margin-top: 60px;
   }

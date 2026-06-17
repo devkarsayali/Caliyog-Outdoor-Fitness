@@ -3,7 +3,7 @@ import aboutImage from "../assets/about-caliyog.png";
 import calisthenicsImage from "../assets/about-calisthenics.png";
 import "../style/About.css";
 
-function About() {
+function About({ onJoin }) {
   return (
     <section className="about-section" id="about">
       <div className="about-container">
@@ -46,9 +46,12 @@ function About() {
             <div className="feature">✓ Yoga & Mobility</div>
           </div>
 
-          <a href="#contact" className="about-btn">
-            Join Our Community →
-          </a>
+         <button
+  className="about-btn"
+  onClick={onJoin}
+>
+  Join Our Community →
+</button>
         </div>
       </div>
 

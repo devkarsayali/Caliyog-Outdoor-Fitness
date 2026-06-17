@@ -60,7 +60,7 @@ function App() {
       </div>
 
       <div data-aos="fade-right">
-        <About />
+      <About onJoin={() => openJoinForm()} />
       </div>
 
       <div data-aos="fade-left">
