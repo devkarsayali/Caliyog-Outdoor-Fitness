@@ -1,11 +1,38 @@
-import React from "react";
+import React, { useState } from "react";
 import "../style/Contact.css";
+import { db } from "../utils/db";
 
 function Contact() {
 
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Thank you! Your message has been submitted.");
+
+    db.addEnquiry(formData);
+
+    alert(
+      "Thank you! Your enquiry has been submitted successfully."
+    );
+
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      message: "",
+    });
   };
 
   return (
@@ -25,6 +52,7 @@ function Contact() {
       <div className="contact-container">
 
         {/* Contact Information */}
+
         <div className="contact-info">
 
           <h3>Get In Touch</h3>
@@ -100,6 +128,7 @@ function Contact() {
         </div>
 
         {/* Contact Form */}
+
         <form
           className="contact-form"
           onSubmit={handleSubmit}
@@ -107,30 +136,42 @@ function Contact() {
 
           <input
             type="text"
+            name="name"
             placeholder="Enter Your Name"
+            value={formData.name}
+            onChange={handleChange}
             required
           />
 
           <input
             type="email"
+            name="email"
             placeholder="Enter Your Email"
+            value={formData.email}
+            onChange={handleChange}
             required
           />
 
           <input
             type="tel"
+            name="phone"
             placeholder="Enter Your Phone Number"
+            value={formData.phone}
+            onChange={handleChange}
             required
           />
 
           <textarea
             rows="5"
+            name="message"
             placeholder="Write Your Message..."
+            value={formData.message}
+            onChange={handleChange}
             required
           ></textarea>
 
           <button type="submit">
-            Send Message
+            Send Enquiry
           </button>
 
         </form>

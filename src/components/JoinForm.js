@@ -1,11 +1,23 @@
 import React, { useEffect, useState } from "react";
 import "../style/JoinForm.css";
 import logo from "../assets/CaliYog-Logo.png";
+import { db } from "../utils/db";
 
 function JoinForm({ closeForm, selectedMembership }) {
   const [batch, setBatch] = useState("");
   const [timingType, setTimingType] = useState("");
   const [membership, setMembership] = useState(selectedMembership || "");
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    contact: "",
+    address: "",
+    parentName: "",
+    parentContact: "",
+    timing: "",
+    transactionType: "",
+  });
 
   const morningTimes = [
     "6:00 AM - 7:00 AM",
@@ -31,10 +43,39 @@ function JoinForm({ closeForm, selectedMembership }) {
   const handleBatchChange = (e) => {
     setBatch(e.target.value);
     setTimingType("");
+
+    setFormData({
+      ...formData,
+      timing: "",
+    });
+  };
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const joinRequest = {
+      name: formData.name,
+      email: formData.email,
+      mobile: formData.contact,
+      address: formData.address,
+      batch: batch,
+      timingType: timingType,
+      timing: formData.timing,
+      membership: membership,
+      transactionType: formData.transactionType,
+      parentName: formData.parentName,
+      parentContact: formData.parentContact,
+    };
+
+    db.addJoinRequest(joinRequest);
+
     alert("Your membership request has been submitted successfully!");
     closeForm();
   };
@@ -63,22 +104,50 @@ function JoinForm({ closeForm, selectedMembership }) {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Full Name</label>
-            <input type="text" placeholder="Enter your name" required />
+            <input
+              type="text"
+              name="name"
+              placeholder="Enter your name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
           </div>
 
           <div className="form-group">
             <label>Email Address</label>
-            <input type="email" placeholder="Enter your email" required />
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
           </div>
 
           <div className="form-group">
             <label>Contact Number</label>
-            <input type="tel" placeholder="Enter contact number" required />
+            <input
+              type="tel"
+              name="contact"
+              placeholder="Enter contact number"
+              value={formData.contact}
+              onChange={handleChange}
+              required
+            />
           </div>
 
           <div className="form-group">
             <label>Address</label>
-            <input type="text" placeholder="Enter your address" required />
+            <input
+              type="text"
+              name="address"
+              placeholder="Enter your address"
+              value={formData.address}
+              onChange={handleChange}
+              required
+            />
           </div>
 
           <div className="form-group">
@@ -99,14 +168,24 @@ function JoinForm({ closeForm, selectedMembership }) {
             <>
               <div className="form-group">
                 <label>Parent Name</label>
-                <input type="text" placeholder="Enter parent name" required />
+                <input
+                  type="text"
+                  name="parentName"
+                  placeholder="Enter parent name"
+                  value={formData.parentName}
+                  onChange={handleChange}
+                  required
+                />
               </div>
 
               <div className="form-group">
                 <label>Parent Contact Number</label>
                 <input
                   type="tel"
+                  name="parentContact"
                   placeholder="Enter parent contact number"
+                  value={formData.parentContact}
+                  onChange={handleChange}
                   required
                 />
               </div>
@@ -118,7 +197,13 @@ function JoinForm({ closeForm, selectedMembership }) {
               <label>Select Timing Type</label>
               <select
                 value={timingType}
-                onChange={(e) => setTimingType(e.target.value)}
+                onChange={(e) => {
+                  setTimingType(e.target.value);
+                  setFormData({
+                    ...formData,
+                    timing: "",
+                  });
+                }}
                 required
               >
                 <option value="">Choose Morning / Evening</option>
@@ -135,7 +220,12 @@ function JoinForm({ closeForm, selectedMembership }) {
           {timingType && (
             <div className="form-group">
               <label>Select Timing</label>
-              <select required>
+              <select
+                name="timing"
+                value={formData.timing}
+                onChange={handleChange}
+                required
+              >
                 <option value="">Choose Time Slot</option>
 
                 {batch === "Kids Batch" &&
@@ -190,7 +280,12 @@ function JoinForm({ closeForm, selectedMembership }) {
           {membership && (
             <div className="form-group">
               <label>Transaction Type</label>
-              <select required>
+              <select
+                name="transactionType"
+                value={formData.transactionType}
+                onChange={handleChange}
+                required
+              >
                 <option value="">Choose Payment Type</option>
                 <option value="UPI Payment">UPI Payment</option>
                 <option value="Cash Payment">Cash Payment</option>
