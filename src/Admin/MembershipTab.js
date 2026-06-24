@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { db } from "../utils/db";
+import React, { useState, useEffect, useCallback } from "react";
 import { FiPlus, FiEdit, FiTrash2, FiX } from "react-icons/fi";
 
 import "../style/Admin/AdminCommon.css";
 import "../style/Admin/MembershipTab.css";
 
+const API_URL = "http://192.168.11.5:5000";
+
 function MembershipTab() {
   const [memberships, setMemberships] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [modalMode, setModalMode] = useState("add");
-  const [editIndex, setEditIndex] = useState(null);
+  const [editId, setEditId] = useState(null);
 
   const [form, setForm] = useState({
     title: "",
@@ -19,23 +20,35 @@ function MembershipTab() {
     featured: false,
   });
 
-  const loadData = () => {
-    setMemberships(db.getMemberships());
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem("adminToken") || localStorage.getItem("token");
+
+    return {
+      "Content-Type": "application/json",
+      Authorization: token ? `Bearer ${token}` : "",
+    };
   };
+
+  const loadData = useCallback(async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/memberships`);
+      const data = await response.json();
+
+      setMemberships(
+        Array.isArray(data) ? data : data.memberships || data.data || []
+      );
+    } catch (error) {
+      console.error("Membership Load Error:", error);
+    }
+  }, []);
 
   useEffect(() => {
     loadData();
-
-    window.addEventListener("caliyog_db_update", loadData);
-
-    return () => {
-      window.removeEventListener("caliyog_db_update", loadData);
-    };
-  }, []);
+  }, [loadData]);
 
   const closeModal = () => {
     setShowModal(false);
-    setEditIndex(null);
+    setEditId(null);
     setForm({
       title: "",
       price: "",
@@ -45,34 +58,70 @@ function MembershipTab() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const filteredFeatures = form.features.filter(
-      (feature) => feature.trim() !== ""
-    );
 
     const finalForm = {
       ...form,
-      features: filteredFeatures,
+      duration: form.title,
+      features: form.features.filter((feature) => feature.trim() !== ""),
     };
 
-    if (modalMode === "add") {
-      db.addMembership(finalForm);
-    } else {
-      db.updateMembership(editIndex, finalForm);
-    }
+    try {
+      const url =
+        modalMode === "add"
+          ? `${API_URL}/api/memberships`
+          : `${API_URL}/api/memberships/${editId}`;
 
-    closeModal();
+      const method = modalMode === "add" ? "POST" : "PUT";
+
+      const response = await fetch(url, {
+        method,
+        headers: getAuthHeaders(),
+        body: JSON.stringify(finalForm),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Failed to save membership");
+        return;
+      }
+
+      alert(data.message || "Membership saved successfully");
+      await loadData();
+      closeModal();
+    } catch (error) {
+      console.error("Membership Save Error:", error);
+      alert("Backend connection failed while saving membership");
+    }
   };
 
-  const deleteMembership = (index) => {
+  const deleteMembership = async (id) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this membership plan?"
     );
 
-    if (confirmDelete) {
-      db.deleteMembership(index);
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`${API_URL}/api/memberships/${id}`, {
+        method: "DELETE",
+        headers: getAuthHeaders(),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Failed to delete membership");
+        return;
+      }
+
+      alert(data.message || "Membership deleted successfully");
+      await loadData();
+    } catch (error) {
+      console.error("Membership Delete Error:", error);
+      alert("Backend connection failed while deleting membership");
     }
   };
 
@@ -99,7 +148,7 @@ function MembershipTab() {
 
     setForm({
       ...form,
-      features: updatedFeatures,
+      features: updatedFeatures.length > 0 ? updatedFeatures : [""],
     });
   };
 
@@ -108,7 +157,7 @@ function MembershipTab() {
     setShowModal(true);
   };
 
-  const openEditModal = (membership, index) => {
+  const openEditModal = (membership) => {
     setForm({
       title: membership.title || "",
       price: membership.price || "",
@@ -120,7 +169,7 @@ function MembershipTab() {
       featured: !!membership.featured,
     });
 
-    setEditIndex(index);
+    setEditId(membership._id);
     setModalMode("edit");
     setShowModal(true);
   };
@@ -128,25 +177,26 @@ function MembershipTab() {
   return (
     <div className="admin-content-window">
       <header className="admin-header">
-        <div className="admin-header-title">
-          <h1>Membership Packages</h1>
-          <p>Modify duration packages, rates, plans, and feature lists.</p>
-        </div>
+        <div className="membership-header-box">
+  <div>
+    <span className="membership-label">Membership Management</span>
+    <h2>Membership Plans</h2>
+    <p>Add, edit, and delete user-side membership packages.</p>
+  </div>
 
-        <div className="admin-header-actions">
-          <button
-            type="button"
-            className="admin-btn admin-btn-primary"
-            onClick={openAddModal}
-          >
-            <FiPlus /> Add Package
-          </button>
-        </div>
+  <button
+    type="button"
+    className="membership-add-btn"
+    onClick={openAddModal}
+  >
+    + Add Plan
+  </button>
+</div>
       </header>
 
       <div className="admin-cards-grid">
-        {memberships.map((membership, index) => (
-          <article className="admin-item-card" key={index}>
+        {memberships.map((membership) => (
+          <article className="admin-item-card" key={membership._id}>
             <div className="admin-item-content">
               <div className="admin-item-title">{membership.title}</div>
 
@@ -160,9 +210,7 @@ function MembershipTab() {
                 </span>
               )}
 
-              <p className="membership-subtitle">
-                {membership.subtitle}
-              </p>
+              <p className="membership-subtitle">{membership.subtitle}</p>
 
               <ul className="membership-feature-list">
                 {membership.features?.map((feature, i) => (
@@ -175,7 +223,7 @@ function MembershipTab() {
               <button
                 type="button"
                 className="btn-icon"
-                onClick={() => openEditModal(membership, index)}
+                onClick={() => openEditModal(membership)}
               >
                 <FiEdit />
               </button>
@@ -183,7 +231,7 @@ function MembershipTab() {
               <button
                 type="button"
                 className="btn-icon btn-icon-danger"
-                onClick={() => deleteMembership(index)}
+                onClick={() => deleteMembership(membership._id)}
               >
                 <FiTrash2 />
               </button>
@@ -338,10 +386,7 @@ function MembershipTab() {
                   Cancel
                 </button>
 
-                <button
-                  type="submit"
-                  className="admin-btn admin-btn-primary"
-                >
+                <button type="submit" className="admin-btn admin-btn-primary">
                   Save Changes
                 </button>
               </div>

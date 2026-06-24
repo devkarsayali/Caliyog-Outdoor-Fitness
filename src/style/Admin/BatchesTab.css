@@ -1,0 +1,145 @@
+/* Batch Header same as ExpertsTab */
+.batch-header-box {
+  background: linear-gradient(135deg, #111827, #14532d);
+  border-radius: 24px;
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  color: white;
+  margin-bottom: 24px;
+  box-shadow: 0 16px 35px rgba(15, 23, 42, 0.18);
+}
+
+.batch-label {
+  display: inline-block;
+  background: rgba(34, 197, 94, 0.18);
+  color: #86efac;
+  padding: 7px 14px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.batch-header-box h2 {
+  font-size: 32px;
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+
+.batch-header-box p {
+  color: #d1d5db;
+  line-height: 1.6;
+  max-width: 650px;
+  font-size: 14px;
+}
+
+.batch-add-btn {
+  border: none;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  padding: 13px 18px;
+  border-radius: 15px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 12px 24px rgba(34, 197, 94, 0.28);
+  transition: 0.3s;
+}
+
+.batch-add-btn:hover {
+  transform: translateY(-3px);
+}
+
+/* Cards */
+.batch-admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 22px;
+}
+
+.batch-admin-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 22px;
+  padding: 24px;
+  box-shadow: 0 14px 35px rgba(15, 23, 42, 0.08);
+  transition: 0.25s;
+}
+
+.batch-admin-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.14);
+}
+
+.batch-admin-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  margin-bottom: 16px;
+  box-shadow: 0 10px 22px rgba(34, 197, 94, 0.35);
+}
+
+.batch-admin-card h3 {
+  color: #0f172a;
+  font-size: 22px;
+  font-weight: 900;
+  margin-bottom: 14px;
+}
+
+.batch-admin-card ul {
+  padding-left: 0;
+  list-style: none;
+  margin-bottom: 22px;
+}
+
+.batch-admin-card li {
+  color: #475569;
+  font-size: 14px;
+  margin-bottom: 9px;
+}
+
+.batch-admin-card li::before {
+  content: "✓ ";
+  color: #16a34a;
+  font-weight: 900;
+}
+
+.batch-admin-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 15px;
+}
+
+@media (max-width: 768px) {
+  .batch-header-box {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .batch-add-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .batch-admin-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .batch-admin-card {
+    padding: 20px;
+  }
+}

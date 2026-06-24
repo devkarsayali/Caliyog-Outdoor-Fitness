@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import "../style/JoinForm.css";
 import logo from "../assets/CaliYog-Logo.png";
-import { db } from "../utils/db";
 
 function JoinForm({ closeForm, selectedMembership }) {
+  const API_URL = "http://192.168.11.5:5000";
+
   const [batch, setBatch] = useState("");
   const [timingType, setTimingType] = useState("");
   const [membership, setMembership] = useState(selectedMembership || "");
+  const [loading, setLoading] = useState(false);
+  
 
   const [formData, setFormData] = useState({
     name: "",
@@ -44,40 +47,86 @@ function JoinForm({ closeForm, selectedMembership }) {
     setBatch(e.target.value);
     setTimingType("");
 
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       timing: "",
-    });
+      parentName: "",
+      parentContact: "",
+    }));
   };
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [e.target.name]: e.target.value,
+    }));
+  };
+
+  const resetForm = () => {
+    setBatch("");
+    setTimingType("");
+    setMembership(selectedMembership || "");
+
+    setFormData({
+      name: "",
+      email: "",
+      contact: "",
+      address: "",
+      parentName: "",
+      parentContact: "",
+      timing: "",
+      transactionType: "",
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const joinRequest = {
-      name: formData.name,
-      email: formData.email,
-      mobile: formData.contact,
-      address: formData.address,
-      batch: batch,
-      timingType: timingType,
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      mobile: formData.contact.trim(),
+      address: formData.address.trim(),
+      batch,
+      timingType,
       timing: formData.timing,
-      membership: membership,
+      membership,
       transactionType: formData.transactionType,
-      parentName: formData.parentName,
-      parentContact: formData.parentContact,
+      parentName: formData.parentName.trim(),
+      parentContact: formData.parentContact.trim(),
+      status: "New",
     };
 
-    db.addJoinRequest(joinRequest);
+    try {
+      setLoading(true);
+const response = await fetch(`${API_URL}/api/join-request`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(joinRequest),
+});
 
-    alert("Your membership request has been submitted successfully!");
-    closeForm();
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Failed to submit request");
+        return;
+      }
+
+      alert(
+        data.message ||
+          "Your membership request has been submitted successfully!"
+      );
+
+      resetForm();
+      if (closeForm) closeForm();
+    } catch (error) {
+      console.error("Join Form Error:", error);
+      alert("Backend connection failed. Check backend server and API route.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -88,17 +137,9 @@ function JoinForm({ closeForm, selectedMembership }) {
         </button>
 
         <div className="join-header">
-          <img
-            src={logo}
-            alt="CaliYog Logo"
-            className="join-logo"
-          />
-
+          <img src={logo} alt="CaliYog Logo" className="join-logo" />
           <h2>Join CaliYog Fitness Club</h2>
-
-          <p>
-            Fill your details and start your fitness journey with us.
-          </p>
+          <p>Fill your details and start your fitness journey with us.</p>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -199,19 +240,15 @@ function JoinForm({ closeForm, selectedMembership }) {
                 value={timingType}
                 onChange={(e) => {
                   setTimingType(e.target.value);
-                  setFormData({
-                    ...formData,
+                  setFormData((prev) => ({
+                    ...prev,
                     timing: "",
-                  });
+                  }));
                 }}
                 required
               >
                 <option value="">Choose Morning / Evening</option>
-
-                {batch !== "Kids Batch" && (
-                  <option value="Morning">Morning</option>
-                )}
-
+                {batch !== "Kids Batch" && <option value="Morning">Morning</option>}
                 <option value="Evening">Evening</option>
               </select>
             </div>
@@ -266,13 +303,17 @@ function JoinForm({ closeForm, selectedMembership }) {
                 required
               >
                 <option value="">Choose Membership</option>
-                <option value="Weekly Plan">Weekly Plan - ₹2,500</option>
-                <option value="15 Days">15 Days - ₹4,000</option>
-                <option value="Monthly">Monthly - ₹6,000</option>
-                <option value="3 Months">3 Months - ₹12,000</option>
-                <option value="6 Months">6 Months - ₹18,000</option>
-                <option value="Yearly Membership">Yearly - ₹24,000</option>
-                <option value="Kids Yearly">Kids Yearly - ₹30,000</option>
+                <option value="Weekly Plan - ₹2,500">Weekly Plan - ₹2,500</option>
+                <option value="15 Days - ₹4,000">15 Days - ₹4,000</option>
+                <option value="Monthly - ₹6,000">Monthly - ₹6,000</option>
+                <option value="3 Months - ₹12,000">3 Months - ₹12,000</option>
+                <option value="6 Months - ₹18,000">6 Months - ₹18,000</option>
+                <option value="Yearly Membership - ₹24,000">
+                  Yearly - ₹24,000
+                </option>
+                <option value="Kids Yearly - ₹30,000">
+                  Kids Yearly - ₹30,000
+                </option>
               </select>
             )}
           </div>
@@ -293,8 +334,8 @@ function JoinForm({ closeForm, selectedMembership }) {
             </div>
           )}
 
-          <button type="submit" className="submit-btn">
-            Submit
+          <button type="submit" className="submit-btn" disabled={loading}>
+            {loading ? "Submitting..." : "Submit"}
           </button>
         </form>
       </div>

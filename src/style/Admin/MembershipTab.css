@@ -1,3 +1,54 @@
+.membership-header-box {
+  background: linear-gradient(135deg, #111827, #14532d);
+  border-radius: 24px;
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  color: white;
+  margin-bottom: 24px;
+  box-shadow: 0 16px 35px rgba(15, 23, 42, 0.18);
+}
+
+.membership-label {
+  display: inline-block;
+  background: rgba(34, 197, 94, 0.18);
+  color: #86efac;
+  padding: 7px 14px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.membership-header-box h2 {
+  font-size: 32px;
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+
+.membership-header-box p {
+  color: #d1d5db;
+  line-height: 1.6;
+  max-width: 650px;
+  font-size: 14px;
+}
+
+.membership-add-btn {
+  border: none;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  padding: 13px 18px;
+  border-radius: 15px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .admin-cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
@@ -119,58 +170,45 @@
   color: white;
 }
 
-/* RIGHT SIDE MODAL */
+.admin-empty-box {
+  background: white;
+  border-radius: 24px;
+  padding: 40px;
+  text-align: center;
+  border: 1px dashed #cbd5e1;
+  color: #64748b;
+  grid-column: 1 / -1;
+}
+
+/* MODAL */
 .admin-modal-overlay {
   position: fixed;
   inset: 0;
   z-index: 99999;
-
   background: rgba(2, 6, 23, 0.55);
   backdrop-filter: blur(6px);
-
   display: flex;
   justify-content: flex-end;
   align-items: stretch;
-
-  padding: 0;
 }
 
 .admin-modal {
   width: 440px;
   max-width: 440px;
   height: 100vh;
-
   background: #ffffff;
   border-radius: 24px 0 0 24px;
-
   overflow-y: auto;
-
   border-left: 1px solid rgba(34, 197, 94, 0.35);
   box-shadow: -20px 0 60px rgba(0, 0, 0, 0.35);
-
-  animation: slidePackageForm 0.3s ease;
-}
-
-@keyframes slidePackageForm {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
 }
 
 .admin-modal-header {
   position: sticky;
   top: 0;
   z-index: 5;
-
   padding: 20px;
   background: linear-gradient(135deg, #0f172a, #14532d);
-
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -185,24 +223,12 @@
 .admin-modal-close {
   width: 38px;
   height: 38px;
-
   border: none;
   border-radius: 50%;
-
   background: rgba(239, 68, 68, 0.2);
   color: #fecaca;
-
   font-size: 20px;
   cursor: pointer;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.admin-modal-close:hover {
-  background: #dc2626;
-  color: white;
 }
 
 .admin-modal-body {
@@ -237,30 +263,6 @@
   box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.14);
 }
 
-.admin-form-row {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0;
-}
-
-.admin-checkbox-label {
-  display: flex !important;
-  align-items: center;
-  gap: 10px;
-
-  background: #f0fdf4;
-  padding: 12px;
-  border-radius: 14px;
-  border: 1px solid rgba(34, 197, 94, 0.2);
-
-  cursor: pointer;
-}
-
-.admin-checkbox-label input {
-  width: 18px;
-  height: 18px;
-}
-
 .features-input-list {
   display: flex;
   flex-direction: column;
@@ -273,28 +275,13 @@
   align-items: center;
 }
 
-.feature-remove-btn {
-  width: 40px;
-  height: 40px;
-  flex-shrink: 0;
-}
-
-.add-feature-btn {
-  width: 100%;
-  justify-content: center;
-}
-
 .admin-modal-footer {
   position: sticky;
   bottom: 0;
-  z-index: 5;
-
   padding: 16px 22px 22px;
-
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-
   background: #ffffff;
   border-top: 1px solid #e5e7eb;
 }
@@ -306,10 +293,6 @@
   font-size: 14px;
   font-weight: 900;
   cursor: pointer;
-
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
 }
 
 .admin-btn-primary {
@@ -322,18 +305,17 @@
   color: #0f172a;
 }
 
-.admin-empty-box {
-  background: white;
-  border-radius: 24px;
-  padding: 40px;
-  text-align: center;
-  border: 1px dashed #cbd5e1;
-  color: #64748b;
-  grid-column: 1 / -1;
-}
-
-/* Mobile */
 @media (max-width: 768px) {
+  .membership-header-box {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .membership-add-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
   .admin-cards-grid {
     grid-template-columns: 1fr;
   }
@@ -350,22 +332,5 @@
     height: auto;
     max-height: 92vh;
     border-radius: 22px;
-  }
-
-  .admin-item-footer {
-    flex-direction: column;
-  }
-
-  .admin-item-footer button {
-    width: 100%;
-  }
-
-  .admin-modal-footer {
-    flex-direction: column;
-  }
-
-  .admin-modal-footer button {
-    width: 100%;
-    justify-content: center;
   }
 }

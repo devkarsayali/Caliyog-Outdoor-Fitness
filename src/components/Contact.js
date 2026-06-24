@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import "../style/Contact.css";
-import { db } from "../utils/db";
+
 
 function Contact() {
+  const API_URL = "http://192.168.11.5:5000";
 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone: "",
+    contact: "",
     message: "",
   });
 
@@ -18,43 +19,57 @@ function Contact() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    db.addEnquiry(formData);
+    try {
+      const response = await fetch(`${API_URL}/api/contacts`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-    alert(
-      "Thank you! Your enquiry has been submitted successfully."
-    );
+      const data = await response.json();
 
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      message: "",
-    });
+      if (!response.ok) {
+        alert(data.message || "Failed to submit enquiry");
+        return;
+      }
+
+      alert(
+        data.message ||
+          "Thank you! Your enquiry has been submitted successfully."
+      );
+
+      setFormData({
+        name: "",
+        email: "",
+        contact: "",
+        message: "",
+      });
+    } catch (error) {
+      console.error("Enquiry Error:", error);
+
+      alert(
+        "Backend connection failed. Please check backend server and IP address."
+      );
+    }
   };
 
   return (
-    <section
-      className="contact-section"
-      id="contact"
-    >
+    <section className="contact-section" id="contact">
       <div className="contact-heading">
         <h2>Contact Us</h2>
 
         <p>
-          Join CALIYOG Outdoor Fitness Club and start
-          your fitness journey today.
+          Join CALIYOG Outdoor Fitness Club and start your fitness journey today.
         </p>
       </div>
 
       <div className="contact-container">
-
-        {/* Contact Information */}
-
         <div className="contact-info">
-
           <h3>Get In Touch</h3>
 
           <p>
@@ -124,16 +139,9 @@ function Contact() {
             <strong>⏰ Timings:</strong>
             Morning & Evening Batches Available
           </p>
-
         </div>
 
-        {/* Contact Form */}
-
-        <form
-          className="contact-form"
-          onSubmit={handleSubmit}
-        >
-
+        <form className="contact-form" onSubmit={handleSubmit}>
           <input
             type="text"
             name="name"
@@ -153,12 +161,12 @@ function Contact() {
           />
 
           <input
-            type="tel"
-            name="phone"
+            type="text"
+            name="contact"
             placeholder="Enter Your Phone Number"
-            value={formData.phone}
+            value={formData.contact}
             onChange={handleChange}
-            required
+           
           />
 
           <textarea
@@ -173,9 +181,7 @@ function Contact() {
           <button type="submit">
             Send Enquiry
           </button>
-
         </form>
-
       </div>
     </section>
   );

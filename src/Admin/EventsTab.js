@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
-import { db } from "../utils/db";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   FiPlus,
   FiEdit,
@@ -12,138 +11,245 @@ import {
 import "../style/Admin/AdminCommon.css";
 import "../style/Admin/EventsTab.css";
 
-import e1 from "../assets/e1.png";
-import e2 from "../assets/e2.png";
-import e3 from "../assets/e3.png";
-import e4 from "../assets/e4.png";
-import e5 from "../assets/e5.png";
-import e6 from "../assets/e6.png";
-import e7 from "../assets/e7.png";
-import e8 from "../assets/e8.png";
-
-const resolveImage = (img) => {
-  if (img === "e1") return e1;
-  if (img === "e2") return e2;
-  if (img === "e3") return e3;
-  if (img === "e4") return e4;
-  if (img === "e5") return e5;
-  if (img === "e6") return e6;
-  if (img === "e7") return e7;
-  if (img === "e8") return e8;
-  return img;
-};
-
 function EventsTab() {
+  const API_URL = "http://192.168.11.5:5000";
+
   const [events, setEvents] = useState([]);
   const [organisedEvents, setOrganisedEvents] = useState([]);
 
   const [showGalleryModal, setShowGalleryModal] = useState(false);
   const [showOrganisedModal, setShowOrganisedModal] = useState(false);
   const [modalMode, setModalMode] = useState("add");
-  const [editIndex, setEditIndex] = useState(null);
+  const [editId, setEditId] = useState(null);
 
   const fileInputRef = useRef(null);
 
   const [galleryForm, setGalleryForm] = useState({
-    img: "e1",
+    img: "",
     title: "",
+    description: "",
+    location: "",
+    date: "",
   });
 
   const [organisedForm, setOrganisedForm] = useState("");
 
-  const loadData = () => {
-    setEvents(db.getEvents());
-    setOrganisedEvents(db.getOrganisedEvents());
+  const getAuthHeaders = () => {
+    const token =
+      localStorage.getItem("adminToken") || localStorage.getItem("token");
+
+    return {
+      "Content-Type": "application/json",
+      Authorization: token ? `Bearer ${token}` : "",
+    };
   };
+
+  const safeJson = async (response) => {
+    const text = await response.text();
+
+    try {
+      return text ? JSON.parse(text) : {};
+    } catch (error) {
+      console.error("Backend returned non-JSON response:", text);
+      return {
+        message: text || "Server returned invalid response",
+      };
+    }
+  };
+
+  const getArrayData = (data) => {
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data.data)) return data.data;
+    if (Array.isArray(data.events)) return data.events;
+    return [];
+  };
+
+  const hasImage = (img) => {
+    return typeof img === "string" && img.trim() !== "";
+  };
+
+  const loadData = useCallback(async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/events`);
+      const data = await safeJson(response);
+
+      const eventList = getArrayData(data);
+
+      const galleryOnly = eventList.filter(
+        (item) => item.eventType === "gallery"
+      );
+
+      const organisedOnly = eventList.filter(
+        (item) =>
+          item.eventType === "organized" || item.eventType === "organised"
+      );
+
+      setEvents(galleryOnly);
+      setOrganisedEvents(organisedOnly);
+    } catch (error) {
+      console.error("Events Load Error:", error);
+    }
+  }, []);
 
   useEffect(() => {
     loadData();
-    window.addEventListener("caliyog_db_update", loadData);
-
-    return () =>
-      window.removeEventListener("caliyog_db_update", loadData);
-  }, []);
-
-  const triggerUpdate = () => {
-    window.dispatchEvent(new Event("caliyog_db_update"));
-  };
+  }, [loadData]);
 
   const closeGalleryModal = () => {
     setShowGalleryModal(false);
-    setEditIndex(null);
+    setEditId(null);
+    setModalMode("add");
     setGalleryForm({
-      img: "e1",
+      img: "",
       title: "",
+      description: "",
+      location: "",
+      date: "",
     });
   };
 
   const closeOrganisedModal = () => {
     setShowOrganisedModal(false);
-    setEditIndex(null);
+    setEditId(null);
+    setModalMode("add");
     setOrganisedForm("");
   };
 
-  const handleGallerySubmit = (e) => {
+  const handleGallerySubmit = async (e) => {
     e.preventDefault();
 
-    if (modalMode === "add") {
-      db.addEvent(galleryForm);
-    } else {
-      db.updateEvent(editIndex, galleryForm);
-    }
+    try {
+      const url =
+        modalMode === "add"
+          ? `${API_URL}/api/events`
+          : `${API_URL}/api/events/${editId}`;
 
-    triggerUpdate();
-    closeGalleryModal();
+      const method = modalMode === "add" ? "POST" : "PUT";
+
+      const response = await fetch(url, {
+        method,
+        headers: getAuthHeaders(),
+        body: JSON.stringify({
+          eventType: "gallery",
+          title: galleryForm.title,
+          img: galleryForm.img,
+          description: galleryForm.description,
+          location: galleryForm.location,
+          date: galleryForm.date,
+        }),
+      });
+
+      const data = await safeJson(response);
+
+      if (!response.ok) {
+        alert(data.message || "Failed to save gallery event");
+        return;
+      }
+
+      alert(data.message || "Gallery event saved successfully");
+      await loadData();
+      closeGalleryModal();
+    } catch (error) {
+      console.error("Gallery Save Error:", error);
+      alert("Backend connection failed while saving gallery event");
+    }
   };
 
-  const handleOrganisedSubmit = (e) => {
+  const handleOrganisedSubmit = async (e) => {
     e.preventDefault();
 
-    if (modalMode === "add") {
-      db.addOrganisedEvent(organisedForm);
-    } else {
-      db.updateOrganisedEvent(editIndex, organisedForm);
-    }
+    try {
+      const url =
+        modalMode === "add"
+          ? `${API_URL}/api/events`
+          : `${API_URL}/api/events/${editId}`;
 
-    triggerUpdate();
-    closeOrganisedModal();
+      const method = modalMode === "add" ? "POST" : "PUT";
+
+      const response = await fetch(url, {
+        method,
+        headers: getAuthHeaders(),
+        body: JSON.stringify({
+          eventType: "organized",
+          title: organisedForm,
+          description: organisedForm,
+          location: "CaliYog Fitness Club",
+          date: new Date().toISOString().slice(0, 10),
+        }),
+      });
+
+      const data = await safeJson(response);
+
+      if (!response.ok) {
+        alert(data.message || "Failed to save organized event");
+        return;
+      }
+
+      alert(data.message || "Organized event saved successfully");
+      await loadData();
+      closeOrganisedModal();
+    } catch (error) {
+      console.error("Organised Event Save Error:", error);
+      alert("Backend connection failed while saving organized event");
+    }
   };
 
-  const deleteGalleryEvent = (index) => {
-    if (window.confirm("Are you sure you want to delete this gallery event?")) {
-      db.deleteEvent(index);
-      triggerUpdate();
-    }
-  };
+const deleteEvent = async (id) => {
+  try {
+    console.log("Delete clicked ID:", id);
 
-  const deleteOrganisedEvent = (index) => {
-    if (window.confirm("Are you sure you want to delete this major event?")) {
-      db.deleteOrganisedEvent(index);
-      triggerUpdate();
+    const token =
+      localStorage.getItem("adminToken") || localStorage.getItem("token");
+
+    const response = await fetch(`${API_URL}/api/events/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+    });
+
+    const data = await response.json();
+
+    console.log("Delete status:", response.status);
+    console.log("Delete response:", data);
+
+    if (!response.ok) {
+      alert(data.message || "Delete failed");
+      return;
     }
-  };
+
+    setEvents((prev) => prev.filter((item) => item._id !== id));
+    setOrganisedEvents((prev) => prev.filter((item) => item._id !== id));
+
+    alert("Event deleted successfully");
+  } catch (error) {
+    console.error("Delete error:", error);
+    alert("Delete API failed");
+  }
+};
 
   const openBrowse = () => {
-    fileInputRef.current.click();
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
   const handleImageFileChange = (e) => {
     const file = e.target.files[0];
-
     if (!file) return;
 
-    if (file.size > 2 * 1024 * 1024) {
-      alert("File is too large! Please upload image smaller than 2MB.");
-      return;
-    }
+   if (file.size > 10 * 1024 * 1024) {
+  alert("File is too large! Please upload image smaller than 10MB.");
+  return;
+}
 
     const reader = new FileReader();
 
     reader.onloadend = () => {
-      setGalleryForm({
-        ...galleryForm,
+      setGalleryForm((prev) => ({
+        ...prev,
         img: reader.result,
-      });
+      }));
     };
 
     reader.readAsDataURL(file);
@@ -151,14 +257,11 @@ function EventsTab() {
 
   return (
     <div className="admin-content-window">
-
       <div className="events-header-box">
         <div>
           <span className="events-label">Events Management</span>
           <h2>Manage Events</h2>
-          <p>
-            Add gallery events and organised major events for CaliYog website.
-          </p>
+          <p>Add gallery events and organised major events separately.</p>
         </div>
 
         <div className="events-header-actions">
@@ -185,7 +288,6 @@ function EventsTab() {
       </div>
 
       <div className="events-layout">
-
         <div className="events-left">
           <div className="section-title-row">
             <h2>Gallery Cards</h2>
@@ -193,26 +295,40 @@ function EventsTab() {
           </div>
 
           <div className="events-cards-grid">
-            {events.map((evt, index) => (
-              <article className="event-card-admin" key={index}>
+            {events.map((evt) => (
+              <article className="event-card-admin" key={evt._id}>
                 <div className="event-img-box">
-                  <img
-                    src={resolveImage(evt.img)}
-                    alt={evt.title}
-                    className="event-img"
-                  />
+                  {hasImage(evt.img) ? (
+                    <img
+                      src={evt.img}
+                      alt={evt.title || "Gallery Event"}
+                      className="event-img"
+                    />
+                  ) : (
+                    <div className="image-placeholder">
+                      <FiImage />
+                      <span>No Image</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="event-card-content">
-                  <h3>{evt.title}</h3>
+                  <h3>{evt.title || "Untitled Event"}</h3>
                 </div>
 
                 <div className="event-card-footer">
                   <button
                     className="event-edit-btn"
                     onClick={() => {
-                      setGalleryForm(evt);
-                      setEditIndex(index);
+                      setGalleryForm({
+                        img: evt.img || "",
+                        title: evt.title || "",
+                        description: evt.description || "",
+                        location: evt.location || "",
+                        date: evt.date ? evt.date.substring(0, 10) : "",
+                      });
+
+                      setEditId(evt._id);
                       setModalMode("edit");
                       setShowGalleryModal(true);
                     }}
@@ -221,11 +337,16 @@ function EventsTab() {
                   </button>
 
                   <button
-                    className="event-delete-btn"
-                    onClick={() => deleteGalleryEvent(index)}
-                  >
-                    <FiTrash2 /> Delete
-                  </button>
+  type="button"
+  className="event-delete-btn"
+  onClick={(e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    deleteEvent(evt._id);
+  }}
+>
+  <FiTrash2 /> Delete
+</button>
                 </div>
               </article>
             ))}
@@ -239,10 +360,10 @@ function EventsTab() {
           </div>
 
           <div className="major-events-list">
-            {organisedEvents.map((evt, index) => (
-              <div className="major-event-card" key={index}>
+            {organisedEvents.map((evt) => (
+              <div className="major-event-card" key={evt._id}>
                 <div>
-                  <h3>{evt}</h3>
+                  <h3>{evt.title || "Untitled Organised Event"}</h3>
                   <p>Organised Event</p>
                 </div>
 
@@ -250,8 +371,8 @@ function EventsTab() {
                   <button
                     className="small-edit-btn"
                     onClick={() => {
-                      setOrganisedForm(evt);
-                      setEditIndex(index);
+                      setOrganisedForm(evt.title || "");
+                      setEditId(evt._id);
                       setModalMode("edit");
                       setShowOrganisedModal(true);
                     }}
@@ -260,28 +381,28 @@ function EventsTab() {
                   </button>
 
                   <button
-                    className="small-delete-btn"
-                    onClick={() => deleteOrganisedEvent(index)}
-                  >
-                    <FiTrash2 />
-                  </button>
+  type="button"
+  className="small-delete-btn"
+  onClick={(e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    deleteEvent(evt._id);
+  }}
+>
+  <FiTrash2 />
+</button>
                 </div>
               </div>
             ))}
           </div>
         </div>
-
       </div>
 
       {showGalleryModal && (
         <div className="event-modal-overlay">
           <div className="event-modal">
-
             <div className="event-modal-header">
-              <h3>
-                {modalMode === "add" ? "Add" : "Edit"} Gallery Event
-              </h3>
-
+              <h3>{modalMode === "add" ? "Add" : "Edit"} Gallery Event</h3>
               <button onClick={closeGalleryModal}>
                 <FiX />
               </button>
@@ -289,16 +410,9 @@ function EventsTab() {
 
             <form onSubmit={handleGallerySubmit}>
               <div className="event-modal-body">
-
-                <div
-                  className="event-image-preview"
-                  onClick={openBrowse}
-                >
-                  {galleryForm.img ? (
-                    <img
-                      src={resolveImage(galleryForm.img)}
-                      alt="Preview"
-                    />
+                <div className="event-image-preview" onClick={openBrowse}>
+                  {hasImage(galleryForm.img) ? (
+                    <img src={galleryForm.img} alt="Preview" />
                   ) : (
                     <div className="image-placeholder">
                       <FiImage />
@@ -325,7 +439,6 @@ function EventsTab() {
 
                 <div className="admin-form-group">
                   <label>Event Title</label>
-
                   <input
                     type="text"
                     className="admin-form-control"
@@ -342,36 +455,53 @@ function EventsTab() {
                 </div>
 
                 <div className="admin-form-group">
-                  <label>Select Default Image</label>
-
-                  <select
+                  <label>Description</label>
+                  <textarea
                     className="admin-form-control"
-                    value={
-                      galleryForm.img.startsWith("data:")
-                        ? "custom"
-                        : galleryForm.img
+                    value={galleryForm.description}
+                    onChange={(e) =>
+                      setGalleryForm({
+                        ...galleryForm,
+                        description: e.target.value,
+                      })
                     }
-                    onChange={(e) => {
-                      if (e.target.value !== "custom") {
-                        setGalleryForm({
-                          ...galleryForm,
-                          img: e.target.value,
-                        });
-                      }
-                    }}
-                  >
-                    <option value="e1">Default Event 1</option>
-                    <option value="e2">Default Event 2</option>
-                    <option value="e3">Default Event 3</option>
-                    <option value="e4">Default Event 4</option>
-                    <option value="e5">Default Event 5</option>
-                    <option value="e6">Default Event 6</option>
-                    <option value="e7">Default Event 7</option>
-                    <option value="e8">Default Event 8</option>
-                    <option value="custom">Custom Upload</option>
-                  </select>
+                    placeholder="Enter event description"
+                    required
+                  />
                 </div>
 
+                <div className="admin-form-group">
+                  <label>Location</label>
+                  <input
+                    type="text"
+                    className="admin-form-control"
+                    value={galleryForm.location}
+                    onChange={(e) =>
+                      setGalleryForm({
+                        ...galleryForm,
+                        location: e.target.value,
+                      })
+                    }
+                    placeholder="Enter event location"
+                    required
+                  />
+                </div>
+
+                <div className="admin-form-group">
+                  <label>Event Date</label>
+                  <input
+                    type="date"
+                    className="admin-form-control"
+                    value={galleryForm.date}
+                    onChange={(e) =>
+                      setGalleryForm({
+                        ...galleryForm,
+                        date: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
               </div>
 
               <div className="event-modal-footer">
@@ -383,15 +513,11 @@ function EventsTab() {
                   Cancel
                 </button>
 
-                <button
-                  type="submit"
-                  className="save-btn"
-                >
-                  Save
+                <button type="submit" className="save-btn">
+                  Save Gallery Event
                 </button>
               </div>
             </form>
-
           </div>
         </div>
       )}
@@ -399,12 +525,8 @@ function EventsTab() {
       {showOrganisedModal && (
         <div className="event-modal-overlay">
           <div className="event-modal">
-
             <div className="event-modal-header">
-              <h3>
-                {modalMode === "add" ? "Add" : "Edit"} Organized Event
-              </h3>
-
+              <h3>{modalMode === "add" ? "Add" : "Edit"} Organized Event</h3>
               <button onClick={closeOrganisedModal}>
                 <FiX />
               </button>
@@ -412,27 +534,22 @@ function EventsTab() {
 
             <form onSubmit={handleOrganisedSubmit}>
               <div className="event-modal-body">
-
                 <div className="organized-icon-box">
                   <FiPlus />
                   <span>Major Event</span>
                 </div>
 
                 <div className="admin-form-group">
-                  <label>Event Description Name</label>
-
+                  <label>Organized Event Name</label>
                   <input
                     type="text"
                     className="admin-form-control"
                     value={organisedForm}
-                    onChange={(e) =>
-                      setOrganisedForm(e.target.value)
-                    }
+                    onChange={(e) => setOrganisedForm(e.target.value)}
                     placeholder="e.g. CaliYog Run Club 2026"
                     required
                   />
                 </div>
-
               </div>
 
               <div className="event-modal-footer">
@@ -444,19 +561,14 @@ function EventsTab() {
                   Cancel
                 </button>
 
-                <button
-                  type="submit"
-                  className="save-btn"
-                >
-                  Save
+                <button type="submit" className="save-btn">
+                  Save Organized Event
                 </button>
               </div>
             </form>
-
           </div>
         </div>
       )}
-
     </div>
   );
 }

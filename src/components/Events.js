@@ -1,87 +1,124 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../style/Events.css";
 
-import e1 from "../assets/e1.png";
-import e2 from "../assets/e2.png";
-import e3 from "../assets/e3.png";
-import e4 from "../assets/e4.png";
-import e5 from "../assets/e5.png";
-import e6 from "../assets/e6.png";
-import e7 from "../assets/e7.png";
-import e8 from "../assets/e8.png";
-
 function Events() {
-  const events = [
-    { img: e1, title: "Outdoor Fitness Event" },
-    { img: e2, title: "Group Workout Session" },
-    { img: e3, title: "Fitness Challenge" },
-    { img: e4, title: "Community Training" },
-    { img: e5, title: "Club Celebration" },
-    { img: e6, title: "CaliYog Memories" },
-    { img: e7, title: "Fitness Community" },
-    { img: e8, title: "Team Motivation" },
-  ];
+  const API_URL = "http://192.168.11.5:5000";
 
-  const organisedEvents = [
-    "CaliYog National Championship 2024",
-    "CaliYog Hyrox Competition",
-    "Small Treks × 3",
-    "Calisthenics Community Meet-Up",
-    "Calisthenics Workshop By Celebrity Coach Kirsten Varela",
-    "CaliYog Premier League Cricket × 2",
-    "Gala Night Celebration",
-    "In-House Championship 2023",
-    "CaliYog Run Club 2025",
-    "CaliYog Marathon 2025 5K",
-  ];
+  const [events, setEvents] = useState([]);
+  const [organisedEvents, setOrganisedEvents] = useState([]);
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const getImageUrl = (item) => {
+    const imagePath = item?.img || item?.image || "";
+
+    if (!imagePath || imagePath.trim() === "") {
+      return null;
+    }
+
+    if (
+      imagePath.startsWith("http") ||
+      imagePath.startsWith("data:image")
+    ) {
+      return imagePath;
+    }
+
+    return `${API_URL}${imagePath}`;
+  };
+
+  const fetchEvents = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/events`);
+
+      if (!response.ok) {
+        throw new Error("Failed to load events");
+      }
+
+      const data = await response.json();
+
+      const eventList = Array.isArray(data)
+        ? data
+        : data.events || data.data || [];
+
+      const galleryEvents = eventList.filter(
+        (item) => item.eventType === "gallery"
+      );
+
+      const majorEvents = eventList.filter(
+        (item) =>
+          item.eventType === "organized" ||
+          item.eventType === "organised"
+      );
+
+      setEvents(galleryEvents);
+      setOrganisedEvents(majorEvents);
+    } catch (error) {
+      console.error("Events Load Error:", error);
+    }
+  };
 
   return (
     <section className="events-section" id="events">
       <div className="events-heading">
         <h2>Events and Clicks</h2>
-
-        <p>
-          Memorable moments from our fitness events and group activities.
-        </p>
+        <p>Memorable moments from our fitness events and group activities.</p>
       </div>
 
       <div className="events-grid">
-        {events.map((item, index) => (
-          <div className="event-card" key={index}>
-            <div className="event-img-box">
-              <img
-                src={item.img}
-                alt={item.title}
-                loading="lazy"
-              />
-            </div>
+        {events.length === 0 ? (
+          <p>No gallery events added yet.</p>
+        ) : (
+          events.map((item, index) => {
+            const imageUrl = getImageUrl(item);
 
-            <div className="event-content">
-              <h3>{item.title}</h3>
-              <span>View Memory</span>
-            </div>
-          </div>
-        ))}
+            return (
+              <div className="event-card" key={item._id || index}>
+                <div className="event-img-box">
+                  {imageUrl ? (
+                    <img
+                      src={imageUrl}
+                      alt={item.title || "Gallery Event"}
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="no-event-image">
+                      No Image Available
+                    </div>
+                  )}
+                </div>
+
+                <div className="event-content">
+                  <h3>{item.title || "Untitled Event"}</h3>
+                  {item.description && <p>{item.description}</p>}
+                </div>
+              </div>
+            );
+          })
+        )}
       </div>
 
       <div className="events-achievements">
         <div className="achievement-header">
           <span>MAJOR EVENTS</span>
-
           <h2>Events We Organised In Last Two Years</h2>
-
-          <p>
-            Organised more than 10 big fitness events.
-          </p>
+          <p>Organised big fitness events through CaliYog.</p>
         </div>
 
         <div className="achievement-list">
-          {organisedEvents.map((event, index) => (
-            <div className="achievement-item" key={index}>
-              <span>{index + 1}</span>
-              <p>{event}</p>
-            </div>
-          ))}
+          {organisedEvents.length === 0 ? (
+            <p>No organised events added yet.</p>
+          ) : (
+            organisedEvents.map((event, index) => (
+              <div className="achievement-item" key={event._id || index}>
+                <span>{index + 1}</span>
+                <div>
+                  <p>{event.title || "Untitled Organised Event"}</p>
+                </div>
+              </div>
+            ))
+          )}
         </div>
 
         <div className="achievement-stats">
@@ -108,7 +145,6 @@ function Events() {
 
         <div className="coach-message">
           <h3>10+ Coaches Dedicated To One Mission</h3>
-
           <p>
             Introducing fitness into everyone's life through outdoor training,
             community support, discipline, and performance-based fitness.

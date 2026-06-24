@@ -8,6 +8,7 @@ import MembershipTab from "./MembershipTab";
 import ReportsTab from "./ReportsTab";
 import EnquiriesTab from "./EnquiriesTab";
 import MembersTab from "./MembersTab";
+import BatchesTab from "./BatchesTab";
 
 import "../style/Admin/AdminDashboard.css";
 import logo from "../assets/CaliYog-Logo.png";
@@ -15,24 +16,71 @@ import logo from "../assets/CaliYog-Logo.png";
 function AdminDashboard() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  const adminData =
+    JSON.parse(localStorage.getItem("adminData")) || {};
 
   const handleLogout = () => {
     localStorage.removeItem("admin");
+    localStorage.removeItem("adminData");
+    localStorage.removeItem("token");
+
     navigate("/admin-login");
   };
 
+ 
+
   return (
     <div className="admin-dashboard">
-      <aside className="admin-sidebar">
-        <div className="admin-sidebar-title">
-          <img
-            src={logo}
-            alt="CaliYog Logo"
-            className="admin-sidebar-logo"
-          />
+      {!isSidebarOpen && (
+        <button
+        type="button"
+        className="drawer-toggle-btn floating-open-btn"
+        onClick={() => setIsSidebarOpen(true)}
+        >
+        ☰
+       </button>
+      )}
+     <aside className={`admin-sidebar ${isSidebarOpen ? "open" : "closed"}`}>
 
-          <h2>CALIYOG</h2>
-          <p>Fitness Admin Panel</p>
+       <div className="admin-sidebar-title">
+  <button
+    type="button"
+    className="drawer-toggle-btn sidebar-top-toggle"
+    onClick={() => setIsSidebarOpen(false)}
+  >
+    ☰
+  </button>
+
+  <div className="logo-block">
+    <img
+      src={logo}
+      alt="CaliYog Logo"
+      className="admin-sidebar-logo"
+    />
+
+    <h2>CALIYOG</h2>
+    <p>Fitness Admin Panel</p>
+  </div>
+</div>
+
+        <div className="admin-profile-card">
+          <div className="admin-profile-avatar">
+            {adminData?.name
+              ? adminData.name.charAt(0).toUpperCase()
+              : "A"}
+          </div>
+
+          <div className="admin-profile-info">
+            <h4>{adminData?.name || "Admin"}</h4>
+
+            <p>
+              {adminData?.email || "admin@caliyog.com"}
+            </p>
+
+            <span>● Active</span>
+          </div>
         </div>
 
         <button
@@ -55,6 +103,13 @@ function AdminDashboard() {
         >
           <span>🎉</span> Events
         </button>
+
+        <button
+         className={activeTab === "batches" ? "active" : ""}
+         onClick={() => setActiveTab("batches")}
+         >
+         <span>🏋️</span> Batches
+         </button>
 
         <button
           className={activeTab === "membership" ? "active" : ""}
@@ -90,46 +145,44 @@ function AdminDashboard() {
         >
           <span>🚪</span> Logout
         </button>
+
       </aside>
 
-      <main className="admin-content">
-        <div className="admin-topbar">
-          <div>
-            <h1>
-              {activeTab === "overview" && "Dashboard Overview"}
-              {activeTab === "experts" && "Manage Experts"}
-              {activeTab === "events" && "Manage Events"}
-              {activeTab === "membership" && "Manage Membership"}
-              {activeTab === "reports" && "User Reports"}
-              {activeTab === "members" && "Members Management"}
-              {activeTab === "enquiries" && "User Enquiries"}
-            </h1>
-
-            <p>
-              Welcome Admin, manage your CaliYog fitness club easily.
-            </p>
-          </div>
-
-          <div className="admin-badge">
-            Admin
-          </div>
-        </div>
-
+      <main className={`admin-content ${isSidebarOpen ? "with-sidebar" : "full-width"}`}>
+        
+        
         {activeTab === "overview" && (
           <OverviewTab setActiveTab={setActiveTab} />
         )}
 
-        {activeTab === "experts" && <ExpertsTab />}
+        {activeTab === "experts" && (
+          <ExpertsTab />
+        )}
 
-        {activeTab === "events" && <EventsTab />}
+        {activeTab === "events" && (
+          <EventsTab />
+        )}
 
-        {activeTab === "membership" && <MembershipTab />}
+        {activeTab === "batches" && (
+          <BatchesTab />
+        )}
 
-        {activeTab === "reports" && <ReportsTab />}
+        {activeTab === "membership" && (
+          <MembershipTab />
+        )}
 
-        {activeTab === "members" && <MembersTab />}
+        {activeTab === "reports" && (
+          <ReportsTab />
+        )}
 
-        {activeTab === "enquiries" && <EnquiriesTab />}
+        {activeTab === "members" && (
+          <MembersTab />
+        )}
+
+        {activeTab === "enquiries" && (
+          <EnquiriesTab />
+        )}
+
       </main>
     </div>
   );

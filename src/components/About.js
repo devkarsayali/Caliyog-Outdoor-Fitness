@@ -46,12 +46,7 @@ function About({ onJoin }) {
             <div className="feature">✓ Yoga & Mobility</div>
           </div>
 
-         <button
-  className="about-btn"
-  onClick={onJoin}
->
-  Join Our Community →
-</button>
+        
         </div>
       </div>
 

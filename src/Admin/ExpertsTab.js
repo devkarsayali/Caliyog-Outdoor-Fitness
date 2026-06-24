@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { db } from "../utils/db";
 import {
   FiPlus,
   FiEdit,
@@ -14,41 +13,55 @@ import "../style/Admin/AdminCommon.css";
 import "../style/Admin/ExpertsTab.css";
 
 function ExpertsTab() {
+  const API_URL = "http://192.168.11.5:5000";
+
   const [experts, setExperts] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [modalMode, setModalMode] = useState("add");
-  const [editIndex, setEditIndex] = useState(null);
+  const [editId, setEditId] = useState(null);
 
   const fileInputRef = useRef(null);
 
   const [form, setForm] = useState({
     name: "",
-    role: "",
-    info: "",
+    specialization: "",
+    experience: "",
     image: "",
   });
 
-  const loadData = () => {
-    setExperts(db.getExperts());
+  const getAuthHeaders = () => ({
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  });
+
+  const loadData = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/experts`);
+      const data = await response.json();
+
+      if (response.ok) {
+        setExperts(Array.isArray(data) ? data : data.data || []);
+      } else {
+        alert(data.message || "Failed to load experts");
+      }
+    } catch (error) {
+      console.error("Experts Load Error:", error);
+      alert("Backend connection failed while loading experts");
+    }
   };
 
   useEffect(() => {
     loadData();
-    window.addEventListener("caliyog_db_update", loadData);
-
-    return () => {
-      window.removeEventListener("caliyog_db_update", loadData);
-    };
   }, []);
 
   const closeModal = () => {
     setShowModal(false);
-    setEditIndex(null);
+    setEditId(null);
 
     setForm({
       name: "",
-      role: "",
-      info: "",
+      specialization: "",
+      experience: "",
       image: "",
     });
   };
@@ -58,15 +71,15 @@ function ExpertsTab() {
     setShowModal(true);
   };
 
-  const openEditModal = (expert, index) => {
+  const openEditModal = (expert) => {
     setForm({
       name: expert.name || "",
-      role: expert.role || "",
-      info: expert.info || "",
+      specialization: expert.specialization || "",
+      experience: expert.experience || "",
       image: expert.image || "",
     });
 
-    setEditIndex(index);
+    setEditId(expert._id);
     setModalMode("edit");
     setShowModal(true);
   };
@@ -80,37 +93,83 @@ function ExpertsTab() {
 
     if (!file) return;
 
+    if (file.size > 2 * 1024 * 1024) {
+      alert("File is too large! Please upload image smaller than 2MB.");
+      return;
+    }
+
     const reader = new FileReader();
 
     reader.onloadend = () => {
-      setForm({
-        ...form,
+      setForm((prev) => ({
+        ...prev,
         image: reader.result,
-      });
+      }));
     };
 
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (modalMode === "add") {
-      db.addExpert(form);
-    } else {
-      db.updateExpert(editIndex, form);
-    }
+    try {
+      const url =
+        modalMode === "add"
+          ? `${API_URL}/api/experts`
+          : `${API_URL}/api/experts/${editId}`;
 
-    closeModal();
+      const method = modalMode === "add" ? "POST" : "PUT";
+
+      const response = await fetch(url, {
+        method,
+        headers: getAuthHeaders(),
+        body: JSON.stringify(form),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Failed to save expert");
+        return;
+      }
+
+      alert(data.message || "Expert saved successfully");
+
+      await loadData();
+      closeModal();
+    } catch (error) {
+      console.error("Expert Save Error:", error);
+      alert("Backend connection failed while saving expert");
+    }
   };
 
-  const deleteExpert = (index) => {
+  const deleteExpert = async (id) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this fitness expert?"
     );
 
-    if (confirmDelete) {
-      db.deleteExpert(index);
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`${API_URL}/api/experts/${id}`, {
+        method: "DELETE",
+        headers: getAuthHeaders(),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Failed to delete expert");
+        return;
+      }
+
+      alert(data.message || "Expert deleted successfully");
+
+      await loadData();
+    } catch (error) {
+      console.error("Expert Delete Error:", error);
+      alert("Backend connection failed while deleting expert");
     }
   };
 
@@ -136,8 +195,8 @@ function ExpertsTab() {
       </div>
 
       <div className="admin-cards-grid">
-        {experts.map((expert, index) => (
-          <article className="expert-card" key={index}>
+        {experts.map((expert) => (
+          <article className="expert-card" key={expert._id}>
             <div className="expert-image-box">
               {expert.image ? (
                 <img
@@ -156,15 +215,15 @@ function ExpertsTab() {
 
             <div className="expert-card-content">
               <h3>{expert.name}</h3>
-              <span className="expert-role">{expert.role}</span>
-              <p>{expert.info}</p>
+              <span className="expert-specialization">{expert.specialization}</span>
+              <p>{expert.experience}</p>
             </div>
 
             <div className="expert-card-footer">
               <button
                 type="button"
                 className="expert-edit-btn"
-                onClick={() => openEditModal(expert, index)}
+                onClick={() => openEditModal(expert)}
               >
                 <FiEdit /> Edit
               </button>
@@ -172,7 +231,7 @@ function ExpertsTab() {
               <button
                 type="button"
                 className="expert-delete-btn"
-                onClick={() => deleteExpert(index)}
+                onClick={() => deleteExpert(expert._id)}
               >
                 <FiTrash2 /> Delete
               </button>
@@ -260,15 +319,15 @@ function ExpertsTab() {
                 </div>
 
                 <div className="admin-form-group">
-                  <label>Role / Position</label>
+                  <label>Specialization</label>
                   <input
                     type="text"
                     className="admin-form-control"
-                    value={form.role}
+                    value={form.specialization}
                     onChange={(e) =>
                       setForm({
                         ...form,
-                        role: e.target.value,
+                        specialization: e.target.value,
                       })
                     }
                     placeholder="e.g. Head Coach"
@@ -277,15 +336,15 @@ function ExpertsTab() {
                 </div>
 
                 <div className="admin-form-group">
-                  <label>Description</label>
+                  <label>Experience</label>
                   <textarea
                     rows="2"
                     className="admin-form-control"
-                    value={form.info}
+                    value={form.experience}
                     onChange={(e) =>
                       setForm({
                         ...form,
-                        info: e.target.value,
+                        experience: e.target.value,
                       })
                     }
                     placeholder="Experience and certifications"

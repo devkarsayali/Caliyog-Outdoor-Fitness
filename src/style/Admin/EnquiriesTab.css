@@ -197,3 +197,52 @@
     justify-content: center;
   }
 }
+.enquiry-table {
+width: 100%;
+border-collapse: collapse;
+background: white;
+border-radius: 12px;
+overflow: hidden;
+}
+
+.enquiry-table th {
+background: #0f172a;
+color: white;
+padding: 14px;
+text-align: left;
+font-size: 14px;
+}
+
+.enquiry-table td {
+padding: 14px;
+border-bottom: 1px solid #e5e7eb;
+vertical-align: top;
+}
+
+.enquiry-table tr:hover {
+background: #f8fafc;
+}
+
+.message-cell {
+max-width: 300px;
+white-space: normal;
+}
+
+.action-cell {
+display: flex;
+gap: 8px;
+}
+
+.status-new {
+background: #fef3c7;
+color: #92400e;
+padding: 4px 10px;
+border-radius: 20px;
+}
+
+.status-replied {
+background: #dcfce7;
+color: #166534;
+padding: 4px 10px;
+border-radius: 20px;
+}
