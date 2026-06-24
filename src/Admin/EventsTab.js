@@ -27,9 +27,6 @@ function EventsTab() {
   const [galleryForm, setGalleryForm] = useState({
     img: "",
     title: "",
-    description: "",
-    location: "",
-    date: "",
   });
 
   const [organisedForm, setOrganisedForm] = useState("");
@@ -49,8 +46,7 @@ function EventsTab() {
 
     try {
       return text ? JSON.parse(text) : {};
-    } catch (error) {
-      console.error("Backend returned non-JSON response:", text);
+    } catch {
       return {
         message: text || "Server returned invalid response",
       };
@@ -75,17 +71,14 @@ function EventsTab() {
 
       const eventList = getArrayData(data);
 
-      const galleryOnly = eventList.filter(
-        (item) => item.eventType === "gallery"
-      );
+      setEvents(eventList.filter((item) => item.eventType === "gallery"));
 
-      const organisedOnly = eventList.filter(
-        (item) =>
-          item.eventType === "organized" || item.eventType === "organised"
+      setOrganisedEvents(
+        eventList.filter(
+          (item) =>
+            item.eventType === "organized" || item.eventType === "organised"
+        )
       );
-
-      setEvents(galleryOnly);
-      setOrganisedEvents(organisedOnly);
     } catch (error) {
       console.error("Events Load Error:", error);
     }
@@ -102,9 +95,6 @@ function EventsTab() {
     setGalleryForm({
       img: "",
       title: "",
-      description: "",
-      location: "",
-      date: "",
     });
   };
 
@@ -133,9 +123,6 @@ function EventsTab() {
           eventType: "gallery",
           title: galleryForm.title,
           img: galleryForm.img,
-          description: galleryForm.description,
-          location: galleryForm.location,
-          date: galleryForm.date,
         }),
       });
 
@@ -194,10 +181,10 @@ function EventsTab() {
     }
   };
 
-const deleteEvent = async (id) => {
-  try {
-    console.log("Delete clicked ID:", id);
+ const deleteEvent = async (id) => {
+  if (!window.confirm("Are you sure you want to delete this event?")) return;
 
+  try {
     const token =
       localStorage.getItem("adminToken") || localStorage.getItem("token");
 
@@ -210,21 +197,16 @@ const deleteEvent = async (id) => {
 
     const data = await response.json();
 
-    console.log("Delete status:", response.status);
-    console.log("Delete response:", data);
-
     if (!response.ok) {
-      alert(data.message || "Delete failed");
+      alert(data.message || "Failed to delete event");
       return;
     }
 
-    setEvents((prev) => prev.filter((item) => item._id !== id));
-    setOrganisedEvents((prev) => prev.filter((item) => item._id !== id));
-
-    alert("Event deleted successfully");
+    alert(data.message || "Event deleted successfully");
+    await loadData();
   } catch (error) {
-    console.error("Delete error:", error);
-    alert("Delete API failed");
+    console.error("Delete Event Error:", error);
+    alert("Backend connection failed while deleting event");
   }
 };
 
@@ -238,10 +220,10 @@ const deleteEvent = async (id) => {
     const file = e.target.files[0];
     if (!file) return;
 
-   if (file.size > 10 * 1024 * 1024) {
-  alert("File is too large! Please upload image smaller than 10MB.");
-  return;
-}
+    if (file.size > 10 * 1024 * 1024) {
+      alert("File is too large! Please upload image smaller than 10MB.");
+      return;
+    }
 
     const reader = new FileReader();
 
@@ -266,6 +248,7 @@ const deleteEvent = async (id) => {
 
         <div className="events-header-actions">
           <button
+            type="button"
             className="events-action-btn secondary"
             onClick={() => {
               setModalMode("add");
@@ -276,6 +259,7 @@ const deleteEvent = async (id) => {
           </button>
 
           <button
+            type="button"
             className="events-action-btn primary"
             onClick={() => {
               setModalMode("add");
@@ -318,14 +302,12 @@ const deleteEvent = async (id) => {
 
                 <div className="event-card-footer">
                   <button
+                    type="button"
                     className="event-edit-btn"
                     onClick={() => {
                       setGalleryForm({
                         img: evt.img || "",
                         title: evt.title || "",
-                        description: evt.description || "",
-                        location: evt.location || "",
-                        date: evt.date ? evt.date.substring(0, 10) : "",
                       });
 
                       setEditId(evt._id);
@@ -337,16 +319,16 @@ const deleteEvent = async (id) => {
                   </button>
 
                   <button
-  type="button"
-  className="event-delete-btn"
-  onClick={(e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    deleteEvent(evt._id);
-  }}
->
-  <FiTrash2 /> Delete
-</button>
+                    type="button"
+                    className="event-delete-btn"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      deleteEvent(evt._id);
+                    }}
+                  >
+                    <FiTrash2 /> Delete
+                  </button>
                 </div>
               </article>
             ))}
@@ -369,6 +351,7 @@ const deleteEvent = async (id) => {
 
                 <div className="major-actions">
                   <button
+                    type="button"
                     className="small-edit-btn"
                     onClick={() => {
                       setOrganisedForm(evt.title || "");
@@ -381,16 +364,16 @@ const deleteEvent = async (id) => {
                   </button>
 
                   <button
-  type="button"
-  className="small-delete-btn"
-  onClick={(e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    deleteEvent(evt._id);
-  }}
->
-  <FiTrash2 />
-</button>
+                    type="button"
+                    className="small-delete-btn"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      deleteEvent(evt._id);
+                    }}
+                  >
+                    <FiTrash2 />
+                  </button>
                 </div>
               </div>
             ))}
@@ -403,7 +386,7 @@ const deleteEvent = async (id) => {
           <div className="event-modal">
             <div className="event-modal-header">
               <h3>{modalMode === "add" ? "Add" : "Edit"} Gallery Event</h3>
-              <button onClick={closeGalleryModal}>
+              <button type="button" onClick={closeGalleryModal}>
                 <FiX />
               </button>
             </div>
@@ -453,55 +436,6 @@ const deleteEvent = async (id) => {
                     required
                   />
                 </div>
-
-                <div className="admin-form-group">
-                  <label>Description</label>
-                  <textarea
-                    className="admin-form-control"
-                    value={galleryForm.description}
-                    onChange={(e) =>
-                      setGalleryForm({
-                        ...galleryForm,
-                        description: e.target.value,
-                      })
-                    }
-                    placeholder="Enter event description"
-                    required
-                  />
-                </div>
-
-                <div className="admin-form-group">
-                  <label>Location</label>
-                  <input
-                    type="text"
-                    className="admin-form-control"
-                    value={galleryForm.location}
-                    onChange={(e) =>
-                      setGalleryForm({
-                        ...galleryForm,
-                        location: e.target.value,
-                      })
-                    }
-                    placeholder="Enter event location"
-                    required
-                  />
-                </div>
-
-                <div className="admin-form-group">
-                  <label>Event Date</label>
-                  <input
-                    type="date"
-                    className="admin-form-control"
-                    value={galleryForm.date}
-                    onChange={(e) =>
-                      setGalleryForm({
-                        ...galleryForm,
-                        date: e.target.value,
-                      })
-                    }
-                    required
-                  />
-                </div>
               </div>
 
               <div className="event-modal-footer">
@@ -527,7 +461,7 @@ const deleteEvent = async (id) => {
           <div className="event-modal">
             <div className="event-modal-header">
               <h3>{modalMode === "add" ? "Add" : "Edit"} Organized Event</h3>
-              <button onClick={closeOrganisedModal}>
+              <button type="button" onClick={closeOrganisedModal}>
                 <FiX />
               </button>
             </div>

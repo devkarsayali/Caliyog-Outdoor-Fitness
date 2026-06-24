@@ -1,5 +1,5 @@
 .events-section {
-  padding: 90px 8%;
+  padding: 80px 5%;
   background:
     radial-gradient(circle at top left, rgba(46, 125, 50, 0.14), transparent 35%),
     radial-gradient(circle at bottom right, rgba(46, 125, 50, 0.14), transparent 35%),
@@ -9,41 +9,42 @@
 
 .events-heading {
   text-align: center;
-  margin-bottom: 55px;
+  margin-bottom: 45px;
 }
 
 .events-heading h2 {
-  font-size: 44px;
+  font-size: 42px;
   color: #12351f;
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 1px;
 }
 
 .events-heading p {
   color: #666;
-  font-size: 18px;
-  margin-top: 12px;
+  font-size: 16px;
+  margin-top: 10px;
 }
 
 .events-grid {
+  width: 100%;
+  max-width: 1150px;
+  margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 35px;
+  gap: 28px;
 }
 
 .event-card {
   background: #ffffff;
-  border-radius: 24px;
+  border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.14);
   transition: 0.35s ease;
 }
 
 .event-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-6px);
 }
-
 .event-img-box {
   width: 100%;
   height: 210px;
@@ -54,10 +55,11 @@
 .event-img-box img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
   display: block;
+  background: #0f172a;
 }
-
 .no-event-image {
   width: 100%;
   height: 100%;
@@ -69,37 +71,37 @@
 }
 
 .event-content {
-  padding: 18px 12px;
+  padding: 14px 10px;
   text-align: center;
   background: linear-gradient(135deg, #12351f, #2e7d32);
-  min-height: 90px;
+  min-height: 76px;
 }
 
 .event-content h3 {
   color: #ffffff;
-  font-size: 20px;
+  font-size: 17px;
   font-weight: 800;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .event-content p {
   display: inline-block;
   background: #ffffff;
   color: #1f3d2b;
-  padding: 6px 20px;
+  padding: 5px 16px;
   border-radius: 30px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   margin: 0;
 }
 
 .events-achievements {
-  margin-top: 90px;
+  margin-top: 85px;
 }
 
 .achievement-header {
   text-align: center;
-  margin-bottom: 45px;
+  margin-bottom: 42px;
 }
 
 .achievement-header span {
@@ -173,7 +175,6 @@
   text-align: center;
   padding: 32px 20px;
   border-radius: 22px;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
 }
 
 .stat-card h3 {
@@ -195,7 +196,6 @@
   padding: 38px;
   border-radius: 24px;
   border-bottom: 5px solid #22c55e;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
 }
 
 .coach-message h3 {
@@ -212,6 +212,7 @@
 
 @media (max-width: 992px) {
   .events-grid {
+    max-width: 720px;
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -229,10 +230,6 @@
     padding: 60px 5%;
   }
 
-  .events-heading {
-    margin-bottom: 35px;
-  }
-
   .events-heading h2,
   .achievement-header h2 {
     font-size: 26px;
@@ -244,6 +241,7 @@
   }
 
   .events-grid {
+    max-width: 100%;
     grid-template-columns: repeat(3, 1fr);
     gap: 14px;
   }
@@ -253,7 +251,7 @@
   }
 
   .event-img-box {
-    height: 120px;
+    height: 130px;
   }
 
   .event-content {
@@ -263,7 +261,6 @@
 
   .event-content h3 {
     font-size: 13px;
-    margin-bottom: 7px;
   }
 
   .event-content p {
@@ -274,33 +271,19 @@
   .achievement-stats {
     grid-template-columns: 1fr;
   }
-
-  .coach-message {
-    padding: 28px 20px;
-  }
 }
 
 @media (max-width: 480px) {
   .events-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
   }
 
   .event-img-box {
-    height: 105px;
-  }
-
-  .event-content {
-    min-height: 62px;
-    padding: 8px 4px;
+    height: 120px;
   }
 
   .event-content h3 {
-    font-size: 11px;
-  }
-
-  .event-content p {
-    font-size: 9px;
-    padding: 4px 8px;
+    font-size: 13px;
   }
 }

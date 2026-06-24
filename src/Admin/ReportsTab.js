@@ -32,7 +32,7 @@ function ReportsTab() {
     return [];
   };
 
-  const value = (...items) => {
+  const value = useCallback((...items) => {
     const found = items.find(
       (item) =>
         item !== undefined &&
@@ -41,27 +41,33 @@ function ReportsTab() {
     );
 
     return found || "-";
-  };
-
-  const isKidsRequest = (item) => {
-    const batch = String(value(item.batch, item.batchName, "")).toLowerCase();
-    const membership = String(item.membership || "").toLowerCase();
-    const type = String(value(item.type, item.memberType, "")).toLowerCase();
-
-    return (
-      batch.includes("kid") ||
-      membership.includes("kid") ||
-      type.includes("kid")
-    );
-  };
-
-  const splitRequests = useCallback((requests) => {
-    const normal = requests.filter((item) => !isKidsRequest(item));
-    const kids = requests.filter((item) => isKidsRequest(item));
-
-    setAllRequests(normal);
-    setKidsRequests(kids);
   }, []);
+
+  const isKidsRequest = useCallback(
+    (item) => {
+      const batch = String(value(item.batch, item.batchName, "")).toLowerCase();
+      const membership = String(item.membership || "").toLowerCase();
+      const type = String(value(item.type, item.memberType, "")).toLowerCase();
+
+      return (
+        batch.includes("kid") ||
+        membership.includes("kid") ||
+        type.includes("kid")
+      );
+    },
+    [value]
+  );
+
+  const splitRequests = useCallback(
+    (requests) => {
+      const normal = requests.filter((item) => !isKidsRequest(item));
+      const kids = requests.filter((item) => isKidsRequest(item));
+
+      setAllRequests(normal);
+      setKidsRequests(kids);
+    },
+    [isKidsRequest]
+  );
 
   const loadData = useCallback(async () => {
     try {
@@ -299,9 +305,7 @@ function ReportsTab() {
                   </td>
 
                   <td>
-                    {formatDate(
-                      item.createdAt || item.submittedOn || item.date
-                    )}
+                    {formatDate(item.createdAt || item.submittedOn || item.date)}
                   </td>
 
                   <td>
@@ -386,7 +390,9 @@ function ReportsTab() {
                     </strong>
                   </td>
 
-                  <td>{value(item.parentName, item.fatherName, item.guardianName)}</td>
+                  <td>
+                    {value(item.parentName, item.fatherName, item.guardianName)}
+                  </td>
 
                   <td>{value(item.parentEmail, item.email)}</td>
 
@@ -464,9 +470,7 @@ function ReportsTab() {
                   </td>
 
                   <td>
-                    {formatDate(
-                      item.createdAt || item.submittedOn || item.date
-                    )}
+                    {formatDate(item.createdAt || item.submittedOn || item.date)}
                   </td>
 
                   <td>

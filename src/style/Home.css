@@ -202,9 +202,24 @@
   font-size: 14px;
   line-height: 1.7;
 
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.95);
 
   word-break: break-word;
+}
+
+/* ================= WHITE LINKS FIX ================= */
+
+.info-card a,
+.info-card a:visited,
+.info-card a:active {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.info-card a:hover {
+  color: #bbf7d0;
+  text-decoration: underline;
 }
 
 /* ================= RESPONSIVE ================= */
