@@ -14,25 +14,60 @@ function EnquiriesTab() {
   const [enquiries, setEnquiries] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const getToken = () => {
+    return localStorage.getItem("adminToken") || localStorage.getItem("token");
+  };
+
   const getAuthHeaders = () => ({
     "Content-Type": "application/json",
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
+    Authorization: getToken() ? `Bearer ${getToken()}` : "",
   });
+
+  const safeJson = async (response) => {
+    const text = await response.text();
+
+    try {
+      return text ? JSON.parse(text) : {};
+    } catch {
+      console.error("Non JSON Response:", text);
+      return {};
+    }
+  };
 
   const getArrayData = (data) => {
     if (Array.isArray(data)) return data;
     if (Array.isArray(data.data)) return data.data;
     if (Array.isArray(data.contacts)) return data.contacts;
     if (Array.isArray(data.enquiries)) return data.enquiries;
+    if (Array.isArray(data.messages)) return data.messages;
+    if (Array.isArray(data.result)) return data.result;
     return [];
   };
 
+  const getValue = (...values) => {
+    const found = values.find(
+      (value) =>
+        value !== undefined &&
+        value !== null &&
+        String(value).trim() !== ""
+    );
+
+    return found || "-";
+  };
+
   const getContactNumber = (item) => {
-    return (
-      item.contact ||
-      item.phone ||
-      item.number ||
-      "-"
+    return getValue(
+      item.contact,
+      item.mobile,
+      item.phone,
+      item.number,
+      item.contactNumber,
+      item.phoneNumber,
+      item.mobileNumber,
+      item.userContact,
+      item.userPhone,
+      item.whatsapp,
+      item.whatsappNumber
     );
   };
 
@@ -44,7 +79,7 @@ function EnquiriesTab() {
         headers: getAuthHeaders(),
       });
 
-      const data = await response.json();
+      const data = await safeJson(response);
       console.log("CONTACT API DATA:", data);
 
       if (response.ok) {
@@ -72,7 +107,7 @@ function EnquiriesTab() {
         headers: getAuthHeaders(),
       });
 
-      const data = await response.json();
+      const data = await safeJson(response);
 
       if (response.ok) {
         alert(data.message || "Enquiry marked as replied");
@@ -97,7 +132,7 @@ function EnquiriesTab() {
         headers: getAuthHeaders(),
       });
 
-      const data = await response.json();
+      const data = await safeJson(response);
 
       if (response.ok) {
         alert(data.message || "Enquiry deleted successfully");
@@ -171,10 +206,23 @@ function EnquiriesTab() {
               {enquiries.map((item, index) => (
                 <tr key={item._id || item.id}>
                   <td>{index + 1}</td>
-                  <td>{item.name || "-"}</td>
-                  <td>{item.email || "-"}</td>
+
+                  <td>
+                    {getValue(
+                      item.name,
+                      item.fullName,
+                      item.userName,
+                      item.memberName
+                    )}
+                  </td>
+
+                  <td>{getValue(item.email, item.userEmail)}</td>
+
                   <td>{getContactNumber(item)}</td>
-                  <td className="message-cell">{item.message || "-"}</td>
+
+                  <td className="message-cell">
+                    {getValue(item.message, item.msg, item.description)}
+                  </td>
 
                   <td>
                     <span
@@ -188,11 +236,16 @@ function EnquiriesTab() {
                     </span>
                   </td>
 
-                  <td>{formatDate(item.createdAt)}</td>
+                  <td>
+                    {formatDate(
+                      item.createdAt || item.date || item.submittedOn
+                    )}
+                  </td>
 
                   <td className="action-cell">
                     {item.status !== "Replied" && (
                       <button
+                        type="button"
                         className="reply-btn"
                         onClick={() => markReplied(item._id || item.id)}
                       >
@@ -201,6 +254,7 @@ function EnquiriesTab() {
                     )}
 
                     <button
+                      type="button"
                       className="delete-btn"
                       onClick={() => deleteEnquiry(item._id || item.id)}
                     >
