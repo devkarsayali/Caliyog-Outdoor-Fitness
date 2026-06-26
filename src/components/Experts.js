@@ -1,35 +1,80 @@
 import React, { useEffect, useState } from "react";
 import "../style/Experts.css";
+
+/*
+  TEMPORARY CLIENT DEMO IMAGE
+
+  Main experts banner image is coming from src/assets.
+  Admin uploaded expert photos are commented for now.
+  Expert name/details will still come from Admin Panel/backend.
+*/
+
 import expertsImage from "../assets/experts.png";
 
 function Experts() {
+  const API_URL = "http://192.168.11.11:5000";
+
   const [showInfo, setShowInfo] = useState(false);
   const [experts, setExperts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchExperts();
   }, []);
 
+  /*
+    ADMIN IMAGE FUNCTION COMMENTED FOR NOW
+
+    Later, when admin expert image upload is fixed,
+    you can use this function.
+
+    const getImageUrl = (expert) => {
+      const imagePath = expert?.img || expert?.image || expert?.photo || "";
+
+      if (!imagePath || imagePath.trim() === "") {
+        return null;
+      }
+
+      if (
+        imagePath.startsWith("http") ||
+        imagePath.startsWith("data:image")
+      ) {
+        return imagePath;
+      }
+
+      return `${API_URL}${imagePath}`;
+    };
+  */
+
   const fetchExperts = async () => {
-  try {
-const response = await fetch("http://192.168.11.5:5000/api/experts");
-    const data = await response.json();
+    try {
+      const response = await fetch(`${API_URL}/api/experts`);
 
-    console.log("Experts API response:", data);
+      if (!response.ok) {
+        throw new Error("Failed to load experts");
+      }
 
-    if (Array.isArray(data)) {
-      setExperts(data);
-    } else if (Array.isArray(data.experts)) {
-      setExperts(data.experts);
-    } else if (Array.isArray(data.data)) {
-      setExperts(data.data);
-    } else {
+      const data = await response.json();
+
+      /*
+        Backend may return:
+        1. Direct array: [...]
+        2. { experts: [...] }
+        3. { data: [...] }
+      */
+
+      const expertList = Array.isArray(data)
+        ? data
+        : data.experts || data.data || [];
+
+      setExperts(expertList);
+    } catch (error) {
+      console.error("Experts Load Error:", error);
       setExperts([]);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error("Error fetching experts:", error);
-  }
-};
+  };
 
   return (
     <section id="experts" className="experts-section">
@@ -49,10 +94,20 @@ const response = await fetch("http://192.168.11.5:5000/api/experts");
           className="experts-image"
           loading="lazy"
         />
+
+        {/*
+          ADMIN BANNER / EXPERT IMAGE COMMENTED FOR CLIENT DEMO
+
+          Currently using:
+          src/assets/experts.png
+
+          Later you can replace this with admin image.
+        */}
       </div>
 
       <div className="expert-btn-box">
         <button
+          type="button"
           className="expert-info-btn"
           onClick={() => setShowInfo((prev) => !prev)}
         >
@@ -62,16 +117,62 @@ const response = await fetch("http://192.168.11.5:5000/api/experts");
 
       {showInfo && (
         <div className="experts-info-container">
-          {experts.length === 0 ? (
+          {loading ? (
+            <p>Loading experts...</p>
+          ) : experts.length === 0 ? (
             <p>No experts added yet.</p>
           ) : (
-            experts.map((expert) => (
-              <div className="expert-info-card" key={expert._id}>
-                <h3>{expert.name}</h3>
-                <h4>{expert.specialization}</h4>
-                <p>{expert.experience}</p>
-              </div>
-            ))
+            experts.map((expert, index) => {
+              /*
+                These variables support different field names
+                saved from Admin Panel.
+              */
+
+              const name =
+                expert.name ||
+                expert.expertName ||
+                expert.coachName ||
+                "Fitness Expert";
+
+              const specialization =
+                expert.specialization ||
+                expert.designation ||
+                expert.role ||
+                expert.category ||
+                "Fitness Coach";
+
+              const experience =
+                expert.experience ||
+                expert.description ||
+                expert.details ||
+                expert.bio ||
+                "Certified fitness professional.";
+
+              return (
+                <div
+                  className="expert-info-card"
+                  key={expert._id || expert.id || index}
+                >
+                  {/*
+                    ADMIN EXPERT PHOTO COMMENTED FOR NOW
+
+                    const imageUrl = getImageUrl(expert);
+
+                    {imageUrl && (
+                      <img
+                        src={imageUrl}
+                        alt={name}
+                        className="expert-card-image"
+                      />
+                    )}
+                  */}
+
+                  <h3>{name}</h3>
+                  <h4>{specialization}</h4>
+                  <p>{experience}</p>
+                </div>
+              );
+            })
           )}
         </div>
       )}

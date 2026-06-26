@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../style/Admin/MembersTab.css";
 
-const API_URL = "http://192.168.11.5:5000";
+const API_URL = "http://192.168.11.11:5000";
 
 function MembersTab() {
   const [members, setMembers] = useState([]);

@@ -13,7 +13,7 @@ import "../style/Admin/AdminCommon.css";
 import "../style/Admin/ExpertsTab.css";
 
 function ExpertsTab() {
-  const API_URL = "http://192.168.11.5:5000";
+  const API_URL = "http://192.168.11.11:5000";
 
   const [experts, setExperts] = useState([]);
   const [showModal, setShowModal] = useState(false);

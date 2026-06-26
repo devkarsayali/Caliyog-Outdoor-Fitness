@@ -33,7 +33,7 @@ function AdminRegister() {
 
     try {
       const response = await axios.post(
-        "http://192.168.11.5:5000/api/admin/register",
+        "http://192.168.11.11:5000/api/admin/register",
         {
           name: formData.name,
           email: formData.email,

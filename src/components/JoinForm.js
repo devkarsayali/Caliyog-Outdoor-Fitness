@@ -3,7 +3,7 @@ import "../style/JoinForm.css";
 import logo from "../assets/CaliYog-Logo.png";
 
 function JoinForm({ closeForm, selectedMembership }) {
-  const API_URL = "http://192.168.11.5:5000";
+  const API_URL = "http://192.168.11.11:5000";
 
   const [batch, setBatch] = useState("");
   const [timingType, setTimingType] = useState("");

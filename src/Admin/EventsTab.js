@@ -12,7 +12,7 @@ import "../style/Admin/AdminCommon.css";
 import "../style/Admin/EventsTab.css";
 
 function EventsTab() {
-  const API_URL = "http://192.168.11.5:5000";
+  const API_URL = "http://192.168.11.11:5000";
 
   const [events, setEvents] = useState([]);
   const [organisedEvents, setOrganisedEvents] = useState([]);

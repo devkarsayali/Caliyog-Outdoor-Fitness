@@ -4,7 +4,7 @@ import { FiPlus, FiEdit, FiTrash2, FiX } from "react-icons/fi";
 import "../style/Admin/AdminCommon.css";
 import "../style/Admin/BatchesTab.css";
 
-const API_URL = "http://192.168.11.5:5000";
+const API_URL = "http://192.168.11.11:5000";
 
 function BatchesTab() {
   const [batches, setBatches] = useState([]);

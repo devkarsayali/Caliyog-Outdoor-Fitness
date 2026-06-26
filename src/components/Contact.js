@@ -3,7 +3,7 @@ import "../style/Contact.css";
 
 
 function Contact() {
-  const API_URL = "http://192.168.11.5:5000";
+  const API_URL = "http://192.168.11.11:5000";
 
   const [formData, setFormData] = useState({
     name: "",

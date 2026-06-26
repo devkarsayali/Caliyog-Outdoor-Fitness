@@ -15,7 +15,7 @@ import "../style/Admin/AdminCommon.css";
 import "../style/Admin/OverviewTab.css";
 
 function OverviewTab({ setActiveTab }) {
-  const API_URL = "http://192.168.11.5:5000";
+  const API_URL = "http://192.168.11.11:5000";
 
   const [expertsCount, setExpertsCount] = useState(0);
   const [eventsCount, setEventsCount] = useState(0);

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import "../style/Admin/ReportsTab.css";
 
 function ReportsTab() {
-  const API_URL = "http://192.168.11.5:5000";
+  const API_URL = "http://192.168.11.11:5000";
 
   const [allRequests, setAllRequests] = useState([]);
   const [kidsRequests, setKidsRequests] = useState([]);

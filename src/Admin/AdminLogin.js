@@ -6,7 +6,7 @@ import logo from "../assets/CaliYog-Logo.png";
 
 function AdminLogin() {
   const navigate = useNavigate();
-  const API_URL = "http://192.168.11.5:5000";
+  const API_URL = "http://192.168.11.11:5000";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
