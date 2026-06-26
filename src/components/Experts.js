@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import "../style/Experts.css";
 import expertsImage from "../assets/experts.png";
 
@@ -16,7 +16,7 @@ function Experts() {
     return [];
   };
 
-  const fetchExperts = async () => {
+  const fetchExperts = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -27,10 +27,8 @@ function Experts() {
       }
 
       const data = await response.json();
-
-      console.log("Experts API response:", data);
-
       const expertList = getArrayData(data);
+
       setExperts(expertList);
     } catch (error) {
       console.error("Error fetching experts:", error);
@@ -38,11 +36,11 @@ function Experts() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchExperts();
-  }, []);
+  }, [fetchExperts]);
 
   return (
     <section id="experts" className="experts-section">
