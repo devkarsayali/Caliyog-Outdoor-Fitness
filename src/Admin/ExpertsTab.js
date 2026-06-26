@@ -13,8 +13,8 @@ import "../style/Admin/AdminCommon.css";
 import "../style/Admin/ExpertsTab.css";
 
 function ExpertsTab() {
-  const API_URL = "http://192.168.11.11:5000";
-
+const API_URL =
+  "https://caliyog-fitness-backend-production.up.railway.app";
   const [experts, setExperts] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [modalMode, setModalMode] = useState("add");

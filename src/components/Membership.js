@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import "../style/Membership.css";
 
 function Membership({ openJoinForm }) {
-  const API_URL = "http://192.168.11.11:5000";
-
+const API_URL =
+  "https://caliyog-fitness-backend-production.up.railway.app";
   const [plans, setPlans] = useState([]);
 
   const loadMemberships = async () => {

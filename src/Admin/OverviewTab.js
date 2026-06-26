@@ -15,8 +15,8 @@ import "../style/Admin/AdminCommon.css";
 import "../style/Admin/OverviewTab.css";
 
 function OverviewTab({ setActiveTab }) {
-  const API_URL = "http://192.168.11.11:5000";
-
+const API_URL =
+  "https://caliyog-fitness-backend-production.up.railway.app";
   const [expertsCount, setExpertsCount] = useState(0);
   const [eventsCount, setEventsCount] = useState(0);
   const [programsCount, setProgramsCount] = useState(0);

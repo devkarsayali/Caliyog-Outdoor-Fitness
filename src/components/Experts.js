@@ -3,8 +3,8 @@ import "../style/Experts.css";
 import expertsImage from "../assets/experts.png";
 
 function Experts() {
-  const API_URL = "http://192.168.11.11:5000";
-
+const API_URL =
+  "https://caliyog-fitness-backend-production.up.railway.app";
   const [showInfo, setShowInfo] = useState(false);
   const [experts, setExperts] = useState([]);
   const [loading, setLoading] = useState(true);

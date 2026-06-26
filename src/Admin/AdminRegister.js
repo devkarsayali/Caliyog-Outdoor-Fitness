@@ -33,8 +33,7 @@ function AdminRegister() {
 
     try {
       const response = await axios.post(
-        "http://192.168.11.11:5000/api/admin/register",
-        {
+"https://caliyog-fitness-backend-production.up.railway.app/api/admin/register",        {
           name: formData.name,
           email: formData.email,
           mobile: formData.mobile,

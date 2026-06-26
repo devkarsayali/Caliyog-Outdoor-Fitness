@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import "../style/Events.css";
 
 function Events() {
-  const API_URL = "http://192.168.11.11:5000";
-
+const API_URL =
+  "https://caliyog-fitness-backend-production.up.railway.app";
   const [events, setEvents] = useState([]);
   const [organisedEvents, setOrganisedEvents] = useState([]);
   const [loading, setLoading] = useState(true);

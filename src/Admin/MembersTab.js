@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "../style/Admin/MembersTab.css";
 
-const API_URL = "http://192.168.11.11:5000";
-
+const API_URL =
+  "https://caliyog-fitness-backend-production.up.railway.app";
 function MembersTab() {
   const [members, setMembers] = useState([]);
   const [kidsMembers, setKidsMembers] = useState([]);

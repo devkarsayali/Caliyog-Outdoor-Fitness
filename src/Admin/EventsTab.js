@@ -12,8 +12,8 @@ import "../style/Admin/AdminCommon.css";
 import "../style/Admin/EventsTab.css";
 
 function EventsTab() {
-  const API_URL = "http://192.168.11.11:5000";
-
+const API_URL =
+  "https://caliyog-fitness-backend-production.up.railway.app";
   const [events, setEvents] = useState([]);
   const [organisedEvents, setOrganisedEvents] = useState([]);
 
