@@ -26,19 +26,14 @@ function EventsTab() {
 
   const [galleryForm, setGalleryForm] = useState({
     img: "",
+    imageFile: null,
     title: "",
   });
 
   const [organisedForm, setOrganisedForm] = useState("");
 
-  const getAuthHeaders = () => {
-    const token =
-      localStorage.getItem("adminToken") || localStorage.getItem("token");
-
-    return {
-      "Content-Type": "application/json",
-      Authorization: token ? `Bearer ${token}` : "",
-    };
+  const getAuthToken = () => {
+    return localStorage.getItem("adminToken") || localStorage.getItem("token");
   };
 
   const safeJson = async (response) => {
@@ -92,10 +87,16 @@ function EventsTab() {
     setShowGalleryModal(false);
     setEditId(null);
     setModalMode("add");
+
     setGalleryForm({
       img: "",
+      imageFile: null,
       title: "",
     });
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const closeOrganisedModal = () => {
@@ -116,14 +117,29 @@ function EventsTab() {
 
       const method = modalMode === "add" ? "POST" : "PUT";
 
+      const token = getAuthToken();
+
+      const formData = new FormData();
+      formData.append("eventType", "gallery");
+      formData.append("title", galleryForm.title);
+      formData.append("description", "");
+      formData.append("location", "");
+      formData.append("date", "");
+
+      if (galleryForm.imageFile) {
+        formData.append("image", galleryForm.imageFile);
+      }
+
+      if (modalMode === "edit" && galleryForm.img) {
+        formData.append("img", galleryForm.img);
+      }
+
       const response = await fetch(url, {
         method,
-        headers: getAuthHeaders(),
-        body: JSON.stringify({
-          eventType: "gallery",
-          title: galleryForm.title,
-          img: galleryForm.img,
-        }),
+        headers: {
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+        body: formData,
       });
 
       const data = await safeJson(response);
@@ -152,10 +168,14 @@ function EventsTab() {
           : `${API_URL}/api/events/${editId}`;
 
       const method = modalMode === "add" ? "POST" : "PUT";
+      const token = getAuthToken();
 
       const response = await fetch(url, {
         method,
-        headers: getAuthHeaders(),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : "",
+        },
         body: JSON.stringify({
           eventType: "organized",
           title: organisedForm,
@@ -181,34 +201,33 @@ function EventsTab() {
     }
   };
 
- const deleteEvent = async (id) => {
-  if (!window.confirm("Are you sure you want to delete this event?")) return;
+  const deleteEvent = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this event?")) return;
 
-  try {
-    const token =
-      localStorage.getItem("adminToken") || localStorage.getItem("token");
+    try {
+      const token = getAuthToken();
 
-    const response = await fetch(`${API_URL}/api/events/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: token ? `Bearer ${token}` : "",
-      },
-    });
+      const response = await fetch(`${API_URL}/api/events/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+      });
 
-    const data = await response.json();
+      const data = await safeJson(response);
 
-    if (!response.ok) {
-      alert(data.message || "Failed to delete event");
-      return;
+      if (!response.ok) {
+        alert(data.message || "Failed to delete event");
+        return;
+      }
+
+      alert(data.message || "Event deleted successfully");
+      await loadData();
+    } catch (error) {
+      console.error("Delete Event Error:", error);
+      alert("Backend connection failed while deleting event");
     }
-
-    alert(data.message || "Event deleted successfully");
-    await loadData();
-  } catch (error) {
-    console.error("Delete Event Error:", error);
-    alert("Backend connection failed while deleting event");
-  }
-};
+  };
 
   const openBrowse = () => {
     if (fileInputRef.current) {
@@ -225,16 +244,11 @@ function EventsTab() {
       return;
     }
 
-    const reader = new FileReader();
-
-    reader.onloadend = () => {
-      setGalleryForm((prev) => ({
-        ...prev,
-        img: reader.result,
-      }));
-    };
-
-    reader.readAsDataURL(file);
+    setGalleryForm((prev) => ({
+      ...prev,
+      imageFile: file,
+      img: URL.createObjectURL(file),
+    }));
   };
 
   return (
@@ -307,6 +321,7 @@ function EventsTab() {
                     onClick={() => {
                       setGalleryForm({
                         img: evt.img || "",
+                        imageFile: null,
                         title: evt.title || "",
                       });
 

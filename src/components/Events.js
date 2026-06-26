@@ -1,56 +1,32 @@
 import React, { useEffect, useState } from "react";
 import "../style/Events.css";
 
-/*
-  TEMPORARY CLIENT DEMO IMAGE IMPORTS
-
-  These images are manually added from src/assets.
-  Admin uploaded images are commented for now.
-  Text data will still come from Admin Panel/backend.
-*/
-
-import e1 from "../assets/e1.png";
-import e2 from "../assets/e2.png";
-import e3 from "../assets/e3.png";
-import e4 from "../assets/e4.png";
-import e5 from "../assets/e5.png";
-import e6 from "../assets/e6.png";
-
 function Events() {
   const API_URL = "http://192.168.11.11:5000";
 
   const [events, setEvents] = useState([]);
   const [organisedEvents, setOrganisedEvents] = useState([]);
 
-  const demoGalleryImages = [e1, e2, e3, e4, e5, e6];
-
   useEffect(() => {
     fetchEvents();
   }, []);
 
-  /*
-    ADMIN IMAGE FUNCTION COMMENTED FOR NOW
+  const getImageUrl = (item) => {
+    const imagePath = item?.img || item?.image || "";
 
-    Later, when admin image upload is fixed,
-    use this function again and replace demo image.
+    if (!imagePath || imagePath.trim() === "") {
+      return null;
+    }
 
-    const getImageUrl = (item) => {
-      const imagePath = item?.img || item?.image || "";
+    if (
+      imagePath.startsWith("http") ||
+      imagePath.startsWith("data:image")
+    ) {
+      return imagePath;
+    }
 
-      if (!imagePath || imagePath.trim() === "") {
-        return null;
-      }
-
-      if (
-        imagePath.startsWith("http") ||
-        imagePath.startsWith("data:image")
-      ) {
-        return imagePath;
-      }
-
-      return `${API_URL}${imagePath}`;
-    };
-  */
+    return `${API_URL}${imagePath}`;
+  };
 
   const fetchEvents = async () => {
     try {
@@ -95,41 +71,22 @@ function Events() {
           <p>No gallery events added yet.</p>
         ) : (
           events.map((item, index) => {
-            /*
-              ADMIN IMAGE COMMENTED FOR CLIENT DEMO
-
-              const imageUrl = getImageUrl(item);
-
-              Currently using manual image from src/assets.
-            */
-
-            const demoImage =
-              demoGalleryImages[index % demoGalleryImages.length];
+            const imageUrl = getImageUrl(item);
 
             return (
               <div className="event-card" key={item._id || index}>
                 <div className="event-img-box">
-                  <img
-                    src={demoImage}
-                    alt={item.title || "Gallery Event"}
-                    loading="lazy"
-                  />
-
-                  {/*
-                    ADMIN IMAGE CODE COMMENTED FOR NOW
-
-                    {imageUrl ? (
-                      <img
-                        src={imageUrl}
-                        alt={item.title || "Gallery Event"}
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="no-event-image">
-                        No Image Available
-                      </div>
-                    )}
-                  */}
+                  {imageUrl ? (
+                    <img
+                      src={imageUrl}
+                      alt={item.title || "Gallery Event"}
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="no-event-image">
+                      No Image Available
+                    </div>
+                  )}
                 </div>
 
                 <div className="event-content">
@@ -158,12 +115,6 @@ function Events() {
                 <span>{index + 1}</span>
                 <div>
                   <p>{event.title || "Untitled Organised Event"}</p>
-
-                  {/*
-                    If organised event image is added by admin,
-                    keep it commented for now.
-                    For client demo, organised events only show title.
-                  */}
                 </div>
               </div>
             ))

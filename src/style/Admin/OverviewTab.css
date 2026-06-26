@@ -5,7 +5,7 @@
 /* Hero */
 .overview-hero {
   background:
-    linear-gradient(135deg, #0f172a, #14532d);
+    linear-gradient(135deg, #25a14a, #59d4b4, #18d360);
 
   border-radius: 26px;
   padding: 30px;
@@ -17,7 +17,7 @@
   justify-content: space-between;
   gap: 25px;
 
-  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18);
+  box-shadow: 0 18px 45px rgba(205, 15, 15, 0.18);
   margin-bottom: 28px;
   overflow: hidden;
   position: relative;

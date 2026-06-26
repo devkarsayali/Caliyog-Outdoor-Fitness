@@ -1,9 +1,5 @@
 .enquiry-header {
-  background: linear-gradient(
-    135deg,
-    #111827,
-    #14532d
-  );
+  background: linear-gradient(135deg, #25a14a, #59d4b4, #18d360);
 
   padding: 28px;
   border-radius: 24px;

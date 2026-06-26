@@ -1,10 +1,10 @@
 .report-header {
-  background: linear-gradient(135deg, #0f172a, #064e3b, #166534);
+  background: linear-gradient(135deg, #25a14a, #59d4b4, #18d360);
   padding: 34px;
   border-radius: 26px;
-  color: white;
+  color: rgb(10, 10, 10);
   margin-bottom: 26px;
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.22);
+  box-shadow: 0 18px 40px rgba(5, 77, 245, 0.22);
 }
 
 .report-header h1 {
