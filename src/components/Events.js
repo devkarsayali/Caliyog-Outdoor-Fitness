@@ -6,10 +6,7 @@ function Events() {
 
   const [events, setEvents] = useState([]);
   const [organisedEvents, setOrganisedEvents] = useState([]);
-
-  useEffect(() => {
-    fetchEvents();
-  }, []);
+  const [loading, setLoading] = useState(true);
 
   const getImageUrl = (item) => {
     const imagePath = item?.img || item?.image || "";
@@ -18,14 +15,15 @@ function Events() {
       return null;
     }
 
-    if (
-      imagePath.startsWith("http") ||
-      imagePath.startsWith("data:image")
-    ) {
+    if (imagePath.startsWith("http") || imagePath.startsWith("data:image")) {
       return imagePath;
     }
 
-    return `${API_URL}${imagePath}`;
+    if (imagePath.startsWith("/uploads")) {
+      return `${API_URL}${imagePath}`;
+    }
+
+    return `${API_URL}/uploads/${imagePath}`;
   };
 
   const fetchEvents = async () => {
@@ -40,7 +38,7 @@ function Events() {
 
       const eventList = Array.isArray(data)
         ? data
-        : data.events || data.data || [];
+        : data.data || data.events || [];
 
       const galleryEvents = eventList.filter(
         (item) => item.eventType === "gallery"
@@ -48,16 +46,26 @@ function Events() {
 
       const majorEvents = eventList.filter(
         (item) =>
-          item.eventType === "organized" ||
-          item.eventType === "organised"
+          item.eventType === "organized" || item.eventType === "organised"
       );
+
+      console.log("All Events:", eventList);
+      console.log("Gallery Events:", galleryEvents);
 
       setEvents(galleryEvents);
       setOrganisedEvents(majorEvents);
     } catch (error) {
       console.error("Events Load Error:", error);
+      setEvents([]);
+      setOrganisedEvents([]);
+    } finally {
+      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
 
   return (
     <section className="events-section" id="events">
@@ -67,7 +75,9 @@ function Events() {
       </div>
 
       <div className="events-grid">
-        {events.length === 0 ? (
+        {loading ? (
+          <p>Loading events...</p>
+        ) : events.length === 0 ? (
           <p>No gallery events added yet.</p>
         ) : (
           events.map((item, index) => {
@@ -81,11 +91,13 @@ function Events() {
                       src={imageUrl}
                       alt={item.title || "Gallery Event"}
                       loading="lazy"
+                      onError={(e) => {
+                        console.log("Image failed:", imageUrl);
+                        e.currentTarget.style.display = "none";
+                      }}
                     />
                   ) : (
-                    <div className="no-event-image">
-                      No Image Available
-                    </div>
+                    <div className="no-event-image">No Image Available</div>
                   )}
                 </div>
 
@@ -107,7 +119,9 @@ function Events() {
         </div>
 
         <div className="achievement-list">
-          {organisedEvents.length === 0 ? (
+          {loading ? (
+            <p>Loading organised events...</p>
+          ) : organisedEvents.length === 0 ? (
             <p>No organised events added yet.</p>
           ) : (
             organisedEvents.map((event, index) => (
