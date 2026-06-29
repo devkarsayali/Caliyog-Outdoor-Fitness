@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
   FiPlus,
   FiEdit,
@@ -13,8 +13,9 @@ import "../style/Admin/AdminCommon.css";
 import "../style/Admin/ExpertsTab.css";
 
 function ExpertsTab() {
-const API_URL =
-  "https://caliyog-fitness-backend-production.up.railway.app";
+  const API_URL =
+    "https://caliyog-fitness-backend-production-2144.up.railway.app";
+
   const [experts, setExperts] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [modalMode, setModalMode] = useState("add");
@@ -27,32 +28,48 @@ const API_URL =
     specialization: "",
     experience: "",
     image: "",
+    imageFile: null,
   });
 
-  const getAuthHeaders = () => ({
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
-  });
-
-  const loadData = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/experts`);
-      const data = await response.json();
-
-      if (response.ok) {
-        setExperts(Array.isArray(data) ? data : data.data || []);
-      } else {
-        alert(data.message || "Failed to load experts");
-      }
-    } catch (error) {
-      console.error("Experts Load Error:", error);
-      alert("Backend connection failed while loading experts");
-    }
+  const getToken = () => {
+    return localStorage.getItem("token") || localStorage.getItem("adminToken");
   };
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  const getImageUrl = (image) => {
+    if (!image) return "";
+
+    if (image.startsWith("data:image")) return image;
+    if (image.startsWith("http")) return image;
+
+    return `${API_URL}${image.startsWith("/") ? image : "/" + image}`;
+  };
+
+  const getArrayData = (data) => {
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data.experts)) return data.experts;
+    if (Array.isArray(data.data)) return data.data;
+    return [];
+  };
+
+  const loadData = useCallback(async () => {
+  try {
+    const response = await fetch(`${API_URL}/api/experts`);
+    const data = await response.json();
+
+    if (response.ok) {
+      setExperts(getArrayData(data));
+    } else {
+      alert(data.message || "Failed to load experts");
+    }
+  } catch (error) {
+    console.error("Experts Load Error:", error);
+    alert("Backend connection failed while loading experts");
+  }
+}, [API_URL]);
+
+ useEffect(() => {
+  loadData();
+}, [loadData]);
 
   const closeModal = () => {
     setShowModal(false);
@@ -63,7 +80,12 @@ const API_URL =
       specialization: "",
       experience: "",
       image: "",
+      imageFile: null,
     });
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const openAddModal = () => {
@@ -77,6 +99,7 @@ const API_URL =
       specialization: expert.specialization || "",
       experience: expert.experience || "",
       image: expert.image || "",
+      imageFile: null,
     });
 
     setEditId(expert._id);
@@ -93,8 +116,10 @@ const API_URL =
 
     if (!file) return;
 
-    if (file.size > 2 * 1024 * 1024) {
-      alert("File is too large! Please upload image smaller than 2MB.");
+    const MAX_SIZE = 10 * 1024 * 1024;
+
+    if (file.size > MAX_SIZE) {
+      alert("File is too large! Please upload image smaller than 10MB.");
       return;
     }
 
@@ -104,6 +129,7 @@ const API_URL =
       setForm((prev) => ({
         ...prev,
         image: reader.result,
+        imageFile: file,
       }));
     };
 
@@ -121,10 +147,21 @@ const API_URL =
 
       const method = modalMode === "add" ? "POST" : "PUT";
 
+      const formData = new FormData();
+      formData.append("name", form.name);
+      formData.append("specialization", form.specialization);
+      formData.append("experience", form.experience);
+
+      if (form.imageFile) {
+        formData.append("image", form.imageFile);
+      }
+
       const response = await fetch(url, {
         method,
-        headers: getAuthHeaders(),
-        body: JSON.stringify(form),
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+        body: formData,
       });
 
       const data = await response.json();
@@ -154,7 +191,9 @@ const API_URL =
     try {
       const response = await fetch(`${API_URL}/api/experts/${id}`, {
         method: "DELETE",
-        headers: getAuthHeaders(),
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
       });
 
       const data = await response.json();
@@ -200,7 +239,7 @@ const API_URL =
             <div className="expert-image-box">
               {expert.image ? (
                 <img
-                  src={expert.image}
+                  src={getImageUrl(expert.image)}
                   alt={expert.name}
                   className="expert-image"
                 />
@@ -215,7 +254,9 @@ const API_URL =
 
             <div className="expert-card-content">
               <h3>{expert.name}</h3>
-              <span className="expert-specialization">{expert.specialization}</span>
+              <span className="expert-specialization">
+                {expert.specialization}
+              </span>
               <p>{expert.experience}</p>
             </div>
 
@@ -276,7 +317,7 @@ const API_URL =
                   title="Click to upload photo"
                 >
                   {form.image ? (
-                    <img src={form.image} alt="Preview" />
+                    <img src={getImageUrl(form.image)} alt="Preview" />
                   ) : (
                     <div className="photo-placeholder">
                       <FiImage />

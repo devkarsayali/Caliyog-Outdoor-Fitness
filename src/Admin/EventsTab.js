@@ -13,8 +13,8 @@ import "../style/Admin/EventsTab.css";
 
 function EventsTab() {
 const API_URL =
-  "https://caliyog-fitness-backend-production.up.railway.app";
-  const [events, setEvents] = useState([]);
+ "https://caliyog-fitness-backend-production-2144.up.railway.app";
+   const [events, setEvents] = useState([]);
   const [organisedEvents, setOrganisedEvents] = useState([]);
 
   const [showGalleryModal, setShowGalleryModal] = useState(false);
@@ -130,9 +130,9 @@ const API_URL =
         formData.append("image", galleryForm.imageFile);
       }
 
-      if (modalMode === "edit" && galleryForm.img) {
-        formData.append("img", galleryForm.img);
-      }
+     if (modalMode === "edit" && galleryForm.img) {
+    formData.append("image", galleryForm.img);
+}
 
       const response = await fetch(url, {
         method,
@@ -296,13 +296,17 @@ const API_URL =
             {events.map((evt) => (
               <article className="event-card-admin" key={evt._id}>
                 <div className="event-img-box">
-                  {hasImage(evt.img) ? (
-                    <img
-                      src={evt.img}
-                      alt={evt.title || "Gallery Event"}
-                      className="event-img"
-                    />
-                  ) : (
+                  {hasImage(evt.image || evt.img) ? (
+  <img
+    src={
+      evt.image
+        ? `${API_URL}${evt.image}`
+        : evt.img
+    }
+    alt={evt.title || "Gallery Event"}
+    className="event-img"
+  />
+) : (
                     <div className="image-placeholder">
                       <FiImage />
                       <span>No Image</span>
@@ -319,11 +323,11 @@ const API_URL =
                     type="button"
                     className="event-edit-btn"
                     onClick={() => {
-                      setGalleryForm({
-                        img: evt.img || "",
-                        imageFile: null,
-                        title: evt.title || "",
-                      });
+                     setGalleryForm({
+  img: evt.image || evt.img || "",
+  imageFile: null,
+  title: evt.title || "",
+});
 
                       setEditId(evt._id);
                       setModalMode("edit");

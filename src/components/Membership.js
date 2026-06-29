@@ -3,7 +3,9 @@ import "../style/Membership.css";
 
 function Membership({ openJoinForm }) {
 const API_URL =
-  "https://caliyog-fitness-backend-production.up.railway.app";
+ "https://caliyog-fitness-backend-production-2144.up.railway.app";
+
+
   const [plans, setPlans] = useState([]);
 
   const loadMemberships = async () => {

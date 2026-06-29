@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import "../style/Batches.css";
 
 const API_URL =
-  "https://caliyog-fitness-backend-production.up.railway.app";
+ "https://caliyog-fitness-backend-production-2144.up.railway.app";
+
 function Batches() {
   const [batches, setBatches] = useState([]);
 

@@ -5,8 +5,8 @@ import "../style/Admin/AdminCommon.css";
 import "../style/Admin/MembershipTab.css";
 
 const API_URL =
-  "https://caliyog-fitness-backend-production.up.railway.app";
-function MembershipTab() {
+ "https://caliyog-fitness-backend-production-2144.up.railway.app";
+ function MembershipTab() {
   const [memberships, setMemberships] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [modalMode, setModalMode] = useState("add");

@@ -10,7 +10,7 @@ import "../style/Admin/EnquiriesTab.css";
 
 function EnquiriesTab() {
   const API_URL =
-  "https://caliyog-fitness-backend-production.up.railway.app";
+  "https://caliyog-fitness-backend-production-2144.up.railway.app";
 
   const [enquiries, setEnquiries] = useState([]);
   const [loading, setLoading] = useState(true);

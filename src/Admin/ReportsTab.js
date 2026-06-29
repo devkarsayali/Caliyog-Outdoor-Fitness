@@ -3,7 +3,8 @@ import "../style/Admin/ReportsTab.css";
 
 function ReportsTab() {
 const API_URL =
-  "https://caliyog-fitness-backend-production.up.railway.app";
+ "https://caliyog-fitness-backend-production-2144.up.railway.app";
+
   const [allRequests, setAllRequests] = useState([]);
   const [kidsRequests, setKidsRequests] = useState([]);
   const [loading, setLoading] = useState(false);

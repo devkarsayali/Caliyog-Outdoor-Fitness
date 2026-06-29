@@ -4,7 +4,8 @@ import "../style/Contact.css";
 
 function Contact() {
 const API_URL =
-  "https://caliyog-fitness-backend-production.up.railway.app";
+ "https://caliyog-fitness-backend-production-2144.up.railway.app";
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",

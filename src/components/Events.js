@@ -1,33 +1,44 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import "../style/Events.css";
 
 function Events() {
-const API_URL =
-  "https://caliyog-fitness-backend-production.up.railway.app";
+  const API_URL =
+    "https://caliyog-fitness-backend-production-2144.up.railway.app";
+
   const [events, setEvents] = useState([]);
   const [organisedEvents, setOrganisedEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const getImageUrl = (item) => {
-    const imagePath = item?.img || item?.image || "";
-
-    if (!imagePath || imagePath.trim() === "") {
-      return null;
-    }
-
-    if (imagePath.startsWith("http") || imagePath.startsWith("data:image")) {
-      return imagePath;
-    }
-
-    if (imagePath.startsWith("/uploads")) {
-      return `${API_URL}${imagePath}`;
-    }
-
-    return `${API_URL}/uploads/${imagePath}`;
+  const getArrayData = (data) => {
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data.events)) return data.events;
+    if (Array.isArray(data.data)) return data.data;
+    return [];
   };
 
-  const fetchEvents = async () => {
+  const getImageUrl = (item) => {
+    const image =
+      item?.image ||
+      item?.img ||
+      item?.photo ||
+      item?.eventImage ||
+      item?.imageUrl ||
+      item?.file ||
+      item?.url;
+
+    if (!image || String(image).trim() === "") return "";
+
+    if (image.startsWith("http") || image.startsWith("data:image")) {
+      return image;
+    }
+
+    return `${API_URL}${image.startsWith("/") ? image : "/" + image}`;
+  };
+
+  const fetchEvents = useCallback(async () => {
     try {
+      setLoading(true);
+
       const response = await fetch(`${API_URL}/api/events`);
 
       if (!response.ok) {
@@ -35,22 +46,24 @@ const API_URL =
       }
 
       const data = await response.json();
-
-      const eventList = Array.isArray(data)
-        ? data
-        : data.data || data.events || [];
+      const eventList = getArrayData(data);
 
       const galleryEvents = eventList.filter(
-        (item) => item.eventType === "gallery"
+        (item) =>
+          item.eventType === "gallery" ||
+          item.type === "gallery" ||
+          item.category === "gallery"
       );
 
       const majorEvents = eventList.filter(
         (item) =>
-          item.eventType === "organized" || item.eventType === "organised"
+          item.eventType === "organized" ||
+          item.eventType === "organised" ||
+          item.type === "organized" ||
+          item.type === "organised" ||
+          item.category === "organized" ||
+          item.category === "organised"
       );
-
-      console.log("All Events:", eventList);
-      console.log("Gallery Events:", galleryEvents);
 
       setEvents(galleryEvents);
       setOrganisedEvents(majorEvents);
@@ -61,11 +74,11 @@ const API_URL =
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchEvents();
-  }, []);
+  }, [fetchEvents]);
 
   return (
     <section className="events-section" id="events">
@@ -76,9 +89,9 @@ const API_URL =
 
       <div className="events-grid">
         {loading ? (
-          <p>Loading events...</p>
+          <p className="events-message">Loading events...</p>
         ) : events.length === 0 ? (
-          <p>No gallery events added yet.</p>
+          <p className="events-message">No gallery events added yet.</p>
         ) : (
           events.map((item, index) => {
             const imageUrl = getImageUrl(item);
@@ -90,9 +103,9 @@ const API_URL =
                     <img
                       src={imageUrl}
                       alt={item.title || "Gallery Event"}
+                      className="event-img"
                       loading="lazy"
                       onError={(e) => {
-                        console.log("Image failed:", imageUrl);
                         e.currentTarget.style.display = "none";
                       }}
                     />
@@ -120,9 +133,9 @@ const API_URL =
 
         <div className="achievement-list">
           {loading ? (
-            <p>Loading organised events...</p>
+            <p className="events-message">Loading organised events...</p>
           ) : organisedEvents.length === 0 ? (
-            <p>No organised events added yet.</p>
+            <p className="events-message">No organised events added yet.</p>
           ) : (
             organisedEvents.map((event, index) => (
               <div className="achievement-item" key={event._id || index}>
