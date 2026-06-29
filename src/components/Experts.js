@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import "../style/Experts.css";
-import expertsImage from "../assets/experts.png";
+import expertsImage from "../assets/experts.JPG";
 
 function Experts() {
   const API_URL =
