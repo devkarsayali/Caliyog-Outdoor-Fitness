@@ -18,15 +18,23 @@ function Experts() {
   };
 
   const getImageUrl = (expert) => {
-  const image =
-    expert.image ||
-    expert.photo ||
-    expert.profileImage ||
-    expert.expertImage ||
-    expert.img ||
-    expert.imageUrl;
+  let image =
+    expert?.image ||
+    expert?.img ||
+    expert?.photo ||
+    expert?.profileImage ||
+    expert?.expertImage ||
+    expert?.imageUrl;
 
   if (!image) return expertsImage;
+
+  if (image.startsWith("data:image")) return image;
+
+  // Convert old local backend URL to Railway URL
+  if (image.includes("192.168.") || image.includes("localhost:5000")) {
+    const fileName = image.split("/").pop();
+    return `${API_URL}/uploads/${fileName}`;
+  }
 
   if (image.startsWith("http")) return image;
 
@@ -105,15 +113,15 @@ function Experts() {
             experts.map((expert, index) => (
               <div className="expert-info-card" key={expert._id || index}>
                 <div className="expert-card-image-box">
-                 <img
-  src={getImageUrl(expert)}
-  alt={expert.name || "Fitness Expert"}
-  className="expert-card-image"
-  loading="lazy"
-  onError={(e) => {
-    e.currentTarget.src = expertsImage;
-  }}
-/>
+                  <img
+                    src={getImageUrl(expert)}
+                    alt={expert.name || "Fitness Expert"}
+                    className="expert-card-image"
+                    loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.src = expertsImage;
+                    }}
+                  />
                 </div>
 
                 <div className="expert-card-content">

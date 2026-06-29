@@ -28,12 +28,18 @@ function Events() {
 
     if (!image || String(image).trim() === "") return "";
 
-    if (image.startsWith("http") || image.startsWith("data:image")) {
-      return image;
-    }
+    if (image.startsWith("data:image")) return image;
 
-    return `${API_URL}${image.startsWith("/") ? image : "/" + image}`;
-  };
+  // Convert old local backend URL to Railway URL
+  if (image.includes("192.168.") || image.includes("localhost:5000")) {
+    const fileName = image.split("/").pop();
+    return `${API_URL}/uploads/${fileName}`;
+  }
+
+  if (image.startsWith("http")) return image;
+
+  return `${API_URL}${image.startsWith("/") ? image : "/" + image}`;
+};
 
   const fetchEvents = useCallback(async () => {
     try {
