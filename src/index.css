@@ -48,6 +48,28 @@ a {
   max-width: 100%;
 }
 
+
+
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+}
+
+section {
+  width: 100%;
+}
+
 /* Admin pages full screen fix */
 .admin-login-page,
 .admin-dashboard {
