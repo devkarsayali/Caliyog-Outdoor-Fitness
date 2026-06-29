@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import AOS from "aos";
-import "aos/dist/aos.css";
+//import "aos/dist/aos.css";
 
 import SplashScreen from "./components/SplashScreen";
 import Navbar from "./components/Navbar";
@@ -39,11 +39,12 @@ function Website() {
   };
 
   useEffect(() => {
-    AOS.init({
-      duration: 1200,
-      once: true,
-      offset: 100,
-    });
+   AOS.init({
+  duration: 800,
+  once: true,
+  offset: 50,
+  disable: "mobile",
+});
 
     const timer = setTimeout(() => {
       setShowSplash(false);

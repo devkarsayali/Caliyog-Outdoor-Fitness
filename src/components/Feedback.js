@@ -50,7 +50,7 @@ function Feedback() {
       text: "One of the best places in the town. Fantastic coaches and great vibe all around.",
     },
     {
-      name: "Vishwas Kadam",
+      name: "Vidya Kadam",
       image: "https://i.pravatar.cc/100?img=20",
       rating: 5,
       reviews: "Local Guide",
@@ -68,7 +68,7 @@ function Feedback() {
       text: "One of the finest fitness centers. Excellent coaching, supportive trainers, and a great atmosphere for everyone.",
     },
     {
-      name: "Prasad Nandanikar",
+      name: "Priya Nandanikar",
       image: "https://i.pravatar.cc/100?img=30",
       rating: 5,
       reviews: "2 reviews",

@@ -48,28 +48,6 @@ a {
   max-width: 100%;
 }
 
-
-
-
-* {
-  box-sizing: border-box;
-}
-
-html,
-body {
-  width: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
-img {
-  max-width: 100%;
-}
-
-section {
-  width: 100%;
-}
-
 /* Admin pages full screen fix */
 .admin-login-page,
 .admin-dashboard {
@@ -218,5 +196,13 @@ section {
   .logo-img {
     width: 38px !important;
     height: 38px !important;
+  }
+}
+
+
+@media (max-width: 768px) {
+  [data-aos] {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
