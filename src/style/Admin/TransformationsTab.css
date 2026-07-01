@@ -1,0 +1,161 @@
+.transformation-admin {
+  padding: 28px;
+  color: #fff;
+}
+
+.transformation-admin-header {
+  margin-bottom: 24px;
+  padding: 22px 25px;
+  border-radius: 22px;
+  background: linear-gradient(
+    135deg,
+    rgba(34, 197, 94, 0.18),
+    rgba(15, 23, 42, 0.95)
+  );
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.transformation-admin-header h2 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.transformation-admin-header p {
+  margin-top: 6px;
+  color: #cbd5e1;
+}
+
+.transformation-form {
+  background: rgba(15, 23, 42, 0.95);
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  padding: 25px;
+  margin-bottom: 25px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 13px 15px;
+  border-radius: 12px;
+  border: 1px solid #334155;
+  background: #020617;
+  color: white;
+}
+
+.form-group small {
+  display: block;
+  margin-top: 6px;
+  color: #94a3b8;
+}
+
+.transformation-preview {
+  margin: 20px 0;
+}
+
+.transformation-preview img {
+  width: 280px;
+  height: 360px;
+  object-fit: cover;
+  border-radius: 18px;
+  border: 2px solid #22c55e;
+}
+
+.transformation-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.transformation-save-btn,
+.transformation-cancel-btn {
+  border: none;
+  padding: 13px 22px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.transformation-save-btn {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+  color: white;
+}
+
+.transformation-cancel-btn {
+  background: #334155;
+  color: white;
+}
+
+.transformation-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 22px;
+}
+
+.transformation-card-admin {
+  background: rgba(15, 23, 42, 0.95);
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.transformation-card-admin img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+}
+
+.transformation-card-admin h3 {
+  padding: 15px;
+  text-align: center;
+  margin: 0;
+}
+
+.transformation-card-buttons {
+  display: flex;
+  gap: 10px;
+  padding: 0 15px 18px;
+}
+
+.transformation-card-buttons button {
+  flex: 1;
+  border: none;
+  padding: 11px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.transformation-card-buttons button:first-child {
+  background: #2563eb;
+  color: white;
+}
+
+.transformation-card-buttons button:last-child {
+  background: #dc2626;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .transformation-admin {
+    padding: 15px;
+  }
+
+  .transformation-preview img {
+    width: 100%;
+    height: auto;
+  }
+
+  .transformation-actions {
+    flex-direction: column;
+  }
+}

@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import AOS from "aos";
 //import "aos/dist/aos.css";
+import "./style/theme.css";
 
 import SplashScreen from "./components/SplashScreen";
 import Navbar from "./components/Navbar";

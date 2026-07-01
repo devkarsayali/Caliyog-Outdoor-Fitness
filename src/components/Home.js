@@ -1,5 +1,6 @@
 import React from "react";
-import cover from "../assets/home-cover.jpg";
+//import cover from "../assets/home-cover.jpg";
+import homeVideo from "../assets/home-video.mp4";
 import "../style/Home.css";
 
 
@@ -8,12 +9,15 @@ function Home({ onJoin }) {
   return (
     <section className="home-section" id="home">
 
-      <img
-        src={cover}
-        alt="Fitness Club"
-        className="background-image"
-        loading="lazy"
-      />
+     <video
+  className="background-video"
+  autoPlay
+  muted
+  loop
+  playsInline
+>
+  <source src={homeVideo} type="video/mp4" />
+</video>
 
       <div className="overlay"></div>
 

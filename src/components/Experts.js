@@ -6,7 +6,6 @@ function Experts() {
   const API_URL =
     "https://caliyog-fitness-backend-production-2144.up.railway.app";
 
-  const [showInfo, setShowInfo] = useState(false);
   const [experts, setExperts] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -17,29 +16,49 @@ function Experts() {
     return [];
   };
 
+  // ---------------- Image URL ----------------
+
   const getImageUrl = (expert) => {
-  let image =
-    expert?.image ||
-    expert?.img ||
-    expert?.photo ||
-    expert?.profileImage ||
-    expert?.expertImage ||
-    expert?.imageUrl;
+    const image =
+      expert?.image ||
+      expert?.img ||
+      expert?.photo ||
+      expert?.profileImage ||
+      expert?.expertImage ||
+      expert?.imageUrl;
 
-  if (!image) return expertsImage;
+    if (!image) return expertsImage;
 
-  if (image.startsWith("data:image")) return image;
+    // Base64 image
+    if (image.startsWith("data:image")) {
+      return image;
+    }
 
-  // Convert old local backend URL to Railway URL
-  if (image.includes("192.168.") || image.includes("localhost:5000")) {
-    const fileName = image.split("/").pop();
-    return `${API_URL}/uploads/${fileName}`;
-  }
+    // Already full URL
+    if (image.startsWith("http://") || image.startsWith("https://")) {
+      return image;
+    }
 
-  if (image.startsWith("http")) return image;
+    // Relative uploads path
+    if (image.startsWith("/uploads")) {
+      return `${API_URL}${image}`;
+    }
 
-  return `${API_URL}${image.startsWith("/") ? image : "/" + image}`;
-};
+    // Old localhost / local IP path
+    if (
+      image.includes("localhost") ||
+      image.includes("127.0.0.1") ||
+      image.includes("192.168.")
+    ) {
+      const fileName = image.split("/").pop();
+      return `${API_URL}/uploads/${fileName}`;
+    }
+
+    // Only filename stored in MongoDB
+    return `${API_URL}/uploads/${image.split("/").pop()}`;
+  };
+
+  // ---------------- Fetch Experts ----------------
 
   const fetchExperts = useCallback(async () => {
     try {
@@ -52,29 +71,22 @@ function Experts() {
       }
 
       const data = await response.json();
+
       setExperts(getArrayData(data));
-    } catch (error) {
-      console.error("Error fetching experts:", error);
+    } catch (err) {
+      console.error("Experts Load Error:", err);
       setExperts([]);
     } finally {
       setLoading(false);
     }
   }, []);
 
-  const handleShowInfo = () => {
-    setShowInfo((prev) => !prev);
-
-    if (!showInfo && experts.length === 0) {
-      fetchExperts();
-    }
-  };
-
   useEffect(() => {
     fetchExperts();
   }, [fetchExperts]);
 
   return (
-    <section id="experts" className="experts-section">
+    <section className="experts-section" id="experts">
       <div className="experts-heading">
         <h2>MEET OUR FITNESS EXPERTS</h2>
 
@@ -84,68 +96,70 @@ function Experts() {
         </p>
       </div>
 
+      {/* Banner */}
+
       <div className="experts-image-container">
         <img
           src={expertsImage}
-          alt="CaliYog Fitness Experts"
+          alt="Experts"
           className="experts-image"
           loading="lazy"
         />
       </div>
 
-      <div className="expert-btn-box">
-        <button
-          type="button"
-          className="expert-info-btn"
-          onClick={handleShowInfo}
-        >
-          {showInfo ? "Hide Information" : "All Information"}
-        </button>
-      </div>
+      {/* Cards */}
 
-      {showInfo && (
-        <div className="experts-info-container">
-          {loading ? (
-            <p className="experts-message">Loading experts...</p>
-          ) : experts.length === 0 ? (
-            <p className="experts-message">No experts added yet.</p>
-          ) : (
-            experts.map((expert, index) => (
-              <div className="expert-info-card" key={expert._id || index}>
-                <div className="expert-card-image-box">
-                  <img
-                    src={getImageUrl(expert)}
-                    alt={expert.name || "Fitness Expert"}
-                    className="expert-card-image"
-                    loading="lazy"
-                    onError={(e) => {
-                      e.currentTarget.src = expertsImage;
-                    }}
-                  />
-                </div>
-
-                <div className="expert-card-content">
-                  <h3>{expert.name || expert.title || "Expert Name"}</h3>
-
-                  <h4>
-                    {expert.specialization ||
-                      expert.role ||
-                      expert.designation ||
-                      "Fitness Expert"}
-                  </h4>
-
-                  <p>
-                    {expert.experience ||
-                      expert.description ||
-                      expert.bio ||
-                      "Expert information will be updated soon."}
-                  </p>
-                </div>
+      <div className="experts-info-container">
+        {loading ? (
+          <p className="experts-message">
+            Loading experts...
+          </p>
+        ) : experts.length === 0 ? (
+          <p className="experts-message">
+            No experts added yet.
+          </p>
+        ) : (
+          experts.map((expert, index) => (
+            <div
+              className="expert-info-card"
+              key={expert._id || index}
+            >
+              <div className="expert-card-image-box">
+                <img
+                  className="expert-card-image"
+                  src={getImageUrl(expert)}
+                  alt={expert.name || "Fitness Expert"}
+                  loading="lazy"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = expertsImage;
+                  }}
+                />
               </div>
-            ))
-          )}
-        </div>
-      )}
+
+              <div className="expert-card-content">
+                <h3>
+                  {expert.name || "Expert Name"}
+                </h3>
+
+                <h4>
+                  {expert.specialization ||
+                    expert.role ||
+                    expert.designation ||
+                    "Fitness Expert"}
+                </h4>
+
+                <p>
+                  {expert.experience ||
+                    expert.description ||
+                    expert.bio ||
+                    "Information coming soon."}
+                </p>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
     </section>
   );
 }

@@ -1,63 +1,72 @@
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "../style/Transformations.css";
 
-import t1 from "../assets/t1.png";
-import t2 from "../assets/t2.png";
-import t3 from "../assets/t3.png";
-import t4 from "../assets/t4.png";
-import t5 from "../assets/t5.png";
-import t6 from "../assets/t6.png";
-import t7 from "../assets/t7.png";
-import t8 from "../assets/t8.png";
-import t9 from "../assets/t9.png";
-import t10 from "../assets/t10.png";
-import t11 from "../assets/t11.png";
-import t12 from "../assets/t12.png";
+const API_URL =
+  "https://caliyog-fitness-backend-production-2144.up.railway.app";
 
 function Transformations() {
-  const data = [
-    { img: t1, title: "Transformation 1" },
-    { img: t2, title: "Transformation 2" },
-    { img: t3, title: "Transformation 3" },
-    { img: t4, title: "Transformation 4" },
-    { img: t5, title: "Transformation 5" },
-    { img: t6, title: "Transformation 6" },
-    { img: t7, title: "Transformation 7" },
-    { img: t8, title: "Transformation 8" },
-    { img: t9, title: "Transformation 9" },
-    { img: t10, title: "Transformation 10" },
-    { img: t11, title: "Transformation 11" },
-    { img: t12, title: "Transformation 12" },
-  ];
+  const [transformations, setTransformations] = useState([]);
+
+  const getImageUrl = useCallback((imagePath) => {
+    if (!imagePath || imagePath.trim() === "") return "";
+    if (imagePath.startsWith("http")) return imagePath;
+
+    return `${API_URL}${imagePath}`;
+  }, []);
+
+  const parseResponse = async (response) => {
+    const text = await response.text();
+
+    try {
+      return JSON.parse(text);
+    } catch {
+      throw new Error(text || "Invalid server response");
+    }
+  };
+
+  const loadTransformations = useCallback(async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/transformations`);
+      const result = await parseResponse(response);
+
+      if (result.success && Array.isArray(result.data)) {
+        const validTransformations = result.data.filter(
+          (item) => item.image && item.name
+        );
+
+        setTransformations(validTransformations);
+      }
+    } catch (error) {
+      console.error("Transformations Load Error:", error);
+      setTransformations([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadTransformations();
+  }, [loadTransformations]);
 
   return (
-    <section
-      className="transform-section"
-      id="transformations"
-    >
+    <section className="transform-section" id="transformations">
       <div className="transform-heading">
         <h2>Transformations We Did</h2>
 
         <p>
-          Real fitness journeys and amazing results
-          achieved by our members.
+          Real fitness journeys and amazing results achieved by our members.
         </p>
       </div>
 
       <div className="transform-grid">
-        {data.map((item, index) => (
-          <div
-            className="transform-card"
-            key={index}
-          >
+        {transformations.map((item) => (
+          <div className="transform-card" key={item._id}>
             <img
-              src={item.img}
-              alt={item.title}
+              src={getImageUrl(item.image)}
+              alt={item.name}
               loading="lazy"
             />
 
             <div className="transform-content">
-              <h3>{item.title}</h3>
+              <h3>{item.name}</h3>
             </div>
           </div>
         ))}

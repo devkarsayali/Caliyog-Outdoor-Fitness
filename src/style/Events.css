@@ -25,13 +25,26 @@
   margin-top: 10px;
 }
 
+/* Events Cards Grid */
 .events-grid {
   width: 100%;
   max-width: 1150px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 28px;
+}
+
+.event-card {
+  grid-column: span 2;
+}
+
+.event-card:nth-child(7) {
+  grid-column: 2 / span 2;
+}
+
+.event-card:nth-child(8) {
+  grid-column: 4 / span 2;
 }
 
 .event-card {
@@ -142,7 +155,8 @@
   margin: auto;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
+  gap: 18px 22px;
+  margin-bottom: 45px;
 }
 
 .achievement-item {
@@ -177,7 +191,7 @@
 
 .achievement-stats {
   max-width: 1100px;
-  margin: 55px auto;
+  margin: 45px auto 40px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 22px;
@@ -204,7 +218,7 @@
 
 .coach-message {
   max-width: 900px;
-  margin: auto;
+  margin: 55px auto 0;
   text-align: center;
   background: white;
   padding: 38px;
@@ -228,6 +242,13 @@
   .events-grid {
     max-width: 720px;
     grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+  }
+
+  .event-card,
+  .event-card:nth-child(7),
+  .event-card:nth-child(8) {
+    grid-column: auto;
   }
 
   .achievement-stats {
@@ -236,6 +257,10 @@
 
   .achievement-list {
     grid-template-columns: 1fr;
+  }
+
+  .coach-message {
+    margin-top: 45px;
   }
 }
 
@@ -282,8 +307,18 @@
     padding: 5px 10px;
   }
 
+  .achievement-list {
+    margin-bottom: 38px;
+  }
+
   .achievement-stats {
     grid-template-columns: 1fr;
+    margin: 40px auto 35px;
+  }
+
+  .coach-message {
+    margin-top: 45px;
+    padding: 30px 22px;
   }
 }
 
@@ -299,5 +334,9 @@
 
   .event-content h3 {
     font-size: 12px;
+  }
+
+  .coach-message {
+    margin-top: 40px;
   }
 }

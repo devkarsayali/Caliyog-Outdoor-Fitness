@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Navbar.css";
 import logo from "../assets/CaliYog-Logo.png";
 
 function Navbar({ onJoin }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
 
   const closeMenu = () => {
     setMenuOpen(false);
@@ -13,6 +14,35 @@ function Navbar({ onJoin }) {
     setMenuOpen(false);
     onJoin();
   };
+
+  useEffect(() => {
+    const sections = document.querySelectorAll("section[id]");
+
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + 120;
+
+      sections.forEach((section) => {
+        const top = section.offsetTop;
+        const height = section.offsetHeight;
+        const id = section.getAttribute("id");
+
+        if (
+          scrollPosition >= top &&
+          scrollPosition < top + height
+        ) {
+          setActiveSection(id);
+        }
+      });
+    };
+
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
     <nav className="navbar">
@@ -30,7 +60,7 @@ function Navbar({ onJoin }) {
         </div>
       </div>
 
-      {/* Mobile Menu Icon */}
+      {/* Mobile Menu */}
       <div
         className="menu-toggle"
         onClick={() => setMenuOpen(!menuOpen)}
@@ -42,68 +72,108 @@ function Navbar({ onJoin }) {
       <ul className={`nav-links ${menuOpen ? "active" : ""}`}>
 
         <li>
-          <a href="#home" onClick={closeMenu}>
+          <a
+            href="#home"
+            className={activeSection === "home" ? "active" : ""}
+            onClick={closeMenu}
+          >
             Home
           </a>
         </li>
 
         <li>
-          <a href="#about" onClick={closeMenu}>
+          <a
+            href="#about"
+            className={activeSection === "about" ? "active" : ""}
+            onClick={closeMenu}
+          >
             About
           </a>
         </li>
 
         <li>
-          <a href="#whychooseus" onClick={closeMenu}>
+          <a
+            href="#whychooseus"
+            className={activeSection === "whychooseus" ? "active" : ""}
+            onClick={closeMenu}
+          >
             Why Choose Us
           </a>
         </li>
 
         <li>
-          <a href="#batches" onClick={closeMenu}>
+          <a
+            href="#batches"
+            className={activeSection === "batches" ? "active" : ""}
+            onClick={closeMenu}
+          >
             Batches
           </a>
         </li>
 
         <li>
-          <a href="#membership" onClick={closeMenu}>
+          <a
+            href="#membership"
+            className={activeSection === "membership" ? "active" : ""}
+            onClick={closeMenu}
+          >
             Membership
           </a>
         </li>
 
         <li>
-          <a href="#transformations" onClick={closeMenu}>
+          <a
+            href="#transformations"
+            className={activeSection === "transformations" ? "active" : ""}
+            onClick={closeMenu}
+          >
             Transformations
           </a>
         </li>
 
         <li>
-          <a href="#experts" onClick={closeMenu}>
+          <a
+            href="#experts"
+            className={activeSection === "experts" ? "active" : ""}
+            onClick={closeMenu}
+          >
             Experts
           </a>
         </li>
 
         <li>
-          <a href="#events" onClick={closeMenu}>
+          <a
+            href="#events"
+            className={activeSection === "events" ? "active" : ""}
+            onClick={closeMenu}
+          >
             Events
           </a>
         </li>
 
         <li>
-          <a href="#feedback" onClick={closeMenu}>
+          <a
+            href="#feedback"
+            className={activeSection === "feedback" ? "active" : ""}
+            onClick={closeMenu}
+          >
             Feedback
           </a>
         </li>
 
         <li>
-          <a href="#contact" onClick={closeMenu}>
+          <a
+            href="#contact"
+            className={activeSection === "contact" ? "active" : ""}
+            onClick={closeMenu}
+          >
             Contact
           </a>
         </li>
 
       </ul>
 
-      {/* Join Now Button */}
+      {/* Join Now */}
       <button
         className="navbar-btn join-link"
         onClick={handleJoinClick}

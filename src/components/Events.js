@@ -154,27 +154,7 @@ function Events() {
           )}
         </div>
 
-        <div className="achievement-stats">
-          <div className="stat-card">
-            <h3>1000+</h3>
-            <p>Members Trained</p>
-          </div>
-
-          <div className="stat-card">
-            <h3>100+</h3>
-            <p>Transformations</p>
-          </div>
-
-          <div className="stat-card">
-            <h3>15+</h3>
-            <p>National Competitions</p>
-          </div>
-
-          <div className="stat-card">
-            <h3>20+</h3>
-            <p>Trophies Won</p>
-          </div>
-        </div>
+       
 
         <div className="coach-message">
           <h3>10+ Coaches Dedicated To One Mission</h3>
