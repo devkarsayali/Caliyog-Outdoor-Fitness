@@ -31,101 +31,63 @@
   width: 100%;
   max-width: 1300px;
   margin: auto;
-
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-
   gap: 35px;
 }
 
 .transform-card {
   width: 100%;
-  position: relative;
-
-  background: white;
-  border-radius: 24px;
+  background: #ffffff;
+  border-radius: 26px;
   overflow: hidden;
-
   box-shadow: 0 15px 35px rgba(0, 60, 25, 0.18);
-
   transition: all 0.45s ease;
   animation: cardFadeUp 0.9s ease forwards;
 }
 
 .transform-card:hover {
-  transform: translateY(-14px);
+  transform: translateY(-10px);
   box-shadow: 0 25px 50px rgba(0, 60, 25, 0.28);
-}
-
-.transform-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-
-  background: linear-gradient(
-    120deg,
-    transparent,
-    rgba(255, 255, 255, 0.35),
-    transparent
-  );
-
-  transform: translateX(-100%);
-  transition: 0.7s;
-  z-index: 2;
-}
-
-.transform-card:hover::before {
-  transform: translateX(100%);
 }
 
 .transform-card img {
   width: 100%;
-  max-width: 100%;
   height: 390px;
-
   display: block;
   object-fit: cover;
-
+  object-position: center top;
   transition: 0.5s ease;
 }
 
 .transform-card:hover img {
-  transform: scale(1.08);
-  filter: brightness(0.85);
+  transform: scale(1.04);
+  filter: brightness(0.9);
 }
 
 .transform-content {
-  position: relative;
-
-  padding: 20px;
-
+  padding: 22px 18px 26px;
   text-align: center;
-
   background: linear-gradient(135deg, #12351f, #2e7d32);
 }
 
 .transform-content h3 {
   color: white;
-  font-size: 21px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+  margin-bottom: 10px;
 }
 
 .transform-content::after {
   content: "Real Results";
-
   display: inline-block;
-
-  margin-top: 8px;
-  padding: 5px 15px;
-
+  padding: 7px 20px;
   background: white;
   color: #1f3d2b;
-
-  border-radius: 20px;
-
-  font-size: 13px;
-  font-weight: 700;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 800;
 }
 
 @keyframes cardFadeUp {
@@ -138,54 +100,6 @@
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.transform-card:nth-child(1) {
-  animation-delay: 0.1s;
-}
-
-.transform-card:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.transform-card:nth-child(3) {
-  animation-delay: 0.3s;
-}
-
-.transform-card:nth-child(4) {
-  animation-delay: 0.4s;
-}
-
-.transform-card:nth-child(5) {
-  animation-delay: 0.5s;
-}
-
-.transform-card:nth-child(6) {
-  animation-delay: 0.6s;
-}
-
-.transform-card:nth-child(7) {
-  animation-delay: 0.7s;
-}
-
-.transform-card:nth-child(8) {
-  animation-delay: 0.8s;
-}
-
-.transform-card:nth-child(9) {
-  animation-delay: 0.9s;
-}
-
-.transform-card:nth-child(10) {
-  animation-delay: 1s;
-}
-
-.transform-card:nth-child(11) {
-  animation-delay: 1.1s;
-}
-
-.transform-card:nth-child(12) {
-  animation-delay: 1.2s;
 }
 
 /* Tablet */
@@ -211,7 +125,7 @@
 /* Mobile */
 @media (max-width: 768px) {
   .transform-section {
-    padding: 60px 20px;
+    padding: 55px 18px;
   }
 
   .transform-heading {
@@ -229,26 +143,45 @@
 
   .transform-grid {
     grid-template-columns: 1fr;
-    gap: 22px;
+    gap: 30px;
   }
 
   .transform-card {
-    border-radius: 20px;
+    border-radius: 24px;
   }
 
   .transform-card img {
-    height: 310px;
+    width: 100%;
+    height: auto;
+    max-height: none;
+    object-fit: contain;
+    object-position: center;
+    background: #ffffff;
+  }
+
+  .transform-card:hover img {
+    transform: none;
+    filter: none;
+  }
+
+  .transform-content {
+    padding: 24px 14px 28px;
   }
 
   .transform-content h3 {
-    font-size: 19px;
+    font-size: 26px;
+  }
+
+  .transform-content::after {
+    font-size: 16px;
+    padding: 9px 26px;
   }
 }
 
 /* Small Mobile */
 @media (max-width: 480px) {
   .transform-section {
-    padding: 50px 16px;
+    padding: 45px 14px;
   }
 
   .transform-heading h2 {
@@ -259,15 +192,20 @@
     font-size: 14px;
   }
 
+  .transform-card {
+    border-radius: 22px;
+  }
+
   .transform-card img {
-    height: 260px;
+    height: auto;
+    object-fit: contain;
   }
 
   .transform-content {
-    padding: 18px 14px;
+    padding: 22px 12px 26px;
   }
 
   .transform-content h3 {
-    font-size: 18px;
+    font-size: 24px;
   }
 }
