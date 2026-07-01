@@ -12,6 +12,7 @@ import EventsTab from "./EventsTab";
 import EnquiriesTab from "./EnquiriesTab";
 import ReportsTab from "./ReportsTab";
 import MembersTab from "./MembersTab";
+import SettingsTab from "./SettingsTab";
 
 import "../style/Admin/AdminDashboard.css";
 import logo from "../assets/CaliYog-Logo.png";
@@ -33,7 +34,6 @@ function AdminDashboard() {
 
   return (
     <div className="admin-dashboard">
-
       {!isSidebarOpen && (
         <button
           type="button"
@@ -44,13 +44,8 @@ function AdminDashboard() {
         </button>
       )}
 
-      {/* ================= Sidebar ================= */}
-
-      <aside
-        className={`admin-sidebar ${isSidebarOpen ? "open" : "closed"}`}
-      >
+      <aside className={`admin-sidebar ${isSidebarOpen ? "open" : "closed"}`}>
         <div className="admin-sidebar-title">
-
           <button
             type="button"
             className="drawer-toggle-btn sidebar-top-toggle"
@@ -67,19 +62,13 @@ function AdminDashboard() {
             />
 
             <h2>CALIYOG</h2>
-
             <p>Fitness Admin Panel</p>
           </div>
         </div>
 
-        {/* Admin Profile */}
-
         <div className="admin-profile-card">
-
           <div className="admin-profile-avatar">
-            {adminData?.name
-              ? adminData.name.charAt(0).toUpperCase()
-              : "A"}
+            {adminData?.name ? adminData.name.charAt(0).toUpperCase() : "A"}
           </div>
 
           <div className="admin-profile-info">
@@ -87,10 +76,7 @@ function AdminDashboard() {
             <p>{adminData?.email || "admin@caliyog.com"}</p>
             <span>● Active</span>
           </div>
-
         </div>
-
-        {/* Overview */}
 
         <button
           className={activeTab === "overview" ? "active" : ""}
@@ -99,16 +85,12 @@ function AdminDashboard() {
           <span>📊</span> Overview
         </button>
 
-        {/* About */}
-
         <button
           className={activeTab === "about" ? "active" : ""}
           onClick={() => setActiveTab("about")}
         >
           <span>📝</span> About
         </button>
-
-        {/* Why Choose Us */}
 
         <button
           className={activeTab === "whyChooseUs" ? "active" : ""}
@@ -117,16 +99,12 @@ function AdminDashboard() {
           <span>⭐</span> Why Choose Us
         </button>
 
-        {/* Batches */}
-
         <button
           className={activeTab === "batches" ? "active" : ""}
           onClick={() => setActiveTab("batches")}
         >
           <span>🏋️</span> Batches
         </button>
-
-        {/* Membership */}
 
         <button
           className={activeTab === "membership" ? "active" : ""}
@@ -135,16 +113,12 @@ function AdminDashboard() {
           <span>💳</span> Membership
         </button>
 
-        {/* Transformations */}
-
         <button
           className={activeTab === "transformations" ? "active" : ""}
           onClick={() => setActiveTab("transformations")}
         >
           <span>🔥</span> Transformations
         </button>
-
-        {/* Experts */}
 
         <button
           className={activeTab === "experts" ? "active" : ""}
@@ -153,16 +127,12 @@ function AdminDashboard() {
           <span>👨‍🏫</span> Experts
         </button>
 
-        {/* Events */}
-
         <button
           className={activeTab === "events" ? "active" : ""}
           onClick={() => setActiveTab("events")}
         >
           <span>🎉</span> Events
         </button>
-
-        {/* Enquiries */}
 
         <button
           className={activeTab === "enquiries" ? "active" : ""}
@@ -171,16 +141,12 @@ function AdminDashboard() {
           <span>📩</span> Enquiries
         </button>
 
-        {/* Reports */}
-
         <button
           className={activeTab === "reports" ? "active" : ""}
           onClick={() => setActiveTab("reports")}
         >
           <span>📋</span> Reports
         </button>
-
-        {/* Members */}
 
         <button
           className={activeTab === "members" ? "active" : ""}
@@ -189,18 +155,17 @@ function AdminDashboard() {
           <span>👥</span> Members
         </button>
 
-        {/* Logout */}
-
         <button
-          className="logout-btn"
-          onClick={handleLogout}
+          className={activeTab === "settings" ? "active" : ""}
+          onClick={() => setActiveTab("settings")}
         >
-          <span>🚪</span> Logout
+          <span>⚙️</span> Settings
         </button>
 
+        <button className="logout-btn" onClick={handleLogout}>
+          <span>🚪</span> Logout
+        </button>
       </aside>
-
-      {/* ================= Main Content ================= */}
 
       <main
         className={`admin-content ${
@@ -230,8 +195,9 @@ function AdminDashboard() {
         {activeTab === "reports" && <ReportsTab />}
 
         {activeTab === "members" && <MembersTab />}
-      </main>
 
+        {activeTab === "settings" && <SettingsTab />}
+      </main>
     </div>
   );
 }

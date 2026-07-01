@@ -6,8 +6,9 @@ import logo from "../assets/CaliYog-Logo.png";
 
 function AdminLogin() {
   const navigate = useNavigate();
+
   const API_URL =
-  "https://caliyog-fitness-backend-production-2144.up.railway.app";
+    "https://caliyog-fitness-backend-production-2144.up.railway.app";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,12 +27,26 @@ function AdminLogin() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          email,
+          password,
+        }),
       });
 
-      const data = await response.json();
+      const text = await response.text();
 
-      if (!response.ok) {
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (error) {
+        console.error("Backend returned non-JSON:", text);
+        alert(
+          "Login API not found or backend returned HTML. Check backend route/deployment."
+        );
+        return;
+      }
+
+      if (!response.ok || !data.token) {
         alert(data.message || "Invalid Admin Credentials");
         return;
       }
@@ -56,11 +71,8 @@ Press Cancel if not.`
       }
 
       localStorage.setItem("admin", "true");
-
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("adminToken", data.token);
-      }
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("adminToken", data.token);
 
       localStorage.setItem(
         "adminData",

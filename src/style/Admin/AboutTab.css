@@ -7,13 +7,9 @@
 /* ================= HEADER ================= */
 
 .about-tab-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-
+  width: 100%;
   margin-bottom: 26px;
-  padding: 28px 32px;
+  padding: 30px 34px;
 
   border-radius: 26px;
   background:
@@ -24,17 +20,6 @@
   box-shadow: 0 18px 42px rgba(15, 23, 42, 0.18);
   position: relative;
   overflow: hidden;
-}
-
-.about-tab-header::after {
-  content: "";
-  position: absolute;
-  right: -60px;
-  top: -60px;
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.18);
 }
 
 .admin-section-label {
@@ -54,31 +39,34 @@
   margin: 0 0 8px;
   font-size: 34px;
   font-weight: 900;
-  letter-spacing: -0.6px;
 }
 
 .about-tab-header p {
   margin: 0;
-  max-width: 680px;
+  max-width: 760px;
   color: rgba(255, 255, 255, 0.92);
   font-size: 14px;
   line-height: 1.7;
 }
 
-/* ================= FORM CARD ================= */
+/* ================= FULL SCREEN FORM ================= */
 
 .about-form {
-  max-width: 980px;
-  margin: 0 auto;
-  padding: 28px;
+  width: 100%;
+  min-height: calc(100vh - 190px);
 
+  padding: 32px;
   border-radius: 28px;
-  background: linear-gradient(180deg, #ffffff, #f8fffb);
+
+  background:
+    radial-gradient(circle at top right, rgba(34, 197, 94, 0.08), transparent 35%),
+    linear-gradient(180deg, #ffffff, #f8fffb);
 
   border: 1px solid rgba(34, 197, 94, 0.22);
+
   box-shadow:
     0 22px 55px rgba(15, 23, 42, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
 }
 
 /* ================= GRID ================= */
@@ -86,18 +74,16 @@
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 22px;
+  gap: 24px;
 }
 
 .form-group {
   margin-bottom: 20px;
 }
 
-/* ================= LABEL ================= */
-
 .form-group label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 9px;
   color: #064e3b;
   font-size: 13px;
   font-weight: 900;
@@ -108,12 +94,12 @@
 .form-group input,
 .form-group textarea {
   width: 100%;
-  padding: 14px 16px;
+  padding: 15px 16px;
 
   border-radius: 15px;
   border: 1px solid rgba(148, 163, 184, 0.45);
 
-  background: #f9fafb;
+  background: #ffffff;
   color: #0f172a;
 
   font-size: 14px;
@@ -126,7 +112,6 @@
 .form-group input:hover,
 .form-group textarea:hover {
   border-color: rgba(34, 197, 94, 0.45);
-  background: #ffffff;
 }
 
 .form-group input::placeholder,
@@ -136,8 +121,8 @@
 
 .form-group textarea {
   resize: vertical;
-  min-height: 105px;
-  line-height: 1.6;
+  min-height: 130px;
+  line-height: 1.7;
 }
 
 .form-group input:focus,
@@ -150,7 +135,7 @@
 /* ================= FILE INPUT ================= */
 
 .form-group input[type="file"] {
-  padding: 12px;
+  padding: 13px;
   background: #ecfdf5;
   border: 1.5px dashed rgba(34, 197, 94, 0.55);
   color: #065f46;
@@ -160,7 +145,7 @@
 .form-group input[type="file"]::file-selector-button {
   border: none;
   margin-right: 12px;
-  padding: 9px 14px;
+  padding: 10px 16px;
   border-radius: 11px;
   background: linear-gradient(135deg, #22c55e, #16a34a);
   color: #ffffff;
@@ -181,26 +166,26 @@
 .preview-box {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 22px;
-  margin: 8px 0 24px;
+  gap: 24px;
+  margin: 10px 0 26px;
 }
 
 .preview-box img {
   width: 100%;
-  height: 185px;
+  height: 260px;
   object-fit: cover;
 
-  border-radius: 22px;
+  border-radius: 24px;
   background: #ecfdf5;
   border: 2px solid rgba(34, 197, 94, 0.45);
 
-  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.11);
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.12);
   transition: 0.3s ease;
 }
 
 .preview-box img:hover {
   transform: translateY(-5px);
-  box-shadow: 0 20px 42px rgba(15, 23, 42, 0.16);
+  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.18);
 }
 
 /* ================= BUTTON ================= */
@@ -208,12 +193,13 @@
 .save-about-btn {
   width: 100%;
   border: none;
-  padding: 15px;
+  padding: 16px;
+  margin-top: 10px;
 
-  border-radius: 16px;
+  border-radius: 18px;
   cursor: pointer;
 
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 900;
   color: #ffffff;
 
@@ -250,8 +236,8 @@
   }
 
   .about-form {
-    max-width: 100%;
     padding: 22px;
+    min-height: auto;
   }
 
   .form-grid {
@@ -264,7 +250,7 @@
   }
 
   .preview-box img {
-    height: 220px;
+    height: 240px;
   }
 }
 
@@ -278,8 +264,6 @@
   .about-tab-header {
     padding: 20px;
     border-radius: 22px;
-    flex-direction: column;
-    align-items: flex-start;
   }
 
   .about-tab-header h2 {
@@ -295,14 +279,6 @@
     border-radius: 22px;
   }
 
-  .form-group {
-    margin-bottom: 16px;
-  }
-
-  .form-group label {
-    font-size: 13px;
-  }
-
   .form-group input,
   .form-group textarea {
     padding: 12px 13px;
@@ -310,7 +286,7 @@
   }
 
   .preview-box img {
-    height: 180px;
+    height: 190px;
   }
 
   .save-about-btn {
