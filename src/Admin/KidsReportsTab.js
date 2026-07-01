@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import "../style/Admin/ReportsTab.css";
 
-function ReportsTab() {
+function KidsReportsTab() {
   const API_URL =
     "https://caliyog-fitness-backend-production-2144.up.railway.app";
 
-  const [allRequests, setAllRequests] = useState([]);
+  const [kidsRequests, setKidsRequests] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const getToken = () => {
@@ -74,19 +74,19 @@ function ReportsTab() {
       const data = await safeJson(response);
 
       if (!response.ok) {
-        alert(data.message || "Failed to load member requests");
-        setAllRequests([]);
+        alert(data.message || "Failed to load kids requests");
+        setKidsRequests([]);
         return;
       }
 
       const requests = getArrayData(data);
-      const normalMembers = requests.filter((item) => !isKidsRequest(item));
+      const kids = requests.filter((item) => isKidsRequest(item));
 
-      setAllRequests(normalMembers);
+      setKidsRequests(kids);
     } catch (error) {
-      console.error("Reports Load Error:", error);
-      alert("Failed to load reports from backend");
-      setAllRequests([]);
+      console.error("Kids Reports Load Error:", error);
+      alert("Failed to load kids reports from backend");
+      setKidsRequests([]);
     } finally {
       setLoading(false);
     }
@@ -115,16 +115,16 @@ function ReportsTab() {
       const data = await safeJson(response);
 
       if (!response.ok) {
-        alert(data.message || "Failed to add member");
+        alert(data.message || "Failed to add kid");
         return;
       }
 
-      alert(data.message || "Member Added Successfully");
+      alert(data.message || "Kid Added Successfully");
       await loadData();
       window.dispatchEvent(new Event("membersUpdated"));
     } catch (error) {
-      console.error("Add Member Error:", error);
-      alert("Backend connection failed while adding member");
+      console.error("Add Kid Error:", error);
+      alert("Backend connection failed while adding kid");
     }
   };
 
@@ -147,15 +147,15 @@ function ReportsTab() {
       const data = await safeJson(response);
 
       if (!response.ok) {
-        alert(data.message || "Failed to reject request");
+        alert(data.message || "Failed to reject kid request");
         return;
       }
 
-      alert(data.message || "Request Rejected");
+      alert(data.message || "Kid Request Rejected");
       await loadData();
     } catch (error) {
-      console.error("Reject Error:", error);
-      alert("Backend connection failed while rejecting request");
+      console.error("Reject Kid Error:", error);
+      alert("Backend connection failed while rejecting kid request");
     }
   };
 
@@ -178,21 +178,22 @@ function ReportsTab() {
   return (
     <div className="reports-container">
       <div className="report-header">
-        <span className="report-label">Reports Management</span>
-        <h1>All Member Requests</h1>
-        <p>Manage normal member joining requests here.</p>
+        <span className="report-label">Kids Reports Management</span>
+        <h1>Kids Section Requests</h1>
+        <p>Manage all kids batch joining requests separately.</p>
       </div>
 
       <div className="report-box">
-        <h2>All Member Requests ({allRequests.length})</h2>
+        <h2>Kids Batch Requests ({kidsRequests.length})</h2>
 
         <div className="report-table-wrapper">
           <table className="report-table">
             <thead>
               <tr>
-                <th>Member Name</th>
-                <th>Email</th>
-                <th>Contact</th>
+                <th>Kid Name</th>
+                <th>Parent Name</th>
+                <th>Parent Email</th>
+                <th>Parent Contact</th>
                 <th>Address</th>
                 <th>Batch</th>
                 <th>Timing Type</th>
@@ -208,34 +209,42 @@ function ReportsTab() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="12" className="empty-report">
-                    Loading Requests...
+                  <td colSpan="13" className="empty-report">
+                    Loading Kids Requests...
                   </td>
                 </tr>
-              ) : allRequests.length === 0 ? (
+              ) : kidsRequests.length === 0 ? (
                 <tr>
-                  <td colSpan="12" className="empty-report">
-                    No Member Requests Found
+                  <td colSpan="13" className="empty-report">
+                    No Kids Batch Requests Found
                   </td>
                 </tr>
               ) : (
-                allRequests.map((item) => (
+                kidsRequests.map((item) => (
                   <tr key={item._id || item.id}>
                     <td>
                       <strong>
-                        {value(item.name, item.memberName, item.fullName)}
+                        {value(item.name, item.kidName, item.childName)}
                       </strong>
                     </td>
 
-                    <td>{value(item.email)}</td>
+                    <td>
+                      {value(
+                        item.parentName,
+                        item.fatherName,
+                        item.guardianName
+                      )}
+                    </td>
+
+                    <td>{value(item.parentEmail, item.email)}</td>
 
                     <td>
                       {value(
+                        item.parentContact,
                         item.contact,
                         item.mobile,
                         item.phone,
-                        item.phoneNumber,
-                        item.contactNumber
+                        item.parentMobile
                       )}
                     </td>
 
@@ -320,8 +329,8 @@ function ReportsTab() {
                           onClick={() => addToMember(item._id || item.id)}
                         >
                           {item.status === "Added to Member"
-                            ? "Member Added"
-                            : "Add Member"}
+                            ? "Kid Added"
+                            : "Add Kid"}
                         </button>
 
                         <button
@@ -348,4 +357,4 @@ function ReportsTab() {
   );
 }
 
-export default ReportsTab;
+export default KidsReportsTab;

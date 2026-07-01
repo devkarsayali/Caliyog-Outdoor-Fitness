@@ -7,6 +7,8 @@
   font-family: "Segoe UI", sans-serif;
 }
 
+
+
 /* SIDEBAR */
 .admin-sidebar {
   width: 285px;
@@ -61,6 +63,47 @@
   color: #16a34a;
   font-size: 13px;
   font-weight: 700;
+}
+
+.sidebar-dropdown {
+  width: 100%;
+}
+
+.sidebar-dropdown > button {
+  width: 100%;
+}
+
+.dropdown-arrow {
+  float: right;
+  font-size: 14px;
+}
+
+.sidebar-submenu {
+  margin-top: 8px;
+  margin-left: 14px;
+  padding-left: 12px;
+  border-left: 2px solid rgba(34, 197, 94, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-submenu button {
+  padding: 12px 14px !important;
+  font-size: 14px !important;
+  border-radius: 13px !important;
+  background: rgba(34, 197, 94, 0.08) !important;
+  color: #334155 !important;
+}
+
+.sidebar-submenu button:hover {
+  background: rgba(34, 197, 94, 0.18) !important;
+  color: #15803d !important;
+}
+
+.sidebar-submenu button.sub-active {
+  background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+  color: #ffffff !important;
 }
 
 /* ADMIN PROFILE */

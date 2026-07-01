@@ -9,8 +9,10 @@ import MembershipTab from "./MembershipTab";
 import TransformationTab from "./TransformationsTab";
 import ExpertsTab from "./ExpertsTab";
 import EventsTab from "./EventsTab";
+import GalleryEventsTab from "./GalleryEventsTab";
 import EnquiriesTab from "./EnquiriesTab";
 import ReportsTab from "./ReportsTab";
+import KidsReportsTab from "./KidsReportsTab";
 import MembersTab from "./MembersTab";
 import SettingsTab from "./SettingsTab";
 
@@ -22,6 +24,8 @@ function AdminDashboard() {
 
   const [activeTab, setActiveTab] = useState("overview");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isEventsDropdownOpen, setIsEventsDropdownOpen] = useState(false);
+  const [isReportsDropdownOpen, setIsReportsDropdownOpen] = useState(false);
 
   const adminData = JSON.parse(localStorage.getItem("adminData")) || {};
 
@@ -29,6 +33,7 @@ function AdminDashboard() {
     localStorage.removeItem("admin");
     localStorage.removeItem("adminData");
     localStorage.removeItem("token");
+    localStorage.removeItem("adminToken");
     navigate("/admin-login");
   };
 
@@ -127,12 +132,45 @@ function AdminDashboard() {
           <span>👨‍🏫</span> Experts
         </button>
 
-        <button
-          className={activeTab === "events" ? "active" : ""}
-          onClick={() => setActiveTab("events")}
-        >
-          <span>🎉</span> Events
-        </button>
+        {/* Events Dropdown */}
+        <div className="sidebar-dropdown">
+          <button
+            type="button"
+            className={
+              activeTab === "events" || activeTab === "galleryEvents"
+                ? "active"
+                : ""
+            }
+            onClick={() => setIsEventsDropdownOpen(!isEventsDropdownOpen)}
+          >
+            <span>🎉</span> Events
+            <b className="dropdown-arrow">
+              {isEventsDropdownOpen ? "▴" : "▾"}
+            </b>
+          </button>
+
+          {isEventsDropdownOpen && (
+            <div className="sidebar-submenu">
+              <button
+                type="button"
+                className={activeTab === "events" ? "active sub-active" : ""}
+                onClick={() => setActiveTab("events")}
+              >
+                Event We Organized
+              </button>
+
+              <button
+                type="button"
+                className={
+                  activeTab === "galleryEvents" ? "active sub-active" : ""
+                }
+                onClick={() => setActiveTab("galleryEvents")}
+              >
+                Gallery Event
+              </button>
+            </div>
+          )}
+        </div>
 
         <button
           className={activeTab === "enquiries" ? "active" : ""}
@@ -141,12 +179,45 @@ function AdminDashboard() {
           <span>📩</span> Enquiries
         </button>
 
-        <button
-          className={activeTab === "reports" ? "active" : ""}
-          onClick={() => setActiveTab("reports")}
-        >
-          <span>📋</span> Reports
-        </button>
+        {/* Reports Dropdown */}
+        <div className="sidebar-dropdown">
+          <button
+            type="button"
+            className={
+              activeTab === "reports" || activeTab === "kidsReports"
+                ? "active"
+                : ""
+            }
+            onClick={() => setIsReportsDropdownOpen(!isReportsDropdownOpen)}
+          >
+            <span>📋</span> Reports
+            <b className="dropdown-arrow">
+              {isReportsDropdownOpen ? "▴" : "▾"}
+            </b>
+          </button>
+
+          {isReportsDropdownOpen && (
+            <div className="sidebar-submenu">
+              <button
+                type="button"
+                className={activeTab === "reports" ? "active sub-active" : ""}
+                onClick={() => setActiveTab("reports")}
+              >
+                All Members
+              </button>
+
+              <button
+                type="button"
+                className={
+                  activeTab === "kidsReports" ? "active sub-active" : ""
+                }
+                onClick={() => setActiveTab("kidsReports")}
+              >
+                Kids Section
+              </button>
+            </div>
+          )}
+        </div>
 
         <button
           className={activeTab === "members" ? "active" : ""}
@@ -190,9 +261,13 @@ function AdminDashboard() {
 
         {activeTab === "events" && <EventsTab />}
 
+        {activeTab === "galleryEvents" && <GalleryEventsTab />}
+
         {activeTab === "enquiries" && <EnquiriesTab />}
 
         {activeTab === "reports" && <ReportsTab />}
+
+        {activeTab === "kidsReports" && <KidsReportsTab />}
 
         {activeTab === "members" && <MembersTab />}
 
