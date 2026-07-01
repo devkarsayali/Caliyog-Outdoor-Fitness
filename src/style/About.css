@@ -1,3 +1,4 @@
+
 .about-section {
   width: 100%;
   padding: 90px 8%;
@@ -144,149 +145,135 @@
   color: #555;
 }
 
+/* ===========================================
+   ACHIEVEMENT STATS
+=========================================== */
+
+.achievement-stats {
+  width: 100%;
+  max-width: 1120px;
+  margin: 70px auto 0;
+
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #16451f, #23752d);
+  color: #ffffff;
+
+  border: none;
+  border-radius: 22px;
+
+  padding: 32px 18px;
+  min-height: 160px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+
+  box-shadow: 0 16px 35px rgba(22, 69, 31, 0.22);
+
+  transition: all 0.35s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-7px);
+  background: linear-gradient(135deg, #1b5e20, #2e7d32);
+  box-shadow: 0 24px 45px rgba(22, 69, 31, 0.32);
+}
+
+.stat-card h3 {
+  margin: 0 0 12px;
+
+  color: #7cff7c;
+
+  font-size: 48px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.stat-card p {
+  margin: 0;
+
+  color: #ffffff;
+
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
 /* Tablet */
 @media (max-width: 992px) {
-  .about-section {
-    padding: 75px 30px;
+  .achievement-stats {
+    max-width: 680px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    margin-top: 55px;
   }
 
-  .about-container,
-  .calisthenics-content {
-    gap: 35px;
+  .stat-card {
+    min-height: 145px;
+    padding: 28px 16px;
   }
 
-  .about-content h2,
-  .calisthenics-text h2 {
-    font-size: 36px;
+  .stat-card h3 {
+    font-size: 40px;
   }
 
-  .about-content h3 {
-    font-size: 24px;
-  }
-
-  .about-img {
-    height: 420px;
+  .stat-card p {
+    font-size: 17px;
   }
 }
 
 /* Mobile */
 @media (max-width: 768px) {
-  .about-section {
-    padding: 45px 18px;
+  .achievement-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 45px;
   }
 
-  .about-container,
-  .calisthenics-content {
-    grid-template-columns: 1fr;
-    gap: 28px;
+  .stat-card {
+    min-height: 130px;
+    padding: 24px 12px;
+    border-radius: 18px;
   }
 
-  .about-img {
-    height: auto;
-    max-height: none;
-    object-fit: contain;
-    border-radius: 22px;
+  .stat-card h3 {
+    font-size: 34px;
+    margin-bottom: 8px;
   }
 
-  .about-content,
-  .calisthenics-text {
-    text-align: center;
-  }
-
-  .about-content h2,
-  .calisthenics-text h2 {
-    font-size: 30px;
-    line-height: 1.25;
-  }
-
-  .about-content h3 {
-    font-size: 22px;
-  }
-
-  .about-content p,
-  .calisthenics-text p {
+  .stat-card p {
     font-size: 15px;
-    line-height: 1.75;
-  }
-
-  .about-features {
-    grid-template-columns: 1fr;
-  }
-
-  .about-btn {
-    width: 100%;
-    max-width: 280px;
-    text-align: center;
-  }
-
-  .calisthenics-section {
-    margin-top: 55px;
-  }
-
-  .highlight-box {
-    text-align: left;
-    font-size: 15px;
-    padding: 20px;
-  }
-
-  .mission-section {
-    width: 100%;
-    max-width: 100%;
-    margin: 45px auto 0;
-    padding: 28px 24px;
-    border-left: 6px solid #22c55e;
-    border-radius: 22px;
-    text-align: left;
-  }
-
-  .mission-section h2 {
-    font-size: 28px;
-    line-height: 1.25;
-  }
-
-  .mission-section p {
-    font-size: 16px;
-    line-height: 1.7;
   }
 }
 
 /* Small Mobile */
 @media (max-width: 480px) {
-  .about-section {
-    padding: 40px 16px;
-  }
-
-  .about-img {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-  }
-
-  .about-content h2,
-  .calisthenics-text h2 {
-    font-size: 27px;
-  }
-
-  .about-content h3 {
-    font-size: 20px;
-  }
-
-  .feature {
-    font-size: 14px;
-    padding: 13px 15px;
-  }
-
-  .mission-section {
-    width: 100%;
+  .achievement-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
     margin-top: 40px;
-    padding: 26px 22px;
   }
 
-  .mission-section h2 {
-    font-size: 26px;
+  .stat-card {
+    min-height: 115px;
+    padding: 20px 10px;
+    border-radius: 16px;
   }
 
-  .mission-section p {
-    font-size: 15px;
+  .stat-card h3 {
+    font-size: 30px;
+  }
+
+  .stat-card p {
+    font-size: 13px;
+    line-height: 1.3;
   }
 }
