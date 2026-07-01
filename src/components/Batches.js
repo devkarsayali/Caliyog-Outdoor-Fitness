@@ -1,8 +1,38 @@
 import React, { useEffect, useState } from "react";
+import Lottie from "lottie-react";
 import "../style/Batches.css";
 
 const API_URL =
- "https://caliyog-fitness-backend-production-2144.up.railway.app";
+  "https://caliyog-fitness-backend-production-2144.up.railway.app";
+
+function LottieIcon({ url }) {
+  const [animationData, setAnimationData] = useState(null);
+
+  useEffect(() => {
+    if (!url) return;
+
+    fetch(url)
+      .then((res) => res.json())
+      .then((data) => setAnimationData(data))
+      .catch((error) => {
+        console.error("Lottie Load Error:", error);
+        setAnimationData(null);
+      });
+  }, [url]);
+
+  if (!animationData) {
+    return <div className="batch-icon-fallback">💪</div>;
+  }
+
+  return (
+    <Lottie
+      animationData={animationData}
+      loop={true}
+      autoplay={true}
+      className="batch-lottie-icon"
+    />
+  );
+}
 
 function Batches() {
   const [batches, setBatches] = useState([]);
@@ -44,7 +74,15 @@ function Batches() {
         ) : (
           batches.map((batch) => (
             <div className="batch-card" key={batch._id}>
-              <div className="batch-icon">{batch.icon || "💪"}</div>
+              <div className="batch-icon">
+                {batch.lottieIcon ? (
+                  <LottieIcon url={batch.lottieIcon} />
+                ) : (
+                  <div className="batch-icon-fallback">
+                    {batch.icon || "💪"}
+                  </div>
+                )}
+              </div>
 
               <h3>{batch.title}</h3>
 

@@ -6,6 +6,7 @@ const API_URL =
 
 function TransformationTab() {
   const [transformations, setTransformations] = useState([]);
+  const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [name, setName] = useState("");
   const [image, setImage] = useState(null);
@@ -135,6 +136,15 @@ function TransformationTab() {
     setName("");
     setImage(null);
     setOldImage("");
+    setShowForm(false);
+  };
+
+  const openAddForm = () => {
+    setEditingId(null);
+    setName("");
+    setImage(null);
+    setOldImage("");
+    setShowForm(true);
   };
 
   const saveTransformation = async (e) => {
@@ -201,6 +211,7 @@ function TransformationTab() {
     setName(item.name || "");
     setOldImage(item.image || "");
     setImage(null);
+    setShowForm(true);
   };
 
   const deleteTransformation = async (id) => {
@@ -236,91 +247,122 @@ function TransformationTab() {
   };
 
   return (
-    <div className="transformation-admin">
-      <div className="transformation-admin-header">
-        <div>
-          <h2>Transformations</h2>
-          <p>Add, edit and delete transformation results</p>
+    <>
+      <div className="transformation-admin">
+        <div className="transformation-admin-header">
+          <div>
+            <h2>Transformations</h2>
+            <p>Add, edit and delete transformation results</p>
+          </div>
+
+          <button
+            type="button"
+            className="transformation-add-btn"
+            onClick={openAddForm}
+          >
+            + Add Transformation
+          </button>
+        </div>
+
+        <div className="transformation-list">
+          {transformations.map((item) => (
+            <div className="transformation-card-admin" key={item._id}>
+              <img src={getImageUrl(item.image)} alt={item.name} />
+
+              <h3>{item.name}</h3>
+
+              <div className="transformation-card-buttons">
+                <button type="button" onClick={() => editTransformation(item)}>
+                  Edit
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => deleteTransformation(item._id)}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
-      <form className="transformation-form" onSubmit={saveTransformation}>
-        <div className="form-group">
-          <label>Transformation Name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Transformation 1"
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Transformation Image</label>
-          <input type="file" accept="image/*" onChange={handleImageChange} />
-          <small>Image will be compressed automatically under 2MB</small>
-        </div>
-
-        {(image || oldImage) && (
-          <div className="transformation-preview">
-            <img
-              src={image ? URL.createObjectURL(image) : getImageUrl(oldImage)}
-              alt="Transformation Preview"
-            />
-          </div>
-        )}
-
-        <div className="transformation-actions">
-          <button
-            type="submit"
-            className="transformation-save-btn"
-            disabled={loading || compressing}
+      {showForm && (
+        <div className="transformation-form-overlay" onClick={resetForm}>
+          <form
+            className="transformation-form"
+            onSubmit={saveTransformation}
+            onClick={(e) => e.stopPropagation()}
           >
-            {compressing
-              ? "Compressing Image..."
-              : loading
-              ? "Saving..."
-              : editingId
-              ? "Update Transformation"
-              : "Add Transformation"}
-          </button>
-
-          {editingId && (
             <button
               type="button"
-              className="transformation-cancel-btn"
+              className="transformation-form-close"
               onClick={resetForm}
             >
-              Cancel
+              ×
             </button>
-          )}
-        </div>
-      </form>
 
-      <div className="transformation-list">
-        {transformations.map((item) => (
-          <div className="transformation-card-admin" key={item._id}>
-            <img src={getImageUrl(item.image)} alt={item.name} />
+            <div className="transformation-form-title">
+              <h3>
+                {editingId ? "Update Transformation" : "Add Transformation"}
+              </h3>
+              <p>Upload transformation image and add a title/name.</p>
+            </div>
 
-            <h3>{item.name}</h3>
+            <div className="form-group">
+              <label>Transformation Name</label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Transformation 1"
+                required
+              />
+            </div>
 
-            <div className="transformation-card-buttons">
-              <button type="button" onClick={() => editTransformation(item)}>
-                Edit
+            <div className="form-group">
+              <label>Transformation Image</label>
+              <input type="file" accept="image/*" onChange={handleImageChange} />
+              <small>Image will be compressed automatically under 2MB</small>
+            </div>
+
+            {(image || oldImage) && (
+              <div className="transformation-preview">
+                <img
+                  src={image ? URL.createObjectURL(image) : getImageUrl(oldImage)}
+                  alt="Transformation Preview"
+                />
+              </div>
+            )}
+
+            <div className="transformation-actions">
+              <button
+                type="submit"
+                className="transformation-save-btn"
+                disabled={loading || compressing}
+              >
+                {compressing
+                  ? "Compressing Image..."
+                  : loading
+                  ? "Saving..."
+                  : editingId
+                  ? "Update Transformation"
+                  : "Add Transformation"}
               </button>
 
               <button
                 type="button"
-                onClick={() => deleteTransformation(item._id)}
+                className="transformation-cancel-btn"
+                onClick={resetForm}
               >
-                Delete
+                Cancel
               </button>
             </div>
-          </div>
-        ))}
-      </div>
-    </div>
+          </form>
+        </div>
+      )}
+    </>
   );
 }
 

@@ -15,8 +15,8 @@ function WhyChooseUsTab() {
 
   const [formData, setFormData] = useState({
     title: "",
-    description: "",
-    order: "",
+    description: ""
+    
   });
 
   const getImageUrl = (imagePath) => {
@@ -27,7 +27,6 @@ function WhyChooseUsTab() {
 
   const parseResponse = async (response) => {
     const text = await response.text();
-
     try {
       return JSON.parse(text);
     } catch {
@@ -55,7 +54,6 @@ function WhyChooseUsTab() {
   const compressImage = (file, maxWidth = 1200, quality = 0.7) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-
       reader.readAsDataURL(file);
 
       reader.onload = (event) => {
@@ -111,7 +109,6 @@ function WhyChooseUsTab() {
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
-
     if (!file) return;
 
     try {
@@ -153,13 +150,20 @@ function WhyChooseUsTab() {
 
     setFormData({
       title: "",
-      description: "",
-      order: "",
+      description: ""
+      
     });
   };
 
   const openAddForm = () => {
-    resetForm();
+    setEditingId(null);
+    setImage(null);
+    setOldImage("");
+    setFormData({
+      title: "",
+      description: ""
+      
+    });
     setShowForm(true);
   };
 
@@ -175,7 +179,7 @@ function WhyChooseUsTab() {
     const data = new FormData();
     data.append("title", formData.title);
     data.append("description", formData.description);
-    data.append("order", Number(formData.order) || 1);
+   
 
     if (image) {
       data.append("image", image);
@@ -213,15 +217,14 @@ function WhyChooseUsTab() {
     setEditingId(item._id);
     setOldImage(item.image || "");
     setImage(null);
-    setShowForm(true);
 
     setFormData({
       title: item.title || "",
-      description: item.description || "",
-      order: item.order || "",
+      description: item.description || ""
+    
     });
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setShowForm(true);
   };
 
   const deleteItem = async (id) => {
@@ -247,136 +250,137 @@ function WhyChooseUsTab() {
   };
 
   return (
-    <div className="why-admin">
-      <div className="why-header">
-        <div>
-          <span className="admin-section-label">Why Choose Us</span>
+    <>
+      <div className="why-admin">
+        <div className="why-header">
+          <div>
+            <span className="admin-section-label">Why Choose Us</span>
+            <h2>Why Choose Us</h2>
+            <p>Manage the features and benefits displayed on your website.</p>
+          </div>
 
-          <h2>Why Choose Us</h2>
-
-          <p>Manage the features and benefits displayed on your website.</p>
+          <button type="button" className="why-add-btn" onClick={openAddForm}>
+            + Add Card
+          </button>
         </div>
 
-        <button type="button" className="why-add-btn" onClick={openAddForm}>
-          + Add Card
-        </button>
+        <div className="why-list">
+          {items.map((item) => (
+            <div className="why-card-admin" key={item._id}>
+              <div className="why-card-image">
+                {item.image ? (
+                  <img src={getImageUrl(item.image)} alt={item.title} />
+                ) : (
+                  <span>🖼️</span>
+                )}
+
+               
+              </div>
+
+              <div className="why-card-content">
+                <h3>{item.title}</h3>
+                <p>{item.description}</p>
+              </div>
+
+              <div className="why-card-buttons">
+                <button type="button" onClick={() => editItem(item)}>
+                  Edit
+                </button>
+
+                <button type="button" onClick={() => deleteItem(item._id)}>
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {showForm && (
-        <form className="why-form" onSubmit={saveItem}>
-          <div className="why-form-title">
-            <h3>{editingId ? "Update Feature Card" : "Add New Feature Card"}</h3>
-            <p>
-              Upload image, add title, description and display order for the
-              website card.
-            </p>
-          </div>
+        <div className="why-form-overlay" onClick={resetForm}>
+          <form
+            className="why-form"
+            onSubmit={saveItem}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button type="button" className="why-form-close" onClick={resetForm}>
+              ×
+            </button>
 
-          <div className="why-form-grid">
-            <div className="form-group">
-              <label>Card Image</label>
-              <input type="file" accept="image/*" onChange={handleImageChange} />
-              <small>Image will be compressed automatically under 2MB</small>
+            <div className="why-form-title">
+              <h3>{editingId ? "Update Feature Card" : "Add New Feature Card"}</h3>
+              <p>
+                Upload image, add title, description for the
+                website card.
+              </p>
             </div>
 
+            <div className="why-form-grid">
+              <div className="form-group">
+                <label>Card Image</label>
+                <input type="file" accept="image/*" onChange={handleImageChange} />
+                <small>Image will be compressed automatically under 2MB</small>
+              </div>
+
+              
+            </div>
+
+            {(image || oldImage) && (
+              <div className="why-preview">
+                <img
+                  src={image ? URL.createObjectURL(image) : getImageUrl(oldImage)}
+                  alt="Why Choose Us Preview"
+                />
+              </div>
+            )}
+
             <div className="form-group">
-              <label>Order</label>
+              <label>Title</label>
               <input
-                type="number"
-                name="order"
-                value={formData.order}
+                type="text"
+                name="title"
+                value={formData.title}
                 onChange={handleChange}
-                placeholder="1"
+                placeholder="Expert Trainers"
+                required
               />
             </div>
-          </div>
 
-          {(image || oldImage) && (
-            <div className="why-preview">
-              <img
-                src={image ? URL.createObjectURL(image) : getImageUrl(oldImage)}
-                alt="Why Choose Us Preview"
+            <div className="form-group">
+              <label>Description</label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Write card description"
+                rows="4"
+                required
               />
             </div>
-          )}
 
-          <div className="form-group">
-            <label>Title</label>
-            <input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              placeholder="Expert Trainers"
-              required
-            />
-          </div>
+            <div className="why-actions">
+              <button
+                type="submit"
+                className="why-save-btn"
+                disabled={loading || compressing}
+              >
+                {compressing
+                  ? "Compressing Image..."
+                  : loading
+                  ? "Saving..."
+                  : editingId
+                  ? "Update Card"
+                  : "Save Card"}
+              </button>
 
-          <div className="form-group">
-            <label>Description</label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              placeholder="Write card description"
-              rows="4"
-              required
-            />
-          </div>
-
-          <div className="why-actions">
-            <button
-              type="submit"
-              className="why-save-btn"
-              disabled={loading || compressing}
-            >
-              {compressing
-                ? "Compressing Image..."
-                : loading
-                ? "Saving..."
-                : editingId
-                ? "Update Card"
-                : "Save Card"}
-            </button>
-
-            <button type="button" className="why-cancel-btn" onClick={resetForm}>
-              Cancel
-            </button>
-          </div>
-        </form>
+              <button type="button" className="why-cancel-btn" onClick={resetForm}>
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
       )}
-
-      <div className="why-list">
-        {items.map((item) => (
-          <div className="why-card-admin" key={item._id}>
-            <div className="why-card-image">
-              {item.image ? (
-                <img src={getImageUrl(item.image)} alt={item.title} />
-              ) : (
-                <span>🖼️</span>
-              )}
-
-              <small>Order: {item.order}</small>
-            </div>
-
-            <div className="why-card-content">
-              <h3>{item.title}</h3>
-              <p>{item.description}</p>
-            </div>
-
-            <div className="why-card-buttons">
-              <button type="button" onClick={() => editItem(item)}>
-                Edit
-              </button>
-
-              <button type="button" onClick={() => deleteItem(item._id)}>
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+    </>
   );
 }
 
