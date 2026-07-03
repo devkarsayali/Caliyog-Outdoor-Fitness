@@ -206,15 +206,7 @@ function AboutTab() {
 
   return (
     <div className="about-tab">
-      <div className="about-tab-header">
-        <div>
-          <span className="admin-section-label">About Management</span>
-
-          <h2>About Section</h2>
-
-          <p>Manage your website About section, description and images.</p>
-        </div>
-      </div>
+      
 
       <form className="about-form" onSubmit={saveAbout}>
         <div className="form-grid">

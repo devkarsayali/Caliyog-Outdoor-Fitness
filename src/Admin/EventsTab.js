@@ -5,8 +5,7 @@ import "../style/Admin/AdminCommon.css";
 import "../style/Admin/EventsTab.css";
 
 function EventsTab() {
-  const API_URL =
-    "https://caliyog-fitness-backend-production-2144.up.railway.app";
+  const API_URL = "https://caliyog-fitness-backend-production-2144.up.railway.app";
 
   const [organisedEvents, setOrganisedEvents] = useState([]);
   const [showOrganisedModal, setShowOrganisedModal] = useState(false);
@@ -19,13 +18,10 @@ function EventsTab() {
 
   const safeJson = async (response) => {
     const text = await response.text();
-
     try {
       return text ? JSON.parse(text) : {};
     } catch {
-      return {
-        message: text || "Server returned invalid response",
-      };
+      return { message: text || "Server returned invalid response" };
     }
   };
 
@@ -44,8 +40,7 @@ function EventsTab() {
 
       setOrganisedEvents(
         eventList.filter(
-          (item) =>
-            item.eventType === "organized" || item.eventType === "organised"
+          (item) => item.eventType === "organized" || item.eventType === "organised"
         )
       );
     } catch (error) {
@@ -62,6 +57,20 @@ function EventsTab() {
     setEditId(null);
     setModalMode("add");
     setOrganisedForm("");
+  };
+
+  const openOrganisedAdd = () => {
+    setModalMode("add");
+    setEditId(null);
+    setOrganisedForm("");
+    setShowOrganisedModal(true);
+  };
+
+  const openOrganisedEdit = (evt) => {
+    setOrganisedForm(evt.title || "");
+    setEditId(evt._id);
+    setModalMode("edit");
+    setShowOrganisedModal(true);
   };
 
   const handleOrganisedSubmit = async (e) => {
@@ -112,12 +121,9 @@ function EventsTab() {
 
     try {
       const token = getAuthToken();
-
       const response = await fetch(`${API_URL}/api/events/${id}`, {
         method: "DELETE",
-        headers: {
-          Authorization: token ? `Bearer ${token}` : "",
-        },
+        headers: { Authorization: token ? `Bearer ${token}` : "" },
       });
 
       const data = await safeJson(response);
@@ -137,28 +143,16 @@ function EventsTab() {
 
   return (
     <div className="admin-content-window">
-      <div className="events-header-box">
-        <div>
-          <span className="events-label">Organized Events Management</span>
-          <h2>Events We Organized</h2>
-          <p>Add, update and delete major organized events here.</p>
-        </div>
-
-        <button
-          type="button"
-          className="events-action-btn primary"
-          onClick={() => {
-            setModalMode("add");
-            setShowOrganisedModal(true);
-          }}
-        >
-          <FiPlus /> Add Organized Event
-        </button>
-      </div>
-
       <div className="section-title-row">
         <h2>Major Organized Events</h2>
         <span>{organisedEvents.length} Items</span>
+        <button
+          type="button"
+          className="events-action-btn primary"
+          onClick={openOrganisedAdd}
+        >
+          <FiPlus /> Add Organized Event
+        </button>
       </div>
 
       <div className="major-events-list">
@@ -173,12 +167,7 @@ function EventsTab() {
               <button
                 type="button"
                 className="small-edit-btn"
-                onClick={() => {
-                  setOrganisedForm(evt.title || "");
-                  setEditId(evt._id);
-                  setModalMode("edit");
-                  setShowOrganisedModal(true);
-                }}
+                onClick={() => openOrganisedEdit(evt)}
               >
                 <FiEdit />
               </button>
@@ -193,6 +182,13 @@ function EventsTab() {
             </div>
           </div>
         ))}
+
+        {organisedEvents.length === 0 && (
+          <div className="admin-empty-box">
+            <h3>No Organized Events</h3>
+            <p>Click "Add Organized Event" to create your first one.</p>
+          </div>
+        )}
       </div>
 
       {showOrganisedModal && (

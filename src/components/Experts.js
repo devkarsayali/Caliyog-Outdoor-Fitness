@@ -16,8 +16,7 @@ function Experts() {
     return [];
   };
 
-  // ---------------- Image URL ----------------
-
+  // ✅ FIX: Handle both object and string image formats
   const getImageUrl = (expert) => {
     const image =
       expert?.image ||
@@ -29,33 +28,32 @@ function Experts() {
 
     if (!image) return expertsImage;
 
-    // Base64 image
-    if (image.startsWith("data:image")) {
+    // If image is an object (new format from backend)
+    if (typeof image === "object" && image !== null) {
+      if (image.imageUrl) return image.imageUrl;
+      if (image.data && image.contentType) {
+        return `data:${image.contentType};base64,${image.data}`;
+      }
+      return expertsImage;
+    }
+
+    // Base64 image (string)
+    if (typeof image === "string" && image.startsWith("data:image")) {
       return image;
     }
 
     // Already full URL
-    if (image.startsWith("http://") || image.startsWith("https://")) {
+    if (typeof image === "string" && (image.startsWith("http://") || image.startsWith("https://"))) {
       return image;
     }
 
     // Relative uploads path
-    if (image.startsWith("/uploads")) {
+    if (typeof image === "string" && image.startsWith("/uploads")) {
       return `${API_URL}${image}`;
     }
 
-    // Old localhost / local IP path
-    if (
-      image.includes("localhost") ||
-      image.includes("127.0.0.1") ||
-      image.includes("192.168.")
-    ) {
-      const fileName = image.split("/").pop();
-      return `${API_URL}/uploads/${fileName}`;
-    }
-
-    // Only filename stored in MongoDB
-    return `${API_URL}/uploads/${image.split("/").pop()}`;
+    // Fallback
+    return expertsImage;
   };
 
   // ---------------- Fetch Experts ----------------
@@ -97,7 +95,6 @@ function Experts() {
       </div>
 
       {/* Banner */}
-
       <div className="experts-image-container">
         <img
           src={expertsImage}
@@ -108,22 +105,14 @@ function Experts() {
       </div>
 
       {/* Cards */}
-
       <div className="experts-info-container">
         {loading ? (
-          <p className="experts-message">
-            Loading experts...
-          </p>
+          <p className="experts-message">Loading experts...</p>
         ) : experts.length === 0 ? (
-          <p className="experts-message">
-            No experts added yet.
-          </p>
+          <p className="experts-message">No experts added yet.</p>
         ) : (
           experts.map((expert, index) => (
-            <div
-              className="expert-info-card"
-              key={expert._id || index}
-            >
+            <div className="expert-info-card" key={expert._id || index}>
               <div className="expert-card-image-box">
                 <img
                   className="expert-card-image"
@@ -138,9 +127,7 @@ function Experts() {
               </div>
 
               <div className="expert-card-content">
-                <h3>
-                  {expert.name || "Expert Name"}
-                </h3>
+                <h3>{expert.name || "Expert Name"}</h3>
 
                 <h4>
                   {expert.specialization ||

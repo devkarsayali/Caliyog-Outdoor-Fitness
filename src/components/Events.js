@@ -2,8 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import "../style/Events.css";
 
 function Events() {
-  const API_URL =
-    "https://caliyog-fitness-backend-production-2144.up.railway.app";
+  const API_URL = "https://caliyog-fitness-backend-production-2144.up.railway.app";
 
   const [events, setEvents] = useState([]);
   const [organisedEvents, setOrganisedEvents] = useState([]);
@@ -17,58 +16,28 @@ function Events() {
   };
 
   const getImageUrl = (item) => {
-    const image =
-      item?.image ||
-      item?.img ||
-      item?.photo ||
-      item?.eventImage ||
-      item?.imageUrl ||
-      item?.file ||
-      item?.url;
-
-    if (!image || String(image).trim() === "") return "";
-
-    if (image.startsWith("data:image")) return image;
-
-  // Convert old local backend URL to Railway URL
-  if (image.includes("192.168.") || image.includes("localhost:5000")) {
-    const fileName = image.split("/").pop();
-    return `${API_URL}/uploads/${fileName}`;
-  }
-
-  if (image.startsWith("http")) return image;
-
-  return `${API_URL}${image.startsWith("/") ? image : "/" + image}`;
-};
+    const image = item?.image || item?.img || item?.imageUrl;
+    if (!image) return "";
+    if (typeof image === "string") {
+      if (image.startsWith("data:image")) return image;
+      if (image.startsWith("http")) return image;
+      if (image.startsWith("/uploads")) return `${API_URL}${image}`;
+    }
+    return "";
+  };
 
   const fetchEvents = useCallback(async () => {
     try {
       setLoading(true);
-
       const response = await fetch(`${API_URL}/api/events`);
-
-      if (!response.ok) {
-        throw new Error("Failed to load events");
-      }
+      if (!response.ok) throw new Error("Failed to load events");
 
       const data = await response.json();
       const eventList = getArrayData(data);
 
-      const galleryEvents = eventList.filter(
-        (item) =>
-          item.eventType === "gallery" ||
-          item.type === "gallery" ||
-          item.category === "gallery"
-      );
-
+      const galleryEvents = eventList.filter((item) => item.eventType === "gallery");
       const majorEvents = eventList.filter(
-        (item) =>
-          item.eventType === "organized" ||
-          item.eventType === "organised" ||
-          item.type === "organized" ||
-          item.type === "organised" ||
-          item.category === "organized" ||
-          item.category === "organised"
+        (item) => item.eventType === "organized" || item.eventType === "organised"
       );
 
       setEvents(galleryEvents);
@@ -101,7 +70,6 @@ function Events() {
         ) : (
           events.map((item, index) => {
             const imageUrl = getImageUrl(item);
-
             return (
               <div className="event-card" key={item._id || index}>
                 <div className="event-img-box">
@@ -119,7 +87,6 @@ function Events() {
                     <div className="no-event-image">No Image Available</div>
                   )}
                 </div>
-
                 <div className="event-content">
                   <h3>{item.title || "Untitled Event"}</h3>
                   {item.description && <p>{item.description}</p>}
@@ -153,8 +120,6 @@ function Events() {
             ))
           )}
         </div>
-
-       
 
         <div className="coach-message">
           <h3>10+ Coaches Dedicated To One Mission</h3>

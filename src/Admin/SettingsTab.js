@@ -140,10 +140,7 @@ function SettingsTab() {
 
   return (
     <div className="settings-tab">
-      <div className="settings-header">
-        <h2>⚙️ Account Settings</h2>
-        <p>Update admin profile information and password.</p>
-      </div>
+      
 
       <form className="settings-card" onSubmit={updateProfile}>
         <h3>👤 Profile Information</h3>

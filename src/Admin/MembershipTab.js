@@ -177,21 +177,13 @@ const API_URL =
   return (
     <div className="admin-content-window">
       <header className="admin-header">
-        <div className="membership-header-box">
-  <div>
-    <span className="membership-label">Membership Management</span>
-    <h2>Membership Plans</h2>
-    <p>Add, edit, and delete user-side membership packages.</p>
-  </div>
-
-  <button
+        <button
     type="button"
     className="membership-add-btn"
     onClick={openAddModal}
   >
     + Add Plan
   </button>
-</div>
       </header>
 
       <div className="admin-cards-grid">

@@ -1,28 +1,32 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import "../style/Admin/TransformationsTab.css";
 
-const API_URL =
-  "https://caliyog-fitness-backend-production-2144.up.railway.app";
+const API_URL = "https://caliyog-fitness-backend-production-2144.up.railway.app";
 
 function TransformationTab() {
+  const fileInputRef = useRef(null);
+
   const [transformations, setTransformations] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [name, setName] = useState("");
-  const [image, setImage] = useState(null);
-  const [oldImage, setOldImage] = useState("");
+  const [imagePreview, setImagePreview] = useState("");
+  const [imageFile, setImageFile] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [compressing, setCompressing] = useState(false);
 
-  const getImageUrl = (imagePath) => {
-    if (!imagePath) return "";
-    if (imagePath.startsWith("http")) return imagePath;
-    return `${API_URL}${imagePath}`;
+  // ✅ Image is base64 string from backend
+  const getImageUrl = (img) => {
+    if (!img) return "";
+    if (typeof img === "string") {
+      if (img.startsWith("data:image")) return img;
+      if (img.startsWith("blob:")) return img;
+      if (img.startsWith("http")) return img;
+    }
+    return "";
   };
 
   const parseResponse = async (response) => {
     const text = await response.text();
-
     try {
       return JSON.parse(text);
     } catch {
@@ -34,7 +38,6 @@ function TransformationTab() {
     try {
       const response = await fetch(`${API_URL}/api/transformations`);
       const result = await parseResponse(response);
-
       if (result.success) {
         setTransformations(result.data || []);
       }
@@ -47,117 +50,48 @@ function TransformationTab() {
     loadTransformations();
   }, [loadTransformations]);
 
-  const compressImage = (file, maxWidth = 1200, quality = 0.7) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-
-      reader.onload = (event) => {
-        const img = new Image();
-        img.src = event.target.result;
-
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-
-          let width = img.width;
-          let height = img.height;
-
-          if (width > maxWidth) {
-            height = Math.round((height * maxWidth) / width);
-            width = maxWidth;
-          }
-
-          canvas.width = width;
-          canvas.height = height;
-
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0, width, height);
-
-          canvas.toBlob(
-            (blob) => {
-              if (!blob) {
-                reject(new Error("Image compression failed"));
-                return;
-              }
-
-              const compressedFile = new File(
-                [blob],
-                file.name.replace(/\.[^/.]+$/, ".jpg"),
-                {
-                  type: "image/jpeg",
-                  lastModified: Date.now(),
-                }
-              );
-
-              resolve(compressedFile);
-            },
-            "image/jpeg",
-            quality
-          );
-        };
-
-        img.onerror = () => reject(new Error("Invalid image file"));
-      };
-
-      reader.onerror = () => reject(new Error("Image reading failed"));
-    });
-  };
-
-  const handleImageChange = async (e) => {
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    try {
-      setCompressing(true);
-
-      const compressedFile = await compressImage(file, 1200, 0.7);
-
-      if (compressedFile.size > 2 * 1024 * 1024) {
-        alert(
-          "Image is still larger than 2MB after compression. Please choose a smaller image."
-        );
-        e.target.value = "";
-        setImage(null);
-        return;
-      }
-
-      setImage(compressedFile);
-    } catch (error) {
-      alert(error.message || "Image compression failed");
+    if (file.size > 5 * 1024 * 1024) {
+      alert("File too large! Max 5MB.");
       e.target.value = "";
-      setImage(null);
-    } finally {
-      setCompressing(false);
+      return;
     }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+      setImageFile(file);
+    };
+    reader.readAsDataURL(file);
   };
 
   const resetForm = () => {
     setEditingId(null);
     setName("");
-    setImage(null);
-    setOldImage("");
+    setImagePreview("");
+    setImageFile(null);
     setShowForm(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const openAddForm = () => {
-    setEditingId(null);
-    setName("");
-    setImage(null);
-    setOldImage("");
+    resetForm();
     setShowForm(true);
   };
 
   const saveTransformation = async (e) => {
     e.preventDefault();
 
-    if (!editingId && !image) {
+    if (!editingId && !imageFile) {
       alert("Please select transformation image");
       return;
     }
 
     setLoading(true);
 
-    const method = editingId ? "PUT" : "POST";
     const url = editingId
       ? `${API_URL}/api/transformations/${editingId}`
       : `${API_URL}/api/transformations`;
@@ -165,15 +99,15 @@ function TransformationTab() {
     const data = new FormData();
     data.append("name", name);
 
-    if (image) {
-      data.append("image", image);
+    if (imageFile) {
+      data.append("image", imageFile);
     }
 
     try {
       const token = localStorage.getItem("token");
 
       const response = await fetch(url, {
-        method,
+        method: editingId ? "PUT" : "POST",
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -187,17 +121,13 @@ function TransformationTab() {
         return;
       }
 
-      if (result.success) {
-        alert(
-          editingId
-            ? "Transformation updated successfully"
-            : "Transformation added successfully"
-        );
-        resetForm();
-        loadTransformations();
-      } else {
-        alert(result.message || "Failed to save transformation");
-      }
+      alert(
+        editingId
+          ? "Transformation updated successfully"
+          : "Transformation added successfully"
+      );
+      resetForm();
+      loadTransformations();
     } catch (error) {
       console.error("Transformation Save Error:", error);
       alert(error.message || "Something went wrong");
@@ -209,8 +139,8 @@ function TransformationTab() {
   const editTransformation = (item) => {
     setEditingId(item._id);
     setName(item.name || "");
-    setOldImage(item.image || "");
-    setImage(null);
+    setImagePreview(getImageUrl(item.image));
+    setImageFile(null);
     setShowForm(true);
   };
 
@@ -219,7 +149,6 @@ function TransformationTab() {
 
     try {
       const token = localStorage.getItem("token");
-
       const response = await fetch(`${API_URL}/api/transformations/${id}`, {
         method: "DELETE",
         headers: {
@@ -230,16 +159,12 @@ function TransformationTab() {
       const result = await parseResponse(response);
 
       if (!response.ok) {
-        alert(result.message || "Failed to delete transformation");
+        alert(result.message || "Failed to delete");
         return;
       }
 
-      if (result.success) {
-        alert("Transformation deleted successfully");
-        loadTransformations();
-      } else {
-        alert(result.message || "Failed to delete transformation");
-      }
+      alert("Transformation deleted successfully");
+      loadTransformations();
     } catch (error) {
       console.error("Transformation Delete Error:", error);
       alert(error.message || "Something went wrong");
@@ -247,45 +172,44 @@ function TransformationTab() {
   };
 
   return (
-    <>
-      <div className="transformation-admin">
-        <div className="transformation-admin-header">
-          <div>
-            <h2>Transformations</h2>
-            <p>Add, edit and delete transformation results</p>
-          </div>
+    <div className="admin-content-window">
+      <div className="section-title-row">
+        <h2>Transformations</h2>
+        <span>{transformations.length} Items</span>
+        <button
+          type="button"
+          className="transformation-add-btn"
+          onClick={openAddForm}
+        >
+          + Add Transformation
+        </button>
+      </div>
 
-          <button
-            type="button"
-            className="transformation-add-btn"
-            onClick={openAddForm}
-          >
-            + Add Transformation
-          </button>
-        </div>
-
-        <div className="transformation-list">
-          {transformations.map((item) => (
-            <div className="transformation-card-admin" key={item._id}>
-              <img src={getImageUrl(item.image)} alt={item.name} />
-
-              <h3>{item.name}</h3>
-
-              <div className="transformation-card-buttons">
-                <button type="button" onClick={() => editTransformation(item)}>
-                  Edit
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => deleteTransformation(item._id)}
-                >
-                  Delete
-                </button>
-              </div>
+      <div className="transformation-list">
+        {transformations.map((item) => (
+          <div className="transformation-card-admin" key={item._id}>
+            <img src={getImageUrl(item.image)} alt={item.name} />
+            <h3>{item.name}</h3>
+            <div className="transformation-card-buttons">
+              <button type="button" onClick={() => editTransformation(item)}>
+                Edit
+              </button>
+              <button
+                type="button"
+                onClick={() => deleteTransformation(item._id)}
+              >
+                Delete
+              </button>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+
+        {transformations.length === 0 && (
+          <div className="admin-empty-box">
+            <h3>No Transformations Yet</h3>
+            <p>Click "Add Transformation" to upload your first one.</p>
+          </div>
+        )}
       </div>
 
       {showForm && (
@@ -323,16 +247,18 @@ function TransformationTab() {
 
             <div className="form-group">
               <label>Transformation Image</label>
-              <input type="file" accept="image/*" onChange={handleImageChange} />
-              <small>Image will be compressed automatically under 2MB</small>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+              <small>Max 5MB. Image is stored in MongoDB.</small>
             </div>
 
-            {(image || oldImage) && (
+            {imagePreview && (
               <div className="transformation-preview">
-                <img
-                  src={image ? URL.createObjectURL(image) : getImageUrl(oldImage)}
-                  alt="Transformation Preview"
-                />
+                <img src={imagePreview} alt="Preview" />
               </div>
             )}
 
@@ -340,11 +266,9 @@ function TransformationTab() {
               <button
                 type="submit"
                 className="transformation-save-btn"
-                disabled={loading || compressing}
+                disabled={loading}
               >
-                {compressing
-                  ? "Compressing Image..."
-                  : loading
+                {loading
                   ? "Saving..."
                   : editingId
                   ? "Update Transformation"
@@ -362,7 +286,7 @@ function TransformationTab() {
           </form>
         </div>
       )}
-    </>
+    </div>
   );
 }
 

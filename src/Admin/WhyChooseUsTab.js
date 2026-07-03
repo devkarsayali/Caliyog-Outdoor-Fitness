@@ -1,28 +1,33 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import "../style/Admin/WhyChooseUsTab.css";
 
-const API_URL =
-  "https://caliyog-fitness-backend-production-2144.up.railway.app";
+const API_URL = "https://caliyog-fitness-backend-production-2144.up.railway.app";
 
 function WhyChooseUsTab() {
+  const fileInputRef = useRef(null);
+
   const [items, setItems] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [image, setImage] = useState(null);
-  const [oldImage, setOldImage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [compressing, setCompressing] = useState(false);
+
+  const [imagePreview, setImagePreview] = useState("");
+  const [imageFile, setImageFile] = useState(null);
 
   const [formData, setFormData] = useState({
     title: "",
-    description: ""
-    
+    description: "",
   });
 
-  const getImageUrl = (imagePath) => {
-    if (!imagePath) return "";
-    if (imagePath.startsWith("http")) return imagePath;
-    return `${API_URL}${imagePath}`;
+  // ✅ Image is now a base64 string from backend
+  const getImageUrl = (img) => {
+    if (!img) return "";
+    if (typeof img === "string") {
+      if (img.startsWith("data:image")) return img;
+      if (img.startsWith("blob:")) return img;
+      if (img.startsWith("http")) return img;
+    }
+    return "";
   };
 
   const parseResponse = async (response) => {
@@ -38,7 +43,6 @@ function WhyChooseUsTab() {
     try {
       const response = await fetch(`${API_URL}/api/why-choose-us`);
       const result = await parseResponse(response);
-
       if (result.success) {
         setItems(result.data || []);
       }
@@ -51,119 +55,39 @@ function WhyChooseUsTab() {
     loadItems();
   }, [loadItems]);
 
-  const compressImage = (file, maxWidth = 1200, quality = 0.7) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-
-      reader.onload = (event) => {
-        const img = new Image();
-        img.src = event.target.result;
-
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-
-          let width = img.width;
-          let height = img.height;
-
-          if (width > maxWidth) {
-            height = Math.round((height * maxWidth) / width);
-            width = maxWidth;
-          }
-
-          canvas.width = width;
-          canvas.height = height;
-
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0, width, height);
-
-          canvas.toBlob(
-            (blob) => {
-              if (!blob) {
-                reject(new Error("Image compression failed"));
-                return;
-              }
-
-              const compressedFile = new File(
-                [blob],
-                file.name.replace(/\.[^/.]+$/, ".jpg"),
-                {
-                  type: "image/jpeg",
-                  lastModified: Date.now(),
-                }
-              );
-
-              resolve(compressedFile);
-            },
-            "image/jpeg",
-            quality
-          );
-        };
-
-        img.onerror = () => reject(new Error("Invalid image file"));
-      };
-
-      reader.onerror = () => reject(new Error("Image reading failed"));
-    });
-  };
-
-  const handleImageChange = async (e) => {
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    try {
-      setCompressing(true);
-
-      const compressedFile = await compressImage(file, 1200, 0.7);
-
-      if (compressedFile.size > 2 * 1024 * 1024) {
-        alert(
-          "Image is still larger than 2MB after compression. Please choose a smaller image."
-        );
-        e.target.value = "";
-        setImage(null);
-        return;
-      }
-
-      setImage(compressedFile);
-    } catch (error) {
-      alert(error.message || "Image compression failed");
+    if (file.size > 5 * 1024 * 1024) {
+      alert("File too large! Max 5MB.");
       e.target.value = "";
-      setImage(null);
-    } finally {
-      setCompressing(false);
+      return;
     }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+      setImageFile(file);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const resetForm = () => {
     setEditingId(null);
-    setImage(null);
-    setOldImage("");
+    setImagePreview("");
+    setImageFile(null);
     setShowForm(false);
-
-    setFormData({
-      title: "",
-      description: ""
-      
-    });
+    setFormData({ title: "", description: "" });
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const openAddForm = () => {
-    setEditingId(null);
-    setImage(null);
-    setOldImage("");
-    setFormData({
-      title: "",
-      description: ""
-      
-    });
+    resetForm();
     setShowForm(true);
   };
 
@@ -171,7 +95,6 @@ function WhyChooseUsTab() {
     e.preventDefault();
     setLoading(true);
 
-    const method = editingId ? "PUT" : "POST";
     const url = editingId
       ? `${API_URL}/api/why-choose-us/${editingId}`
       : `${API_URL}/api/why-choose-us`;
@@ -179,15 +102,14 @@ function WhyChooseUsTab() {
     const data = new FormData();
     data.append("title", formData.title);
     data.append("description", formData.description);
-   
 
-    if (image) {
-      data.append("image", image);
+    if (imageFile) {
+      data.append("image", imageFile);
     }
 
     try {
       const response = await fetch(url, {
-        method,
+        method: editingId ? "PUT" : "POST",
         body: data,
       });
 
@@ -198,13 +120,9 @@ function WhyChooseUsTab() {
         return;
       }
 
-      if (result.success) {
-        alert(editingId ? "Card updated successfully" : "Card added successfully");
-        resetForm();
-        loadItems();
-      } else {
-        alert(result.message || "Failed to save card");
-      }
+      alert(editingId ? "Card updated successfully" : "Card added successfully");
+      resetForm();
+      loadItems();
     } catch (error) {
       console.error("Why Choose Us Save Error:", error);
       alert(error.message || "Something went wrong");
@@ -215,85 +133,76 @@ function WhyChooseUsTab() {
 
   const editItem = (item) => {
     setEditingId(item._id);
-    setOldImage(item.image || "");
-    setImage(null);
-
+    setImagePreview(getImageUrl(item.image));
+    setImageFile(null);
     setFormData({
       title: item.title || "",
-      description: item.description || ""
-    
+      description: item.description || "",
     });
-
     setShowForm(true);
   };
 
   const deleteItem = async (id) => {
     if (!window.confirm("Delete this card?")) return;
-
     try {
       const response = await fetch(`${API_URL}/api/why-choose-us/${id}`, {
         method: "DELETE",
       });
-
       const result = await parseResponse(response);
-
       if (result.success) {
         alert("Card deleted successfully");
         loadItems();
       } else {
-        alert(result.message || "Failed to delete card");
+        alert(result.message || "Failed to delete");
       }
     } catch (error) {
       console.error("Why Choose Us Delete Error:", error);
-      alert(error.message || "Something went wrong");
     }
   };
 
   return (
-    <>
-      <div className="why-admin">
-        <div className="why-header">
-          <div>
-            <span className="admin-section-label">Why Choose Us</span>
-            <h2>Why Choose Us</h2>
-            <p>Manage the features and benefits displayed on your website.</p>
-          </div>
+    <div className="admin-content-window">
+      <div className="section-title-row">
+        <h2>Why Choose Us Cards</h2>
+        <span>{items.length} Items</span>
+        <button type="button" className="why-add-btn" onClick={openAddForm}>
+          + Add Card
+        </button>
+      </div>
 
-          <button type="button" className="why-add-btn" onClick={openAddForm}>
-            + Add Card
-          </button>
-        </div>
-
-        <div className="why-list">
-          {items.map((item) => (
-            <div className="why-card-admin" key={item._id}>
-              <div className="why-card-image">
-                {item.image ? (
-                  <img src={getImageUrl(item.image)} alt={item.title} />
-                ) : (
-                  <span>🖼️</span>
-                )}
-
-               
-              </div>
-
-              <div className="why-card-content">
-                <h3>{item.title}</h3>
-                <p>{item.description}</p>
-              </div>
-
-              <div className="why-card-buttons">
-                <button type="button" onClick={() => editItem(item)}>
-                  Edit
-                </button>
-
-                <button type="button" onClick={() => deleteItem(item._id)}>
-                  Delete
-                </button>
-              </div>
+      <div className="why-list">
+        {items.map((item) => (
+          <div className="why-card-admin" key={item._id}>
+            <div className="why-card-image">
+              {item.image ? (
+                <img src={getImageUrl(item.image)} alt={item.title} />
+              ) : (
+                <span>🖼️</span>
+              )}
             </div>
-          ))}
-        </div>
+
+            <div className="why-card-content">
+              <h3>{item.title}</h3>
+              <p>{item.description}</p>
+            </div>
+
+            <div className="why-card-buttons">
+              <button type="button" onClick={() => editItem(item)}>
+                Edit
+              </button>
+              <button type="button" onClick={() => deleteItem(item._id)}>
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+
+        {items.length === 0 && (
+          <div className="admin-empty-box">
+            <h3>No Cards Yet</h3>
+            <p>Click "Add Card" to create your first Why Choose Us card.</p>
+          </div>
+        )}
       </div>
 
       {showForm && (
@@ -309,28 +218,23 @@ function WhyChooseUsTab() {
 
             <div className="why-form-title">
               <h3>{editingId ? "Update Feature Card" : "Add New Feature Card"}</h3>
-              <p>
-                Upload image, add title, description for the
-                website card.
-              </p>
+              <p>Upload image, add title, and description for the website card.</p>
             </div>
 
-            <div className="why-form-grid">
-              <div className="form-group">
-                <label>Card Image</label>
-                <input type="file" accept="image/*" onChange={handleImageChange} />
-                <small>Image will be compressed automatically under 2MB</small>
-              </div>
-
-              
+            <div className="form-group">
+              <label>Card Image</label>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+              <small>Max 5MB. Image is stored in MongoDB.</small>
             </div>
 
-            {(image || oldImage) && (
+            {imagePreview && (
               <div className="why-preview">
-                <img
-                  src={image ? URL.createObjectURL(image) : getImageUrl(oldImage)}
-                  alt="Why Choose Us Preview"
-                />
+                <img src={imagePreview} alt="Preview" />
               </div>
             )}
 
@@ -359,20 +263,9 @@ function WhyChooseUsTab() {
             </div>
 
             <div className="why-actions">
-              <button
-                type="submit"
-                className="why-save-btn"
-                disabled={loading || compressing}
-              >
-                {compressing
-                  ? "Compressing Image..."
-                  : loading
-                  ? "Saving..."
-                  : editingId
-                  ? "Update Card"
-                  : "Save Card"}
+              <button type="submit" className="why-save-btn" disabled={loading}>
+                {loading ? "Saving..." : editingId ? "Update Card" : "Save Card"}
               </button>
-
               <button type="button" className="why-cancel-btn" onClick={resetForm}>
                 Cancel
               </button>
@@ -380,7 +273,7 @@ function WhyChooseUsTab() {
           </form>
         </div>
       )}
-    </>
+    </div>
   );
 }
 

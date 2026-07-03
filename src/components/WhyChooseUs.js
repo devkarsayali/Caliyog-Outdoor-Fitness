@@ -6,8 +6,7 @@ import why2 from "../assets/why2.png";
 import why3 from "../assets/why3.png";
 import why4 from "../assets/why4.png";
 
-const API_URL =
-  "https://caliyog-fitness-backend-production-2144.up.railway.app";
+const API_URL = "https://caliyog-fitness-backend-production-2144.up.railway.app";
 
 const defaultFeatures = [
   {
@@ -39,10 +38,14 @@ const defaultFeatures = [
 function WhyChooseUs() {
   const [features, setFeatures] = useState(defaultFeatures);
 
-  const getImageUrl = useCallback((imagePath) => {
-    if (!imagePath || imagePath.trim() === "") return "";
-    if (imagePath.startsWith("http")) return imagePath;
-    return `${API_URL}${imagePath}`;
+  // ✅ Image is base64 string from backend
+  const getImageUrl = useCallback((img) => {
+    if (!img) return "";
+    if (typeof img === "string") {
+      if (img.startsWith("data:image")) return img;
+      if (img.startsWith("http")) return img;
+    }
+    return "";
   }, []);
 
   const loadWhyChooseUs = useCallback(async () => {
@@ -52,13 +55,10 @@ function WhyChooseUs() {
 
       if (result.success && result.data && result.data.length > 0) {
         const dynamicFeatures = result.data.map((item, index) => ({
-          image: item.image
-            ? getImageUrl(item.image)
-            : defaultFeatures[index % defaultFeatures.length].image,
+          image: getImageUrl(item.image) || defaultFeatures[index % defaultFeatures.length].image,
           title: item.title,
           description: item.description,
         }));
-
         setFeatures(dynamicFeatures);
       }
     } catch (error) {

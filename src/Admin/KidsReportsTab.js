@@ -177,11 +177,7 @@ function KidsReportsTab() {
 
   return (
     <div className="reports-container">
-      <div className="report-header">
-        <span className="report-label">Kids Reports Management</span>
-        <h1>Kids Section Requests</h1>
-        <p>Manage all kids batch joining requests separately.</p>
-      </div>
+      
 
       <div className="report-box">
         <h2>Kids Batch Requests ({kidsRequests.length})</h2>

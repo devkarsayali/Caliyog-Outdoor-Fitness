@@ -195,21 +195,13 @@ function BatchesTab() {
 
   return (
     <div className="admin-content-window">
-      <div className="batch-header-box">
-        <div>
-          <span className="batch-label">Batch Management</span>
-          <h2>Training Batches</h2>
-          <p>Add, edit, and delete user-side batch programs.</p>
-        </div>
-
-        <button
+      <button
           type="button"
           className="batch-add-btn"
           onClick={openAddModal}
         >
           <FiPlus /> Add Batch
         </button>
-      </div>
 
       <div className="batch-admin-grid">
         {batches.length === 0 ? (

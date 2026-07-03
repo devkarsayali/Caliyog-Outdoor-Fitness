@@ -108,34 +108,11 @@ const API_URL =
     loadData();
   }, []);
 
-  const totalRecords =
-    expertsCount +
-    eventsCount +
-    programsCount +
-    membershipsCount +
-    organisedEventsCount +
-    reportsCount +
-    membersCount +
-    batchMembersCount +
-    enquiriesCount;
+ 
 
   return (
     <div className="admin-content-window">
-      <div className="overview-hero">
-        <div>
-          <span className="overview-label">CaliYog Admin</span>
-          <h2>Welcome Back, Admin 👋</h2>
-          <p>
-            Monitor website content, user requests, members, batch members,
-            enquiries, events, experts and membership plans from one place.
-          </p>
-        </div>
-
-        <div className="overview-hero-box">
-          <h3>{totalRecords}</h3>
-          <span>Total Records</span>
-        </div>
-      </div>
+      
 
       <section className="admin-stats-grid">
         <StatCard title="Total Experts" number={expertsCount} text="Professional trainers added" icon={<FiUsers />} />

@@ -177,12 +177,7 @@ function ReportsTab() {
 
   return (
     <div className="reports-container">
-      <div className="report-header">
-        <span className="report-label">Reports Management</span>
-        <h1>All Member Requests</h1>
-        <p>Manage normal member joining requests here.</p>
-      </div>
-
+      
       <div className="report-box">
         <h2>All Member Requests ({allRequests.length})</h2>
 

@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import {
   FiMail,
   FiTrash2,
-  FiCheckCircle,
-  FiRefreshCw,
+  FiCheckCircle
+ 
 } from "react-icons/fi";
 
 import "../style/Admin/EnquiriesTab.css";
@@ -159,23 +159,7 @@ function EnquiriesTab() {
 
   return (
     <div className="enquiry-page">
-      <div className="enquiry-header">
-        <div>
-          <span className="enquiry-label">Contact Form Reports</span>
-
-          <h2>User Enquiries</h2>
-
-          <p>
-            All enquiries submitted from the website contact form will appear
-            here.
-          </p>
-        </div>
-
-        <button className="refresh-btn" onClick={loadData}>
-          <FiRefreshCw />
-          Refresh
-        </button>
-      </div>
+      
 
       {loading ? (
         <div className="empty-enquiry-box">

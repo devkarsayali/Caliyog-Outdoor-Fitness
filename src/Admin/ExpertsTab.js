@@ -27,7 +27,7 @@ function ExpertsTab() {
     name: "",
     specialization: "",
     experience: "",
-    image: "",
+    imagePreview: "", // for showing preview
     imageFile: null,
   });
 
@@ -35,13 +35,30 @@ function ExpertsTab() {
     return localStorage.getItem("token") || localStorage.getItem("adminToken");
   };
 
+  // ✅ FIX: Handle both object and string image formats
   const getImageUrl = (image) => {
     if (!image) return "";
 
-    if (image.startsWith("data:image")) return image;
-    if (image.startsWith("http")) return image;
+    // If image is an object (new format from backend)
+    if (typeof image === "object" && image !== null) {
+      // Backend now sends imageUrl inside the object
+      if (image.imageUrl) return image.imageUrl;
 
-    return `${API_URL}${image.startsWith("/") ? image : "/" + image}`;
+      // Build base64 from data buffer (defensive)
+      if (image.data && image.contentType) {
+        return `data:${image.contentType};base64,${image.data}`;
+      }
+      return "";
+    }
+
+    // If image is a string
+    if (typeof image === "string") {
+      if (image.startsWith("data:image")) return image;
+      if (image.startsWith("http")) return image;
+      return `${API_URL}${image.startsWith("/") ? image : "/" + image}`;
+    }
+
+    return "";
   };
 
   const getArrayData = (data) => {
@@ -52,24 +69,24 @@ function ExpertsTab() {
   };
 
   const loadData = useCallback(async () => {
-  try {
-    const response = await fetch(`${API_URL}/api/experts`);
-    const data = await response.json();
+    try {
+      const response = await fetch(`${API_URL}/api/experts`);
+      const data = await response.json();
 
-    if (response.ok) {
-      setExperts(getArrayData(data));
-    } else {
-      alert(data.message || "Failed to load experts");
+      if (response.ok) {
+        setExperts(getArrayData(data));
+      } else {
+        alert(data.message || "Failed to load experts");
+      }
+    } catch (error) {
+      console.error("Experts Load Error:", error);
+      alert("Backend connection failed while loading experts");
     }
-  } catch (error) {
-    console.error("Experts Load Error:", error);
-    alert("Backend connection failed while loading experts");
-  }
-}, [API_URL]);
+  }, [API_URL]);
 
- useEffect(() => {
-  loadData();
-}, [loadData]);
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const closeModal = () => {
     setShowModal(false);
@@ -79,7 +96,7 @@ function ExpertsTab() {
       name: "",
       specialization: "",
       experience: "",
-      image: "",
+      imagePreview: "",
       imageFile: null,
     });
 
@@ -93,12 +110,13 @@ function ExpertsTab() {
     setShowModal(true);
   };
 
+  // ✅ FIX: Properly handle object image when editing
   const openEditModal = (expert) => {
     setForm({
       name: expert.name || "",
       specialization: expert.specialization || "",
       experience: expert.experience || "",
-      image: expert.image || "",
+      imagePreview: getImageUrl(expert.image), // convert object → base64 string
       imageFile: null,
     });
 
@@ -116,10 +134,10 @@ function ExpertsTab() {
 
     if (!file) return;
 
-    const MAX_SIZE = 10 * 1024 * 1024;
+    const MAX_SIZE = 5 * 1024 * 1024; // Match backend limit
 
     if (file.size > MAX_SIZE) {
-      alert("File is too large! Please upload image smaller than 10MB.");
+      alert("File is too large! Please upload image smaller than 5MB.");
       return;
     }
 
@@ -128,7 +146,7 @@ function ExpertsTab() {
     reader.onloadend = () => {
       setForm((prev) => ({
         ...prev,
-        image: reader.result,
+        imagePreview: reader.result,
         imageFile: file,
       }));
     };
@@ -214,71 +232,68 @@ function ExpertsTab() {
 
   return (
     <div className="admin-content-window">
-      <div className="experts-header-box">
-        <div>
-          <span className="experts-label">Trainer Management</span>
-          <h2>Fitness Experts</h2>
-          <p>
-            Manage trainers, coaches, founders and expert profiles displayed on
-            the CaliYog website.
-          </p>
-        </div>
-
-        <button
-          type="button"
-          className="experts-add-btn"
-          onClick={openAddModal}
-        >
-          <FiPlus /> Add Expert
-        </button>
-      </div>
+      <button
+        type="button"
+        className="experts-add-btn"
+        onClick={openAddModal}
+      >
+        <FiPlus /> Add Expert
+      </button>
 
       <div className="admin-cards-grid">
-        {experts.map((expert) => (
-          <article className="expert-card" key={expert._id}>
-            <div className="expert-image-box">
-              {expert.image ? (
-                <img
-                  src={getImageUrl(expert.image)}
-                  alt={expert.name}
-                  className="expert-image"
-                />
-              ) : (
-                <div className="expert-avatar">
-                  <FiUserCheck />
-                </div>
-              )}
+        {experts.map((expert) => {
+          const imageUrl = getImageUrl(expert.image);
 
-              <span className="expert-status">Active Expert</span>
-            </div>
+          return (
+            <article className="expert-card" key={expert._id}>
+              <div className="expert-image-box">
+                {imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    alt={expert.name}
+                    className="expert-image"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.style.display = "none";
+                    }}
+                  />
+                ) : (
+                  <div className="expert-avatar">
+                    <FiUserCheck />
+                  </div>
+                )}
 
-            <div className="expert-card-content">
-              <h3>{expert.name}</h3>
-              <span className="expert-specialization">
-                {expert.specialization}
-              </span>
-              <p>{expert.experience}</p>
-            </div>
+                <span className="expert-status">Active Expert</span>
+              </div>
 
-            <div className="expert-card-footer">
-              <button
-                type="button"
-                className="expert-edit-btn"
-                onClick={() => openEditModal(expert)}
-              >
-                <FiEdit /> Edit
-              </button>
+              <div className="expert-card-content">
+                <h3>{expert.name}</h3>
+                <span className="expert-specialization">
+                  {expert.specialization}
+                </span>
+                <p>{expert.experience}</p>
+              </div>
 
-              <button
-                type="button"
-                className="expert-delete-btn"
-                onClick={() => deleteExpert(expert._id)}
-              >
-                <FiTrash2 /> Delete
-              </button>
-            </div>
-          </article>
-        ))}
+              <div className="expert-card-footer">
+                <button
+                  type="button"
+                  className="expert-edit-btn"
+                  onClick={() => openEditModal(expert)}
+                >
+                  <FiEdit /> Edit
+                </button>
+
+                <button
+                  type="button"
+                  className="expert-delete-btn"
+                  onClick={() => deleteExpert(expert._id)}
+                >
+                  <FiTrash2 /> Delete
+                </button>
+              </div>
+            </article>
+          );
+        })}
 
         {experts.length === 0 && (
           <div className="admin-empty-box">
@@ -316,8 +331,8 @@ function ExpertsTab() {
                   onClick={openBrowse}
                   title="Click to upload photo"
                 >
-                  {form.image ? (
-                    <img src={getImageUrl(form.image)} alt="Preview" />
+                  {form.imagePreview ? (
+                    <img src={form.imagePreview} alt="Preview" />
                   ) : (
                     <div className="photo-placeholder">
                       <FiImage />

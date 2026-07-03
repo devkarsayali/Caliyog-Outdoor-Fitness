@@ -5,8 +5,7 @@ import "../style/Admin/AdminCommon.css";
 import "../style/Admin/EventsTab.css";
 
 function GalleryEventsTab() {
-  const API_URL =
-    "https://caliyog-fitness-backend-production-2144.up.railway.app";
+  const API_URL = "https://caliyog-fitness-backend-production-2144.up.railway.app";
 
   const [events, setEvents] = useState([]);
   const [showGalleryModal, setShowGalleryModal] = useState(false);
@@ -16,7 +15,7 @@ function GalleryEventsTab() {
   const fileInputRef = useRef(null);
 
   const [galleryForm, setGalleryForm] = useState({
-    img: "",
+    imagePreview: "",
     imageFile: null,
     title: "",
   });
@@ -40,12 +39,21 @@ function GalleryEventsTab() {
     return [];
   };
 
-  const hasImage = (img) => typeof img === "string" && img.trim() !== "";
-
   const getImageUrl = (img) => {
     if (!img) return "";
-    if (img.startsWith("blob:") || img.startsWith("http")) return img;
-    return `${API_URL}${img}`;
+    if (typeof img === "string") {
+      if (img.startsWith("blob:")) return img;
+      if (img.startsWith("data:image")) return img;
+      if (img.startsWith("http")) return img;
+      if (img.startsWith("/uploads")) return `${API_URL}${img}`;
+    }
+    return "";
+  };
+
+  const hasImage = (img) => {
+    if (!img) return false;
+    if (typeof img === "string") return img.trim() !== "";
+    return false;
   };
 
   const loadData = useCallback(async () => {
@@ -53,7 +61,6 @@ function GalleryEventsTab() {
       const response = await fetch(`${API_URL}/api/events`);
       const data = await safeJson(response);
       const eventList = getArrayData(data);
-
       setEvents(eventList.filter((item) => item.eventType === "gallery"));
     } catch (error) {
       console.error("Gallery Events Load Error:", error);
@@ -68,16 +75,8 @@ function GalleryEventsTab() {
     setShowGalleryModal(false);
     setEditId(null);
     setModalMode("add");
-
-    setGalleryForm({
-      img: "",
-      imageFile: null,
-      title: "",
-    });
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    setGalleryForm({ imagePreview: "", imageFile: null, title: "" });
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const openBrowse = () => {
@@ -88,16 +87,20 @@ function GalleryEventsTab() {
     const file = e.target.files[0];
     if (!file) return;
 
-    if (file.size > 10 * 1024 * 1024) {
-      alert("File is too large! Please upload image smaller than 10MB.");
+    if (file.size > 5 * 1024 * 1024) {
+      alert("File too large! Max 5MB.");
       return;
     }
 
-    setGalleryForm((prev) => ({
-      ...prev,
-      imageFile: file,
-      img: URL.createObjectURL(file),
-    }));
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setGalleryForm((prev) => ({
+        ...prev,
+        imagePreview: reader.result,
+        imageFile: file,
+      }));
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleGallerySubmit = async (e) => {
@@ -125,9 +128,7 @@ function GalleryEventsTab() {
 
       const response = await fetch(url, {
         method,
-        headers: {
-          Authorization: token ? `Bearer ${token}` : "",
-        },
+        headers: { Authorization: token ? `Bearer ${token}` : "" },
         body: formData,
       });
 
@@ -148,16 +149,13 @@ function GalleryEventsTab() {
   };
 
   const deleteEvent = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this gallery event?")) return;
+    if (!window.confirm("Delete this gallery event?")) return;
 
     try {
       const token = getAuthToken();
-
       const response = await fetch(`${API_URL}/api/events/${id}`, {
         method: "DELETE",
-        headers: {
-          Authorization: token ? `Bearer ${token}` : "",
-        },
+        headers: { Authorization: token ? `Bearer ${token}` : "" },
       });
 
       const data = await safeJson(response);
@@ -175,26 +173,31 @@ function GalleryEventsTab() {
     }
   };
 
+  const openGalleryAdd = () => {
+    setModalMode("add");
+    setShowGalleryModal(true);
+  };
+
+  const openGalleryEdit = (evt) => {
+    setGalleryForm({
+      imagePreview: getImageUrl(evt.image || evt.img),
+      imageFile: null,
+      title: evt.title || "",
+    });
+    setEditId(evt._id);
+    setModalMode("edit");
+    setShowGalleryModal(true);
+  };
+
   return (
     <div className="admin-content-window">
-      <div className="events-header-box">
-        <div>
-          <span className="events-label">Gallery Event Management</span>
-          <h2>Gallery Events</h2>
-          <p>Add, update and delete only gallery event images here.</p>
-        </div>
-
-        <button
-          type="button"
-          className="events-action-btn primary"
-          onClick={() => {
-            setModalMode("add");
-            setShowGalleryModal(true);
-          }}
-        >
-          <FiPlus /> Add Gallery Event
-        </button>
-      </div>
+      <button
+        type="button"
+        className="events-action-btn primary"
+        onClick={openGalleryAdd}
+      >
+        <FiPlus /> Add Gallery Event
+      </button>
 
       <div className="section-title-row">
         <h2>Gallery Cards</h2>
@@ -202,56 +205,61 @@ function GalleryEventsTab() {
       </div>
 
       <div className="events-cards-grid">
-        {events.map((evt) => (
-          <article className="event-card-admin" key={evt._id}>
-            <div className="event-img-box">
-              {hasImage(evt.image || evt.img) ? (
-                <img
-                  src={getImageUrl(evt.image || evt.img)}
-                  alt={evt.title || "Gallery Event"}
-                  className="event-img"
-                />
-              ) : (
-                <div className="image-placeholder">
-                  <FiImage />
-                  <span>No Image</span>
-                </div>
-              )}
-            </div>
+        {events.map((evt) => {
+          const imageUrl = getImageUrl(evt.image || evt.img);
 
-            <div className="event-card-content">
-              <h3>{evt.title || "Untitled Event"}</h3>
-            </div>
+          return (
+            <article className="event-card-admin" key={evt._id}>
+              <div className="event-img-box">
+                {hasImage(evt.image || evt.img) ? (
+                  <img
+                    src={imageUrl}
+                    alt={evt.title || "Gallery Event"}
+                    className="event-img"
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
+                  />
+                ) : (
+                  <div className="image-placeholder">
+                    <FiImage />
+                    <span>No Image</span>
+                  </div>
+                )}
+              </div>
 
-            <div className="event-card-footer">
-              <button
-                type="button"
-                className="event-edit-btn"
-                onClick={() => {
-                  setGalleryForm({
-                    img: evt.image || evt.img || "",
-                    imageFile: null,
-                    title: evt.title || "",
-                  });
+              <div className="event-card-content">
+                <h3>{evt.title || "Untitled Event"}</h3>
+              </div>
 
-                  setEditId(evt._id);
-                  setModalMode("edit");
-                  setShowGalleryModal(true);
-                }}
-              >
-                <FiEdit /> Edit
-              </button>
+              <div className="event-card-footer">
+                <button
+                  type="button"
+                  className="event-edit-btn"
+                  onClick={() => openGalleryEdit(evt)}
+                >
+                  <FiEdit /> Edit
+                </button>
 
-              <button
-                type="button"
-                className="event-delete-btn"
-                onClick={() => deleteEvent(evt._id)}
-              >
-                <FiTrash2 /> Delete
-              </button>
-            </div>
-          </article>
-        ))}
+                <button
+                  type="button"
+                  className="event-delete-btn"
+                  onClick={() => deleteEvent(evt._id)}
+                >
+                  <FiTrash2 /> Delete
+                </button>
+              </div>
+            </article>
+          );
+        })}
+
+        {events.length === 0 && (
+          <div className="admin-empty-box">
+            <div className="empty-icon"><FiImage /></div>
+            <h3>No Gallery Events</h3>
+            <p>Click "Add Gallery Event" to upload images.</p>
+          </div>
+        )}
       </div>
 
       {showGalleryModal && (
@@ -267,8 +275,8 @@ function GalleryEventsTab() {
             <form onSubmit={handleGallerySubmit}>
               <div className="event-modal-body">
                 <div className="event-image-preview" onClick={openBrowse}>
-                  {hasImage(galleryForm.img) ? (
-                    <img src={getImageUrl(galleryForm.img)} alt="Preview" />
+                  {hasImage(galleryForm.imagePreview) ? (
+                    <img src={galleryForm.imagePreview} alt="Preview" />
                   ) : (
                     <div className="image-placeholder">
                       <FiImage />
@@ -300,10 +308,7 @@ function GalleryEventsTab() {
                     className="admin-form-control"
                     value={galleryForm.title}
                     onChange={(e) =>
-                      setGalleryForm({
-                        ...galleryForm,
-                        title: e.target.value,
-                      })
+                      setGalleryForm({ ...galleryForm, title: e.target.value })
                     }
                     placeholder="Enter event title"
                     required
@@ -315,7 +320,6 @@ function GalleryEventsTab() {
                 <button type="button" className="cancel-btn" onClick={closeGalleryModal}>
                   Cancel
                 </button>
-
                 <button type="submit" className="save-btn">
                   Save Gallery Event
                 </button>
