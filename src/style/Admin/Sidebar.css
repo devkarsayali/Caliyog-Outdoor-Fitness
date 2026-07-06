@@ -353,3 +353,14 @@
     left: 240px;                   /* Match smaller sidebar width */
   }
 }
+
+/* =========================================
+   MOBILE SCROLL FIX
+   ========================================= */
+@media (max-width: 768px) {
+  .admin-sidebar {
+    /* Allow sidebar to scroll if it's taller than screen */
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+}
