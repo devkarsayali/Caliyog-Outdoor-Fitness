@@ -294,3 +294,161 @@
     font-size: 14px;
   }
 }
+
+/* =========================================
+   ENHANCED MOBILE RESPONSIVE
+   ========================================= */
+
+/* Tablet (900px and below) */
+@media (max-width: 900px) {
+  .about-tab {
+    padding: 18px;
+  }
+
+  .about-tab-header {
+    padding: 24px;
+  }
+
+  .about-tab-header h2 {
+    font-size: 28px;
+  }
+
+  .about-form {
+    padding: 22px;
+    min-height: auto;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .preview-box {
+    grid-template-columns: 1fr;
+  }
+
+  .preview-box img {
+    height: 240px;
+  }
+}
+
+/* Mobile (600px and below) */
+@media (max-width: 600px) {
+  .about-tab {
+    padding: 14px;
+  }
+
+  .about-tab-header {
+    padding: 20px;
+    border-radius: 22px;
+  }
+
+  .about-tab-header h2 {
+    font-size: 24px;
+  }
+
+  .about-tab-header p {
+    font-size: 13px;
+  }
+
+  .about-form {
+    padding: 18px;
+    border-radius: 22px;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    padding: 12px 13px;
+    font-size: 14px;
+  }
+
+  .preview-box img {
+    height: 190px;
+  }
+
+  .save-about-btn {
+    padding: 14px;
+    font-size: 14px;
+  }
+}
+
+/* Small Mobile (480px and below) - additional improvements */
+@media (max-width: 480px) {
+  .about-tab {
+    padding: 10px;
+  }
+
+  .about-tab-header {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .admin-section-label {
+    font-size: 10px;
+    padding: 5px 12px;
+  }
+
+  .about-tab-header h2 {
+    font-size: 20px;
+  }
+
+  .about-tab-header p {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .about-form {
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-group label {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    padding: 11px 12px;
+    font-size: 13px;
+    border-radius: 12px;
+  }
+
+  .form-group textarea {
+    min-height: 100px;
+  }
+
+  .form-group input[type="file"] {
+    padding: 10px;
+  }
+
+  .form-group input[type="file"]::file-selector-button {
+    padding: 8px 12px;
+    font-size: 12px;
+    margin-right: 8px;
+  }
+
+  .form-group small {
+    font-size: 11px;
+  }
+
+  .preview-box {
+    gap: 14px;
+    margin: 8px 0 18px;
+  }
+
+  .preview-box img {
+    height: 160px;
+    border-radius: 16px;
+  }
+
+  .save-about-btn {
+    padding: 12px;
+    font-size: 13px;
+    border-radius: 14px;
+  }
+}

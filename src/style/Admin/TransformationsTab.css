@@ -420,3 +420,286 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* =========================================
+   ENHANCED MOBILE RESPONSIVE
+   ========================================= */
+
+/* Tablet (900px and below) */
+@media (max-width: 900px) {
+  .transformation-admin {
+    padding: 18px;
+  }
+
+  .transformation-admin-header {
+    padding: 22px;
+  }
+
+  .transformation-admin-header h2 {
+    font-size: 28px;
+  }
+
+  .transformation-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+}
+
+/* Mobile (768px and below) */
+@media (max-width: 768px) {
+  .transformation-admin {
+    padding: 15px;
+  }
+
+  .transformation-admin-header {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+    border-radius: 20px;
+  }
+
+  .transformation-admin-header h2 {
+    font-size: 26px;
+  }
+
+  .transformation-admin-header p {
+    font-size: 13px;
+  }
+
+  .transformation-add-btn {
+    width: 100%;
+    padding: 12px 16px;
+    justify-content: center;
+  }
+
+  .section-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .section-title-row h2 {
+    font-size: 22px;
+  }
+
+  .section-title-row span {
+    font-size: 13px;
+  }
+
+  .transformation-list {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .transformation-card-admin {
+    border-radius: 18px;
+  }
+
+  .transformation-card-admin img {
+    height: 280px;
+  }
+
+  .transformation-card-admin h3 {
+    font-size: 17px;
+    padding: 13px;
+  }
+
+  /* Modal adjustments */
+  .transformation-form-overlay {
+    padding: 60px 14px 25px;
+  }
+
+  .transformation-form {
+    max-width: 100%;
+    padding: 20px;
+    border-radius: 22px;
+  }
+
+  .transformation-form-title h3 {
+    font-size: 20px;
+  }
+
+  .transformation-form-title p {
+    font-size: 13px;
+  }
+
+  .transformation-form-close {
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    font-size: 22px;
+  }
+
+  .transformation-preview img {
+    width: 100%;
+    max-width: 260px;
+    height: auto;
+  }
+
+  .transformation-actions {
+    flex-direction: column;
+  }
+
+  .transformation-save-btn,
+  .transformation-cancel-btn {
+    width: 100%;
+  }
+}
+
+/* Small Mobile (480px and below) - additional improvements */
+@media (max-width: 480px) {
+  .transformation-admin {
+    padding: 10px;
+  }
+
+  .transformation-admin-header {
+    padding: 16px;
+    border-radius: 18px;
+    margin-bottom: 18px;
+  }
+
+  .transformation-admin-header h2 {
+    font-size: 22px;
+  }
+
+  .transformation-admin-header p {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .transformation-add-btn {
+    padding: 11px 14px;
+    font-size: 13px;
+    border-radius: 12px;
+  }
+
+  .section-title-row h2 {
+    font-size: 19px;
+  }
+
+  .section-title-row span {
+    font-size: 12px;
+    padding: 4px 10px;
+  }
+
+  .transformation-list {
+    gap: 14px;
+  }
+
+  .transformation-card-admin {
+    border-radius: 16px;
+  }
+
+  .transformation-card-admin img {
+    height: 240px;
+  }
+
+  .transformation-card-admin h3 {
+    font-size: 15px;
+    padding: 12px;
+  }
+
+  .transformation-card-buttons {
+    padding: 0 12px 14px;
+    gap: 8px;
+  }
+
+  .transformation-card-buttons button {
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .admin-empty-box {
+    padding: 30px 20px;
+  }
+
+  .admin-empty-box h3 {
+    font-size: 18px;
+  }
+
+  .admin-empty-box p {
+    font-size: 13px;
+  }
+
+  /* Modal full-screen on small phones */
+  .transformation-form-overlay {
+    padding: 0 !important;
+    align-items: stretch !important;
+  }
+
+  .transformation-form {
+    max-width: 100% !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+    border-radius: 0 !important;
+    padding: 18px !important;
+  }
+
+  .transformation-form-close {
+    top: 14px;
+    right: 14px;
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+  }
+
+  .transformation-form-title {
+    padding-right: 50px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+  }
+
+  .transformation-form-title h3 {
+    font-size: 18px;
+  }
+
+  .transformation-form-title p {
+    font-size: 12px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-group label {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+
+  .form-group input {
+    padding: 11px 13px;
+    font-size: 13px;
+    border-radius: 12px;
+  }
+
+  .form-group input[type="file"]::file-selector-button {
+    padding: 8px 12px;
+    font-size: 12px;
+    margin-right: 8px;
+  }
+
+  .form-group small {
+    font-size: 11px;
+  }
+
+  .transformation-preview {
+    margin: 14px 0 18px;
+  }
+
+  .transformation-preview img {
+    max-width: 200px;
+    border-radius: 14px;
+  }
+
+  .transformation-actions {
+    gap: 10px;
+  }
+
+  .transformation-save-btn,
+  .transformation-cancel-btn {
+    padding: 12px 16px;
+    font-size: 13px;
+    border-radius: 12px;
+  }
+}

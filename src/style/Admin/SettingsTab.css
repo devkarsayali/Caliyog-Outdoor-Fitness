@@ -199,3 +199,85 @@
     font-size: 14px;
   }
 }
+
+/* =========================================
+   ENHANCED MOBILE RESPONSIVE - Added improvements
+   ========================================= */
+
+/* Tablet */
+@media (max-width: 992px) {
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-group.full {
+    grid-column: auto;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .settings-tab {
+    padding: 18px;
+  }
+
+  .settings-card {
+    padding: 22px;
+  }
+
+  .settings-header h2 {
+    font-size: 28px;
+  }
+
+  .settings-card h3 {
+    font-size: 21px;
+  }
+
+  .settings-group input {
+    height: 50px;
+  }
+
+  .settings-btn {
+    height: 52px;
+    font-size: 15px;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .settings-tab {
+    padding: 12px;
+  }
+
+  .settings-card {
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .settings-header h2 {
+    font-size: 24px;
+  }
+
+  .settings-header p {
+    font-size: 14px;
+  }
+
+  .settings-card h3 {
+    font-size: 19px;
+  }
+
+  .settings-group label {
+    font-size: 13px;
+  }
+
+  .settings-group input {
+    height: 48px;
+    font-size: 14px;
+    padding: 0 14px;
+  }
+
+  .settings-btn {
+    height: 48px;
+    font-size: 14px;
+  }
+}

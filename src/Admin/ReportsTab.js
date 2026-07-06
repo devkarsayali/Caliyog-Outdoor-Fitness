@@ -181,8 +181,9 @@ function ReportsTab() {
       <div className="report-box">
         <h2>All Member Requests ({allRequests.length})</h2>
 
-        <div className="report-table-wrapper">
-          <table className="report-table">
+          <div className="reports-desktop-view">
+          <div className="report-table-wrapper">
+            <table className="report-table">
             <thead>
               <tr>
                 <th>Member Name</th>
@@ -336,8 +337,150 @@ function ReportsTab() {
                 ))
               )}
             </tbody>
-          </table>
+                     </table>
+          </div>
         </div>
+
+        {/* ============= MOBILE CARDS VIEW ============= */}
+        {allRequests.length > 0 && !loading && (
+          <div className="reports-mobile-view">
+            <div className="reports-cards">
+              {allRequests.map((item) => (
+                <div className="report-card-item" key={item._id || item.id}>
+                  <div className="report-card-header">
+                    <h3>
+                      {value(item.name, item.memberName, item.fullName)}
+                    </h3>
+                    <span className={getStatusClass(item.status)}>
+                      {value(item.status, "Pending")}
+                    </span>
+                  </div>
+
+                  <div className="report-card-body">
+                    <div className="report-card-row">
+                      <span className="report-card-label">📧 Email</span>
+                      <span className="report-card-value">
+                        {value(item.email)}
+                      </span>
+                    </div>
+                    <div className="report-card-row">
+                      <span className="report-card-label">📞 Contact</span>
+                      <span className="report-card-value">
+                        {value(
+                          item.contact,
+                          item.mobile,
+                          item.phone,
+                          item.phoneNumber,
+                          item.contactNumber
+                        )}
+                      </span>
+                    </div>
+                    <div className="report-card-row">
+                      <span className="report-card-label">📍 Address</span>
+                      <span className="report-card-value">
+                        {value(
+                          item.address,
+                          item.fullAddress,
+                          item.location,
+                          item.userAddress
+                        )}
+                      </span>
+                    </div>
+                    <div className="report-card-row">
+                      <span className="report-card-label">🏋️ Batch</span>
+                      <span className="report-card-value">
+                        {value(
+                          item.batch,
+                          item.batchName,
+                          item.selectedBatch,
+                          item.batchType
+                        )}
+                      </span>
+                    </div>
+                    <div className="report-card-row">
+                      <span className="report-card-label">⏰ Timing</span>
+                      <span className="report-card-value">
+                        {value(
+                          item.timingType,
+                          item.timeType,
+                          item.trainingType,
+                          item.sessionType
+                        )}{" "}
+                        •{" "}
+                        {value(
+                          item.timing,
+                          item.time,
+                          item.batchTime,
+                          item.selectedTiming
+                        )}
+                      </span>
+                    </div>
+                    <div className="report-card-row">
+                      <span className="report-card-label">💳 Membership</span>
+                      <span className="report-card-value">
+                        <span className="membership-tag">
+                          {value(
+                            item.membership,
+                            item.membershipPlan,
+                            item.plan,
+                            item.packageName
+                          )}
+                        </span>
+                      </span>
+                    </div>
+                    <div className="report-card-row">
+                      <span className="report-card-label">💰 Payment</span>
+                      <span className="report-card-value">
+                        {value(
+                          item.transactionType,
+                          item.payment,
+                          item.paymentMode,
+                          item.paymentType,
+                          item.paymentMethod
+                        )}
+                      </span>
+                    </div>
+                    <div className="report-card-row">
+                      <span className="report-card-label">📅 Submitted</span>
+                      <span className="report-card-value">
+                        {formatDate(
+                          item.createdAt || item.submittedOn || item.date
+                        )}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="report-card-footer">
+                    <button
+                      type="button"
+                      className="member-btn"
+                      disabled={
+                        item.status === "Added to Member" ||
+                        item.status === "Rejected"
+                      }
+                      onClick={() => addToMember(item._id || item.id)}
+                    >
+                      {item.status === "Added to Member"
+                        ? "✓ Member Added"
+                        : "✓ Add Member"}
+                    </button>
+                    <button
+                      type="button"
+                      className="checked-btn"
+                      disabled={
+                        item.status === "Rejected" ||
+                        item.status === "Added to Member"
+                      }
+                      onClick={() => rejectRequest(item._id || item.id)}
+                    >
+                      {item.status === "Rejected" ? "✗ Rejected" : "✗ Reject"}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

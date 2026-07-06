@@ -409,3 +409,328 @@
   font-size: 24px;
   cursor: pointer;
 }
+
+/* =========================================
+   ENHANCED MOBILE RESPONSIVE
+   ========================================= */
+
+/* Tablet (900px and below) */
+@media (max-width: 900px) {
+  .why-admin {
+    padding: 18px;
+  }
+
+  .why-header {
+    padding: 22px;
+  }
+
+  .why-header h2 {
+    font-size: 28px;
+  }
+
+  .why-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+}
+
+/* Mobile (768px and below) */
+@media (max-width: 768px) {
+  .why-admin {
+    padding: 15px;
+  }
+
+  .why-header {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+    border-radius: 20px;
+  }
+
+  .why-header h2 {
+    font-size: 26px;
+  }
+
+  .why-header p {
+    font-size: 13px;
+  }
+
+  .admin-section-label {
+    font-size: 11px;
+    padding: 6px 12px;
+  }
+
+  .why-add-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 16px;
+  }
+
+  .section-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .section-title-row h2 {
+    font-size: 22px;
+  }
+
+  .section-title-row span {
+    font-size: 13px;
+  }
+
+  .why-list {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .why-card-admin {
+    border-radius: 18px;
+  }
+
+  .why-card-image {
+    height: 170px;
+  }
+
+  .why-card-image span {
+    font-size: 36px;
+  }
+
+  .why-card-content {
+    padding: 18px;
+  }
+
+  .why-card-admin h3 {
+    font-size: 19px;
+  }
+
+  .why-card-admin p {
+    font-size: 13px;
+  }
+
+  .why-card-buttons {
+    padding: 14px 18px;
+  }
+
+  .why-card-buttons button {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  /* Modal adjustments */
+  .why-form-overlay {
+    padding: 60px 14px 25px;
+  }
+
+  .why-form {
+    max-width: 100%;
+    padding: 20px;
+    border-radius: 22px;
+  }
+
+  .why-form-title h3 {
+    font-size: 19px;
+  }
+
+  .why-form-title p {
+    font-size: 13px;
+  }
+
+  .why-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .why-actions {
+    flex-direction: column;
+  }
+
+  .why-save-btn,
+  .why-cancel-btn {
+    width: 100%;
+  }
+
+  .why-preview img {
+    width: 100%;
+    height: 180px;
+  }
+}
+
+/* Small Mobile (480px and below) - additional improvements */
+@media (max-width: 480px) {
+  .why-admin {
+    padding: 10px;
+  }
+
+  .why-header {
+    padding: 16px;
+    border-radius: 18px;
+    margin-bottom: 18px;
+  }
+
+  .why-header h2 {
+    font-size: 22px;
+  }
+
+  .why-header p {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .admin-section-label {
+    font-size: 10px;
+    padding: 5px 10px;
+    margin-bottom: 8px;
+  }
+
+  .why-add-btn {
+    padding: 11px 14px;
+    font-size: 13px;
+    border-radius: 12px;
+  }
+
+  .section-title-row h2 {
+    font-size: 19px;
+  }
+
+  .section-title-row span {
+    font-size: 12px;
+    padding: 4px 10px;
+  }
+
+  .why-list {
+    gap: 14px;
+  }
+
+  .why-card-admin {
+    border-radius: 16px;
+  }
+
+  .why-card-image {
+    height: 150px;
+  }
+
+  .why-card-image span {
+    font-size: 32px;
+  }
+
+  .why-card-content {
+    padding: 14px;
+  }
+
+  .why-card-content h3 {
+    font-size: 17px;
+  }
+
+  .why-card-content p {
+    font-size: 13px;
+  }
+
+  .why-card-buttons {
+    padding: 12px 14px;
+    gap: 8px;
+  }
+
+  .why-card-buttons button {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+
+  .admin-empty-box {
+    padding: 30px 20px;
+  }
+
+  .admin-empty-box h3 {
+    font-size: 18px;
+  }
+
+  .admin-empty-box p {
+    font-size: 13px;
+  }
+
+  /* Modal full-screen on small phones */
+  .why-form-overlay {
+    padding: 0 !important;
+    align-items: stretch !important;
+  }
+
+  .why-form {
+    max-width: 100% !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+    border-radius: 0 !important;
+    padding: 18px !important;
+  }
+
+  .why-form-close {
+    top: 14px;
+    right: 14px;
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+  }
+
+  .why-form-title {
+    padding-right: 50px;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+  }
+
+  .why-form-title h3 {
+    font-size: 18px;
+  }
+
+  .why-form-title p {
+    font-size: 12px;
+  }
+
+  .why-form .form-group {
+    margin-bottom: 14px;
+  }
+
+  .why-form label {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+
+  .why-form input,
+  .why-form textarea {
+    padding: 11px 13px;
+    font-size: 13px;
+    border-radius: 12px;
+  }
+
+  .why-form input[type="file"]::file-selector-button {
+    padding: 8px 12px;
+    font-size: 12px;
+    margin-right: 8px;
+  }
+
+  .why-form textarea {
+    min-height: 90px;
+  }
+
+  .why-form small {
+    font-size: 11px;
+  }
+
+  .why-preview {
+    margin: 10px 0 16px;
+  }
+
+  .why-preview img {
+    height: 140px;
+    border-radius: 14px;
+  }
+
+  .why-actions {
+    gap: 10px;
+  }
+
+  .why-save-btn,
+  .why-cancel-btn {
+    padding: 12px 16px;
+    font-size: 13px;
+    border-radius: 12px;
+  }
+}

@@ -277,3 +277,155 @@
     justify-content: center;
   }
 }
+
+
+/* =========================================
+   ENHANCED MOBILE RESPONSIVE
+   ========================================= */
+
+/* Tablet (992px and below) */
+@media (max-width: 992px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile (768px and below) */
+@media (max-width: 768px) {
+  .overview-hero {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px;
+  }
+
+  .overview-hero h2 {
+    font-size: 28px;
+  }
+
+  .overview-hero p {
+    font-size: 14px;
+  }
+
+  .overview-hero-box {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .overview-hero-box h3 {
+    font-size: 36px;
+  }
+
+  .admin-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .summary-row {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 18px;
+  }
+
+  .summary-row button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .stat-card-admin {
+    padding: 20px;
+  }
+
+  .stat-number {
+    font-size: 32px;
+  }
+
+  .admin-summary-panel {
+    padding: 20px;
+  }
+
+  .admin-summary-header h2 {
+    font-size: 20px;
+  }
+}
+
+/* Small Mobile (480px and below) */
+@media (max-width: 480px) {
+  .overview-hero {
+    padding: 20px;
+  }
+
+  .overview-hero h2 {
+    font-size: 24px;
+  }
+
+  .overview-hero p {
+    font-size: 13px;
+  }
+
+  .overview-label {
+    font-size: 11px;
+    padding: 6px 12px;
+  }
+
+  .stat-card-admin {
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .stat-info-admin h3 {
+    font-size: 12px;
+  }
+
+  .stat-number {
+    font-size: 28px;
+  }
+
+  .stat-info-admin p {
+    font-size: 13px;
+  }
+
+  .stat-icon-admin {
+    width: 46px;
+    height: 46px;
+    font-size: 24px;
+  }
+
+  .admin-summary-panel {
+    padding: 16px;
+    border-radius: 20px;
+  }
+
+  .admin-summary-header h2 {
+    font-size: 18px;
+  }
+
+  .admin-summary-header p {
+    font-size: 13px;
+  }
+
+  .summary-row {
+    padding: 16px;
+  }
+
+  .summary-row h3 {
+    font-size: 15px;
+  }
+
+  .summary-row p {
+    font-size: 13px;
+  }
+
+  .summary-row button {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+}
