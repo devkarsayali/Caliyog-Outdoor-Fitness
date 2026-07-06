@@ -11,7 +11,7 @@ import {
   FiUserPlus,
 } from "react-icons/fi";
 
-import "../style/Admin/AdminCommon.css";
+//import "../style/Admin/AdminCommon.css";
 import "../style/Admin/OverviewTab.css";
 
 function OverviewTab({ setActiveTab }) {

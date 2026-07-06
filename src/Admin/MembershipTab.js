@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { FiPlus, FiEdit, FiTrash2, FiX } from "react-icons/fi";
 
-import "../style/Admin/AdminCommon.css";
+//import "../style/Admin/AdminCommon.css";
 import "../style/Admin/MembershipTab.css";
 
 const API_URL =

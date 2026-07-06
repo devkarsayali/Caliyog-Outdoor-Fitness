@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { FiPlus, FiEdit, FiTrash2, FiX, FiUpload, FiImage } from "react-icons/fi";
 
-import "../style/Admin/AdminCommon.css";
+//import "../style/Admin/AdminCommon.css";
 import "../style/Admin/EventsTab.css";
 
 function GalleryEventsTab() {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FiPlus, FiEdit, FiTrash2, FiX } from "react-icons/fi";
 
-import "../style/Admin/AdminCommon.css";
+//import "../style/Admin/AdminCommon.css";
 import "../style/Admin/BatchesTab.css";
 
 const API_URL =

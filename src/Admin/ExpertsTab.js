@@ -9,7 +9,7 @@ import {
   FiUpload,
 } from "react-icons/fi";
 
-import "../style/Admin/AdminCommon.css";
+//import "../style/Admin/AdminCommon.css";
 import "../style/Admin/ExpertsTab.css";
 
 function ExpertsTab() {
