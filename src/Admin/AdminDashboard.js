@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import OverviewTab from "./OverviewTab";
@@ -8,11 +8,7 @@ import BatchesTab from "./BatchesTab";
 import MembershipTab from "./MembershipTab";
 import TransformationTab from "./TransformationsTab";
 import ExpertsTab from "./ExpertsTab";
-//import EventsTab from "./EventsTab";
-//import GalleryEventsTab from "./GalleryEventsTab";
 import EnquiriesTab from "./EnquiriesTab";
-//import ReportsTab from "./ReportsTab";
-//import KidsReportsTab from "./KidsReportsTab";
 import MembersTab from "./MembersTab";
 import SettingsTab from "./SettingsTab";
 import EventsManagerTab from "./EventsManagerTab";
@@ -23,9 +19,22 @@ import logo from "../assets/CaliYog-Logo.png";
 
 function AdminDashboard() {
   const navigate = useNavigate();
-
   const [activeTab, setActiveTab] = useState("overview");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  // Detect screen size
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      if (mobile) setIsSidebarOpen(false);
+      if (!mobile) setIsSidebarOpen(true);
+    };
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const adminData = JSON.parse(localStorage.getItem("adminData")) || {};
 
@@ -37,26 +46,32 @@ function AdminDashboard() {
     navigate("/admin-login");
   };
 
+  // Handle tab change - close sidebar on mobile
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    if (isMobile) setIsSidebarOpen(false);
+  };
+
   return (
     <div className="admin-dashboard">
-      <aside className={`admin-sidebar ${isSidebarOpen ? "open" : "closed"}`}>
-        <button
-          type="button"
-          className="drawer-toggle-btn sidebar-top-toggle"
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        >
-          {isSidebarOpen ? "‹" : "›"}
-        </button>
+      {/* Mobile Overlay - Click to close sidebar */}
+      {isMobile && isSidebarOpen && (
+        <div
+          className="sidebar-overlay"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
 
-        <div className="admin-sidebar-title">
-         
-        </div>
+      <aside
+        className={`admin-sidebar ${isSidebarOpen ? "open" : "closed"}`}
+      >
+        <div className="admin-sidebar-title"></div>
 
         <div className="sidebar-menu">
           <button
             title="Dashboard"
             className={activeTab === "overview" ? "active" : ""}
-            onClick={() => setActiveTab("overview")}
+            onClick={() => handleTabChange("overview")}
           >
             <span>🏠</span>
             <b>Dashboard</b>
@@ -65,7 +80,7 @@ function AdminDashboard() {
           <button
             title="About"
             className={activeTab === "about" ? "active" : ""}
-            onClick={() => setActiveTab("about")}
+            onClick={() => handleTabChange("about")}
           >
             <span>📝</span>
             <b>About</b>
@@ -74,7 +89,7 @@ function AdminDashboard() {
           <button
             title="Why Choose Us"
             className={activeTab === "whyChooseUs" ? "active" : ""}
-            onClick={() => setActiveTab("whyChooseUs")}
+            onClick={() => handleTabChange("whyChooseUs")}
           >
             <span>⭐</span>
             <b>Why Choose Us</b>
@@ -83,7 +98,7 @@ function AdminDashboard() {
           <button
             title="Batches"
             className={activeTab === "batches" ? "active" : ""}
-            onClick={() => setActiveTab("batches")}
+            onClick={() => handleTabChange("batches")}
           >
             <span>🏋️</span>
             <b>Batches</b>
@@ -92,7 +107,7 @@ function AdminDashboard() {
           <button
             title="Membership"
             className={activeTab === "membership" ? "active" : ""}
-            onClick={() => setActiveTab("membership")}
+            onClick={() => handleTabChange("membership")}
           >
             <span>💳</span>
             <b>Membership</b>
@@ -101,7 +116,7 @@ function AdminDashboard() {
           <button
             title="Transformations"
             className={activeTab === "transformations" ? "active" : ""}
-            onClick={() => setActiveTab("transformations")}
+            onClick={() => handleTabChange("transformations")}
           >
             <span>🔥</span>
             <b>Transformations</b>
@@ -110,42 +125,43 @@ function AdminDashboard() {
           <button
             title="Experts"
             className={activeTab === "experts" ? "active" : ""}
-            onClick={() => setActiveTab("experts")}
+            onClick={() => handleTabChange("experts")}
           >
             <span>👨‍🏫</span>
             <b>Experts</b>
           </button>
 
           <button
-  title="Events"
-  className={activeTab === "events" ? "active" : ""}
-  onClick={() => setActiveTab("events")}
->
-  <span>🎉</span>
-  <b>Events</b>
-</button>
+            title="Events"
+            className={activeTab === "events" ? "active" : ""}
+            onClick={() => handleTabChange("events")}
+          >
+            <span>🎉</span>
+            <b>Events</b>
+          </button>
 
           <button
             title="Enquiries"
             className={activeTab === "enquiries" ? "active" : ""}
-            onClick={() => setActiveTab("enquiries")}
+            onClick={() => handleTabChange("enquiries")}
           >
             <span>📩</span>
             <b>Enquiries</b>
           </button>
 
           <button
-  title="Reports"
-  className={activeTab === "reports" ? "active" : ""}
-  onClick={() => setActiveTab("reports")}
->
-  <span>📋</span>
-  <b>Reports</b>
-</button>
+            title="Reports"
+            className={activeTab === "reports" ? "active" : ""}
+            onClick={() => handleTabChange("reports")}
+          >
+            <span>📋</span>
+            <b>Reports</b>
+          </button>
+
           <button
             title="Members"
             className={activeTab === "members" ? "active" : ""}
-            onClick={() => setActiveTab("members")}
+            onClick={() => handleTabChange("members")}
           >
             <span>👥</span>
             <b>Members</b>
@@ -165,8 +181,6 @@ function AdminDashboard() {
             </div>
           </div>
 
-          
-
           <button title="Logout" className="logout-btn" onClick={handleLogout}>
             <span>🚪</span>
             <b>Logout</b>
@@ -180,6 +194,15 @@ function AdminDashboard() {
         }`}
       >
         <div className="admin-main-topbar">
+          {/* Hamburger button - only shows on mobile */}
+          <button
+            className="hamburger-btn"
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            aria-label="Toggle Menu"
+          >
+            ☰
+          </button>
+
           <div className="admin-topbar-brand">
             <img src={logo} alt="CaliYog Logo" />
             <div>
@@ -195,13 +218,13 @@ function AdminDashboard() {
 
           <button
             className="admin-topbar-settings"
-            onClick={() => setActiveTab("settings")}
+            onClick={() => handleTabChange("settings")}
           >
             ⚙️ Settings
           </button>
         </div>
 
-        {activeTab === "overview" && <OverviewTab setActiveTab={setActiveTab} />}
+        {activeTab === "overview" && <OverviewTab setActiveTab={handleTabChange} />}
         {activeTab === "about" && <AboutTab />}
         {activeTab === "whyChooseUs" && <WhyChooseUsTab />}
         {activeTab === "batches" && <BatchesTab />}
