@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import "../style/Admin/MembersTab.css";
 
 const API_URL =
- "https://caliyog-fitness-backend-production-2144.up.railway.app";  
+  "https://caliyog-fitness-backend-production-2144.up.railway.app";
+
 function MembersTab() {
   const [members, setMembers] = useState([]);
   const [kidsMembers, setKidsMembers] = useState([]);
@@ -57,8 +58,12 @@ function MembersTab() {
       const allMembers = memberResponse.ok ? getArrayData(memberData) : [];
       const batchKids = kidsResponse.ok ? getArrayData(kidsData) : [];
 
-      const normalMembers = allMembers.filter((member) => !isKidsMember(member));
-      const kidsFromMembers = allMembers.filter((member) => isKidsMember(member));
+      const normalMembers = allMembers.filter(
+        (member) => !isKidsMember(member)
+      );
+      const kidsFromMembers = allMembers.filter((member) =>
+        isKidsMember(member)
+      );
 
       setMembers(normalMembers);
       setKidsMembers([...kidsFromMembers, ...batchKids]);
@@ -156,6 +161,7 @@ function MembersTab() {
     }
   };
 
+  // ==================== DESKTOP TABLE (unchanged) ====================
   const renderMembersTable = () => {
     return (
       <div className="members-table-wrapper">
@@ -292,6 +298,173 @@ function MembersTab() {
     );
   };
 
+  // ==================== MOBILE CARDS (new) ====================
+  const renderMembersCards = () => {
+    if (members.length === 0) {
+      return <div className="empty-members">No members found.</div>;
+    }
+
+    return (
+      <div className="members-cards">
+        {members.map((member) => (
+          <div className="member-card" key={member._id || member.id}>
+            <div className="member-card-header">
+              <h3>{member.name || "Unnamed"}</h3>
+              <span className="remaining-badge">
+                {getRemainingDays(member)} days
+              </span>
+            </div>
+
+            <div className="member-card-body">
+              <div className="member-card-row">
+                <span className="member-card-label">Email</span>
+                <span className="member-card-value">{member.email || "-"}</span>
+              </div>
+              <div className="member-card-row">
+                <span className="member-card-label">Contact</span>
+                <span className="member-card-value">
+                  {member.contact || member.mobile || "-"}
+                </span>
+              </div>
+              <div className="member-card-row">
+                <span className="member-card-label">Address</span>
+                <span className="member-card-value">
+                  {member.address || "-"}
+                </span>
+              </div>
+              <div className="member-card-row">
+                <span className="member-card-label">Batch</span>
+                <span className="member-card-value">{member.batch || "-"}</span>
+              </div>
+              <div className="member-card-row">
+                <span className="member-card-label">Timing</span>
+                <span className="member-card-value">
+                  {member.timingType || "-"} • {member.timing || "-"}
+                </span>
+              </div>
+              <div className="member-card-row">
+                <span className="member-card-label">Membership</span>
+                <span className="member-card-value">
+                  {member.membership || "-"}
+                </span>
+              </div>
+              <div className="member-card-row">
+                <span className="member-card-label">Payment</span>
+                <span className="member-card-value">
+                  {member.transactionType || "-"}
+                </span>
+              </div>
+              <div className="member-card-row">
+                <span className="member-card-label">Start Date</span>
+                <span className="member-card-value">
+                  {formatDate(member.startDate || member.createdAt)}
+                </span>
+              </div>
+            </div>
+
+            <div className="member-card-footer">
+              <button
+                className="member-delete-btn"
+                onClick={() =>
+                  deleteMember(member._id || member.id, "member")
+                }
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const renderKidsCards = () => {
+    if (kidsMembers.length === 0) {
+      return <div className="empty-members">No kids batch members found.</div>;
+    }
+
+    return (
+      <div className="members-cards">
+        {kidsMembers.map((member) => (
+          <div className="member-card" key={member._id || member.id}>
+            <div className="member-card-header">
+              <h3>{member.name || "Unnamed"}</h3>
+              <span className="remaining-badge">
+                {getRemainingDays(member)} days
+              </span>
+            </div>
+
+            <div className="member-card-body">
+              <div className="member-card-row">
+                <span className="member-card-label">Parent Name</span>
+                <span className="member-card-value">
+                  {member.parentName || "-"}
+                </span>
+              </div>
+              <div className="member-card-row">
+                <span className="member-card-label">Parent Email</span>
+                <span className="member-card-value">
+                  {member.parentEmail || member.email || "-"}
+                </span>
+              </div>
+              <div className="member-card-row">
+                <span className="member-card-label">Parent Contact</span>
+                <span className="member-card-value">
+                  {member.parentContact || member.contact || "-"}
+                </span>
+              </div>
+              <div className="member-card-row">
+                <span className="member-card-label">Address</span>
+                <span className="member-card-value">
+                  {member.address || "-"}
+                </span>
+              </div>
+              <div className="member-card-row">
+                <span className="member-card-label">Batch</span>
+                <span className="member-card-value">{member.batch || "-"}</span>
+              </div>
+              <div className="member-card-row">
+                <span className="member-card-label">Timing</span>
+                <span className="member-card-value">
+                  {member.timingType || "-"} • {member.timing || "-"}
+                </span>
+              </div>
+              <div className="member-card-row">
+                <span className="member-card-label">Membership</span>
+                <span className="member-card-value">
+                  {member.membership || "-"}
+                </span>
+              </div>
+              <div className="member-card-row">
+                <span className="member-card-label">Payment</span>
+                <span className="member-card-value">
+                  {member.transactionType || "-"}
+                </span>
+              </div>
+              <div className="member-card-row">
+                <span className="member-card-label">Start Date</span>
+                <span className="member-card-value">
+                  {formatDate(member.startDate || member.createdAt)}
+                </span>
+              </div>
+            </div>
+
+            <div className="member-card-footer">
+              <button
+                className="member-delete-btn"
+                onClick={() =>
+                  deleteMember(member._id || member.id, "kids")
+                }
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   if (loading) {
     return (
       <div>
@@ -305,16 +478,25 @@ function MembersTab() {
 
   return (
     <div>
-      
+      <div className="members-header">
+        <h1>Members Management</h1>
+        <p>View and manage all gym members and kids batch members.</p>
+      </div>
 
       <div className="members-box">
         <h2>All Members ({members.length})</h2>
-        {renderMembersTable()}
+        {/* Desktop view */}
+        <div className="members-desktop-view">{renderMembersTable()}</div>
+        {/* Mobile view */}
+        <div className="members-mobile-view">{renderMembersCards()}</div>
       </div>
 
       <div className="members-box">
         <h2>Kids Batch Members ({kidsMembers.length})</h2>
-        {renderKidsTable()}
+        {/* Desktop view */}
+        <div className="members-desktop-view">{renderKidsTable()}</div>
+        {/* Mobile view */}
+        <div className="members-mobile-view">{renderKidsCards()}</div>
       </div>
     </div>
   );

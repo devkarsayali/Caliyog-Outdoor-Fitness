@@ -2,15 +2,14 @@ import React, { useEffect, useState } from "react";
 import {
   FiMail,
   FiTrash2,
-  FiCheckCircle
- 
+  FiCheckCircle,
 } from "react-icons/fi";
 
 import "../style/Admin/EnquiriesTab.css";
 
 function EnquiriesTab() {
   const API_URL =
-  "https://caliyog-fitness-backend-production-2144.up.railway.app";
+    "https://caliyog-fitness-backend-production-2144.up.railway.app";
 
   const [enquiries, setEnquiries] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -157,10 +156,158 @@ function EnquiriesTab() {
     return date.toLocaleDateString();
   };
 
+  // ==================== DESKTOP TABLE (unchanged) ====================
+  const renderTable = () => (
+    <table className="enquiry-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Contact</th>
+          <th>Message</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {enquiries.map((item, index) => (
+          <tr key={item._id || item.id}>
+            <td>{index + 1}</td>
+            <td>
+              {getValue(
+                item.name,
+                item.fullName,
+                item.userName,
+                item.memberName
+              )}
+            </td>
+            <td>{getValue(item.email, item.userEmail)}</td>
+            <td>{getContactNumber(item)}</td>
+            <td className="message-cell">
+              {getValue(item.message, item.msg, item.description)}
+            </td>
+            <td>
+              <span
+                className={
+                  item.status === "Replied" ? "status-replied" : "status-new"
+                }
+              >
+                {item.status || "New"}
+              </span>
+            </td>
+            <td>
+              {formatDate(
+                item.createdAt || item.date || item.submittedOn
+              )}
+            </td>
+            <td className="action-cell">
+              {item.status !== "Replied" && (
+                <button
+                  type="button"
+                  className="reply-btn"
+                  onClick={() => markReplied(item._id || item.id)}
+                >
+                  <FiCheckCircle />
+                </button>
+              )}
+              <button
+                type="button"
+                className="delete-btn"
+                onClick={() => deleteEnquiry(item._id || item.id)}
+              >
+                <FiTrash2 />
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+
+  // ==================== MOBILE CARDS (new) ====================
+  const renderCards = () => (
+    <div className="enquiry-cards">
+      {enquiries.map((item, index) => (
+        <div className="enquiry-card-item" key={item._id || item.id}>
+          <div className="enquiry-card-top">
+            <div>
+              <span className="enquiry-card-index">#{index + 1}</span>
+              <h3>
+                {getValue(
+                  item.name,
+                  item.fullName,
+                  item.userName,
+                  item.memberName
+                )}
+              </h3>
+            </div>
+            <span
+              className={
+                item.status === "Replied" ? "status-replied" : "status-new"
+              }
+            >
+              {item.status || "New"}
+            </span>
+          </div>
+
+          <div className="enquiry-card-body">
+            <div className="enquiry-card-row">
+              <span className="enquiry-card-label">📧 Email</span>
+              <span className="enquiry-card-value">
+                {getValue(item.email, item.userEmail)}
+              </span>
+            </div>
+
+            <div className="enquiry-card-row">
+              <span className="enquiry-card-label">📞 Contact</span>
+              <span className="enquiry-card-value">
+                {getContactNumber(item)}
+              </span>
+            </div>
+
+            <div className="enquiry-card-row">
+              <span className="enquiry-card-label">📅 Date</span>
+              <span className="enquiry-card-value">
+                {formatDate(
+                  item.createdAt || item.date || item.submittedOn
+                )}
+              </span>
+            </div>
+
+            <div className="enquiry-card-message">
+              <span className="enquiry-card-label">💬 Message</span>
+              <p>{getValue(item.message, item.msg, item.description)}</p>
+            </div>
+          </div>
+
+          <div className="enquiry-card-footer">
+            {item.status !== "Replied" && (
+              <button
+                type="button"
+                className="reply-btn"
+                onClick={() => markReplied(item._id || item.id)}
+              >
+                <FiCheckCircle /> Mark Replied
+              </button>
+            )}
+            <button
+              type="button"
+              className="delete-btn"
+              onClick={() => deleteEnquiry(item._id || item.id)}
+            >
+              <FiTrash2 /> Delete
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
   return (
     <div className="enquiry-page">
-      
-
       {loading ? (
         <div className="empty-enquiry-box">
           <h3>Loading Enquiries...</h3>
@@ -172,85 +319,14 @@ function EnquiriesTab() {
           <p>Contact form submissions will appear here.</p>
         </div>
       ) : (
-        <div className="admin-table-box">
-          <table className="enquiry-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Contact</th>
-                <th>Message</th>
-                <th>Status</th>
-                <th>Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {enquiries.map((item, index) => (
-                <tr key={item._id || item.id}>
-                  <td>{index + 1}</td>
-
-                  <td>
-                    {getValue(
-                      item.name,
-                      item.fullName,
-                      item.userName,
-                      item.memberName
-                    )}
-                  </td>
-
-                  <td>{getValue(item.email, item.userEmail)}</td>
-
-                  <td>{getContactNumber(item)}</td>
-
-                  <td className="message-cell">
-                    {getValue(item.message, item.msg, item.description)}
-                  </td>
-
-                  <td>
-                    <span
-                      className={
-                        item.status === "Replied"
-                          ? "status-replied"
-                          : "status-new"
-                      }
-                    >
-                      {item.status || "New"}
-                    </span>
-                  </td>
-
-                  <td>
-                    {formatDate(
-                      item.createdAt || item.date || item.submittedOn
-                    )}
-                  </td>
-
-                  <td className="action-cell">
-                    {item.status !== "Replied" && (
-                      <button
-                        type="button"
-                        className="reply-btn"
-                        onClick={() => markReplied(item._id || item.id)}
-                      >
-                        <FiCheckCircle />
-                      </button>
-                    )}
-
-                    <button
-                      type="button"
-                      className="delete-btn"
-                      onClick={() => deleteEnquiry(item._id || item.id)}
-                    >
-                      <FiTrash2 />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <>
+          {/* Desktop view */}
+          <div className="admin-table-box enquiry-desktop-view">
+            {renderTable()}
+          </div>
+          {/* Mobile view */}
+          <div className="enquiry-mobile-view">{renderCards()}</div>
+        </>
       )}
     </div>
   );

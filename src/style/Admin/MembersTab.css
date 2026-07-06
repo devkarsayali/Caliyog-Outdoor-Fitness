@@ -152,3 +152,166 @@
     font-size: 13px;
   }
 }
+
+
+/* =========================================
+   MOBILE RESPONSIVE - Cards view
+   ========================================= */
+
+/* Hide mobile cards on desktop, hide table on mobile */
+.members-mobile-view {
+  display: none;
+}
+
+.members-desktop-view {
+  display: block;
+}
+
+/* Card styles for mobile */
+.members-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.member-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+}
+
+.member-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.member-card-header h3 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 17px;
+  font-weight: 900;
+  word-break: break-word;
+}
+
+.member-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.member-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.member-card-label {
+  color: #64748b;
+  font-weight: 700;
+  flex-shrink: 0;
+  min-width: 100px;
+}
+
+.member-card-value {
+  color: #0f172a;
+  font-weight: 600;
+  text-align: right;
+  word-break: break-word;
+  flex: 1;
+}
+
+.member-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 8px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.member-card-footer .member-delete-btn {
+  width: 100%;
+  padding: 11px 14px;
+  font-size: 14px;
+}
+
+/* ============= MOBILE (768px and below) ============= */
+@media (max-width: 768px) {
+  .members-header {
+    padding: 24px;
+    border-radius: 20px;
+    text-align: center;
+  }
+
+  .members-header h1 {
+    font-size: 28px;
+  }
+
+  .members-box {
+    padding: 18px;
+  }
+
+  .members-box h2 {
+    font-size: 22px;
+  }
+
+  /* Switch to card view on mobile */
+  .members-desktop-view {
+    display: none;
+  }
+
+  .members-mobile-view {
+    display: block;
+  }
+
+  /* Make table wrapper scrollable in case it's still shown */
+  .members-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ============= SMALL MOBILE (480px and below) ============= */
+@media (max-width: 480px) {
+  .members-box {
+    padding: 14px;
+  }
+
+  .members-box h2 {
+    font-size: 18px;
+  }
+
+  .member-card {
+    padding: 14px;
+  }
+
+  .member-card-header h3 {
+    font-size: 15px;
+  }
+
+  .member-card-row {
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .member-card-label {
+    min-width: auto;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .member-card-value {
+    text-align: left;
+    font-size: 13px;
+  }
+}
