@@ -478,10 +478,7 @@ function MembersTab() {
 
   return (
     <div>
-      <div className="members-header">
-        <h1>Members Management</h1>
-        <p>View and manage all gym members and kids batch members.</p>
-      </div>
+      
 
       <div className="members-box">
         <h2>All Members ({members.length})</h2>
