@@ -26,8 +26,11 @@ function AdminDashboard() {
     const handleResize = () => {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
-      if (mobile) setIsSidebarOpen(false);
-      if (!mobile) setIsSidebarOpen(true);
+      if (mobile) {
+        setIsSidebarOpen(false);
+      } else {
+        setIsSidebarOpen(true);
+      }
     };
     window.addEventListener("resize", handleResize);
     handleResize();
@@ -36,7 +39,9 @@ function AdminDashboard() {
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
-    if (isMobile) setIsSidebarOpen(false);
+    if (isMobile) {
+      setIsSidebarOpen(false);
+    }
   };
 
   const toggleSidebar = () => {
@@ -47,55 +52,58 @@ function AdminDashboard() {
     setIsSidebarOpen(false);
   };
 
- 
-
   const openSettings = () => {
     setActiveTab("settings");
+    if (isMobile) setIsSidebarOpen(false);
+  };
+
+  const getContentClass = () => {
+    if (isMobile) return "admin-content mobile-view";
+    return isSidebarOpen ? "admin-content with-sidebar" : "admin-content full-width";
   };
 
   return (
-    <div className="admin-dashboard">
+    <div className="admin-dashboard-wrapper">
       {/* Mobile Overlay */}
       {isMobile && isSidebarOpen && (
         <div className="sidebar-overlay" onClick={closeSidebar} />
       )}
 
-      {/* TOPBAR */}
-      <Topbar
-        isMobile={isMobile}
-        onToggleSidebar={toggleSidebar}
-        onOpenSettings={openSettings}
-      />
-
-      {/* SIDEBAR with toggle button */}
+      {/* SIDEBAR - Fixed positioned */}
       <Sidebar
         isOpen={isSidebarOpen}
         isMobile={isMobile}
         activeTab={activeTab}
         setActiveTab={handleTabChange}
         onClose={closeSidebar}
-        onToggle={toggleSidebar}          // ← NEW PROP
+        onToggle={toggleSidebar}
       />
 
-      {/* CONTENT */}
-      <main
-        className={`admin-content ${
-          isSidebarOpen ? "with-sidebar" : "full-width"
-        }`}
-      >
-        {activeTab === "overview" && <OverviewTab setActiveTab={handleTabChange} />}
-        {activeTab === "about" && <AboutTab />}
-        {activeTab === "whyChooseUs" && <WhyChooseUsTab />}
-        {activeTab === "batches" && <BatchesTab />}
-        {activeTab === "membership" && <MembershipTab />}
-        {activeTab === "transformations" && <TransformationTab />}
-        {activeTab === "experts" && <ExpertsTab />}
-        {activeTab === "events" && <EventsManagerTab />}
-        {activeTab === "enquiries" && <EnquiriesTab />}
-        {activeTab === "reports" && <ReportsManagerTab />}
-        {activeTab === "members" && <MembersTab />}
-        {activeTab === "settings" && <SettingsTab />}
-      </main>
+      {/* MAIN AREA - This is the scrolling container */}
+      <div className={`admin-main-area ${isMobile ? "mobile" : "desktop"}`}>
+        {/* TOPBAR - Sticky inside the scrolling container */}
+        <Topbar
+          isMobile={isMobile}
+          onToggleSidebar={toggleSidebar}
+          onOpenSettings={openSettings}
+        />
+
+        {/* CONTENT - Scrolls under the sticky topbar */}
+        <main className={getContentClass()}>
+          {activeTab === "overview" && <OverviewTab setActiveTab={handleTabChange} />}
+          {activeTab === "about" && <AboutTab />}
+          {activeTab === "whyChooseUs" && <WhyChooseUsTab />}
+          {activeTab === "batches" && <BatchesTab />}
+          {activeTab === "membership" && <MembershipTab />}
+          {activeTab === "transformations" && <TransformationTab />}
+          {activeTab === "experts" && <ExpertsTab />}
+          {activeTab === "events" && <EventsManagerTab />}
+          {activeTab === "enquiries" && <EnquiriesTab />}
+          {activeTab === "reports" && <ReportsManagerTab />}
+          {activeTab === "members" && <MembersTab />}
+          {activeTab === "settings" && <SettingsTab />}
+        </main>
+      </div>
     </div>
   );
 }

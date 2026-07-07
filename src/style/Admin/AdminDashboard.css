@@ -1,41 +1,56 @@
-/* ============= MAIN LAYOUT WRAPPER ============= */
-.admin-dashboard {
+/* ============= MAIN WRAPPER ============= */
+.admin-dashboard-wrapper {
+  display: flex;
   width: 100%;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;          /* Stack topbar on top, content below */
   background: #f5f7fb;
-  font-family: "Segoe UI", sans-serif;
   position: relative;
   overflow-x: hidden;
 }
 
-/* ============= CONTENT AREA (below topbar) ============= */
-.admin-content {
-  flex: 1;                         /* Takes remaining space */
-  min-height: calc(100vh - 76px);  /* Full height minus topbar */
-  background: #f5f7fb;
-  transition: all 0.35s ease;
+/* ============= MAIN AREA (Scrollable) ============= */
+.admin-main-area {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 20px 28px 28px;
+  min-width: 0; /* Critical for flexbox overflow */
+  min-height: 100vh;
+  transition: margin-left 0.35s ease, width 0.35s ease;
 }
 
-.admin-content.with-sidebar {
+/* Desktop: Push content based on sidebar */
+.admin-main-area.desktop.with-sidebar-open {
   margin-left: 240px;
   width: calc(100% - 240px);
 }
 
-.admin-content.full-width {
+.admin-main-area.desktop.with-sidebar-closed {
   margin-left: 76px;
   width: calc(100% - 76px);
+}
+
+/* Mobile: Full width, no margin */
+.admin-main-area.mobile {
+  margin-left: 0 !important;
+  width: 100% !important;
+}
+
+/* ============= CONTENT (Scrolls independently) ============= */
+.admin-content {
+  flex: 1;
+  background: #f5f7fb;
+  padding: 20px 28px 28px;
+  box-sizing: border-box;
+  width: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ============= SIDEBAR OVERLAY ============= */
 .sidebar-overlay {
   display: none;
   position: fixed;
-  inset: 76px 0 0 0;              /* Starts below topbar */
+  inset: 0;
   background: rgba(0, 0, 0, 0.5);
   z-index: 1500;
   backdrop-filter: blur(2px);
@@ -110,6 +125,8 @@
   padding: 24px;
   margin-top: 28px;
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .admin-table-box h2 {
@@ -120,6 +137,7 @@
 .admin-table-box table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 500px;
 }
 
 .admin-table-box th {
@@ -217,111 +235,71 @@
 }
 
 /* =========================================
-   RESPONSIVE
+   RESPONSIVE - TABLET
+   ========================================= */
+@media (max-width: 1024px) {
+  .admin-content {
+    padding: 18px 20px;
+  }
+
+  .admin-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .admin-selection-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================
+   RESPONSIVE - MOBILE
    ========================================= */
 @media (max-width: 768px) {
   .sidebar-overlay {
     display: block;
   }
 
-  .admin-content.with-sidebar,
-  .admin-content.full-width {
-    margin-left: 0;
-    width: 100%;
-    padding: 16px;
+  .admin-content {
+    padding: 14px 14px 90px !important; /* Bottom padding for mobile browser */
   }
 
   .admin-cards-grid {
     grid-template-columns: 1fr;
-  }
-
-  .admin-table-box {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .admin-selection-cards {
-    grid-template-columns: 1fr;
+    gap: 14px;
   }
 
   .admin-content h1 {
-    font-size: 26px;
+    font-size: 24px;
   }
 }
 
 @media (max-width: 480px) {
-  .admin-content.with-sidebar,
-  .admin-content.full-width {
-    padding: 12px;
+  .admin-content {
+    padding: 12px 12px 100px !important;
   }
 
   .admin-content h1 {
-    font-size: 22px;
+    font-size: 20px;
+  }
+
+  .admin-cards-grid {
+    gap: 12px;
   }
 }
-
 
 /* =========================================
-   MOBILE SCROLL FIX
+   GLOBAL SCROLL FIX
    ========================================= */
-@media (max-width: 768px) {
-  /* Allow page to scroll on mobile */
-  html, body {
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
-    height: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* Main dashboard - allow vertical scroll */
-  .admin-dashboard {
-    height: auto !important;
-    min-height: 100vh;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* Content area - allow scroll */
-  .admin-content {
-    height: auto !important;
-    min-height: calc(100vh - 76px);
-    max-height: none !important;
-    overflow-y: visible !important;
-    overflow-x: hidden !important;
-  }
-
-  /* Topbar stays sticky on scroll */
-  .admin-main-topbar {
-    position: sticky !important;
-    top: 0 !important;
-    z-index: 1500 !important;
-  }
-
-  /* Remove any fixed heights on content wrappers */
-  .admin-content-window,
-  .admin-content-inner {
-    height: auto !important;
-    overflow: visible !important;
-  }
+html, body {
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   html, body {
     overflow-y: auto !important;
     height: auto !important;
-  }
-
-  .admin-dashboard {
-    height: auto !important;
-    overflow-y: auto !important;
-  }
-
-  .admin-content {
-    height: auto !important;
-    min-height: calc(100vh - 64px);
-    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch;
   }
 }

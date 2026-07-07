@@ -2,25 +2,13 @@ import React from "react";
 import "../style/Admin/Topbar.css";
 import logo from "../assets/CaliYog-Logo.png";
 
-function Topbar({ isMobile, onToggleSidebar }) {
+function Topbar({ isMobile, onToggleSidebar, onOpenSettings }) {
   return (
     <div className="admin-main-topbar">
-      {/* Hamburger button - ONLY on mobile */}
+      {/* Hamburger - Mobile only */}
       {isMobile && (
-        <button
-          className="hamburger-btn"
-          onClick={onToggleSidebar}
-          aria-label="Toggle Menu"
-        >
-          <svg
-            width="22"
-            height="22"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-          >
+        <button className="hamburger-btn" onClick={onToggleSidebar} aria-label="Toggle Menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="12" x2="21" y2="12"></line>
             <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -36,7 +24,7 @@ function Topbar({ isMobile, onToggleSidebar }) {
         </div>
       </div>
 
-      {/* Search - ONLY on desktop */}
+      {/* Search - Desktop only */}
       {!isMobile && (
         <div className="admin-topbar-search">
           <span>🔍</span>
@@ -44,17 +32,9 @@ function Topbar({ isMobile, onToggleSidebar }) {
         </div>
       )}
 
-      {/* Settings button - ONLY on desktop (moved to sidebar on mobile) */}
+      {/* Settings - Desktop only */}
       {!isMobile && (
-        <button
-          className="admin-topbar-settings"
-          onClick={() => {
-            /* Settings opens via sidebar on mobile */
-            const event = new CustomEvent("openSettings");
-            window.dispatchEvent(event);
-          }}
-          aria-label="Settings"
-        >
+        <button className="admin-topbar-settings" onClick={onOpenSettings} aria-label="Settings">
           ⚙️ Settings
         </button>
       )}
