@@ -19,33 +19,27 @@ import ReportsManagerTab from "./ReportsManagerTab";
 
 function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 768);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
-      if (mobile) {
-        setIsSidebarOpen(false);
-      } else {
-        setIsSidebarOpen(true);
-      }
+      setIsSidebarOpen(!mobile);
     };
+
     window.addEventListener("resize", handleResize);
-    handleResize();
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
-    if (isMobile) {
-      setIsSidebarOpen(false);
-    }
+    if (isMobile) setIsSidebarOpen(false);
   };
 
   const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+    setIsSidebarOpen((prev) => !prev);
   };
 
   const closeSidebar = () => {
@@ -57,19 +51,25 @@ function AdminDashboard() {
     if (isMobile) setIsSidebarOpen(false);
   };
 
-  const getContentClass = () => {
-    if (isMobile) return "admin-content mobile-view";
-    return isSidebarOpen ? "admin-content with-sidebar" : "admin-content full-width";
+  const getMainAreaClass = () => {
+    if (isMobile) return "admin-main-area mobile";
+    return isSidebarOpen
+      ? "admin-main-area desktop sidebar-open"
+      : "admin-main-area desktop sidebar-closed";
   };
 
   return (
     <div className="admin-dashboard-wrapper">
-      {/* Mobile Overlay */}
+      <Topbar
+        isMobile={isMobile}
+        onToggleSidebar={toggleSidebar}
+        onOpenSettings={openSettings}
+      />
+
       {isMobile && isSidebarOpen && (
         <div className="sidebar-overlay" onClick={closeSidebar} />
       )}
 
-      {/* SIDEBAR - Fixed positioned */}
       <Sidebar
         isOpen={isSidebarOpen}
         isMobile={isMobile}
@@ -79,17 +79,8 @@ function AdminDashboard() {
         onToggle={toggleSidebar}
       />
 
-      {/* MAIN AREA - This is the scrolling container */}
-      <div className={`admin-main-area ${isMobile ? "mobile" : "desktop"}`}>
-        {/* TOPBAR - Sticky inside the scrolling container */}
-        <Topbar
-          isMobile={isMobile}
-          onToggleSidebar={toggleSidebar}
-          onOpenSettings={openSettings}
-        />
-
-        {/* CONTENT - Scrolls under the sticky topbar */}
-        <main className={getContentClass()}>
+      <div className={getMainAreaClass()}>
+        <main className="admin-content">
           {activeTab === "overview" && <OverviewTab setActiveTab={handleTabChange} />}
           {activeTab === "about" && <AboutTab />}
           {activeTab === "whyChooseUs" && <WhyChooseUsTab />}

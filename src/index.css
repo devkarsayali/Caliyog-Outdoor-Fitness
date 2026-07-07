@@ -1,3 +1,5 @@
+
+
 * {
   margin: 0;
   padding: 0;
@@ -154,12 +156,10 @@ a {
     height: auto !important;
   }
 
-  .join-btn,
-  button {
-    width: 100%;
-    max-width: 280px;
-  }
-
+  .join-page .join-btn {
+  width: 100%;
+  max-width: 280px;
+}
   .admin-login-btn {
     max-width: 100% !important;
   }

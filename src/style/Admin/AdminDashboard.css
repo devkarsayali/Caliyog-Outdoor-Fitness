@@ -1,3 +1,22 @@
+/* ============= RESET ============= */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 /* ============= MAIN WRAPPER ============= */
 .admin-dashboard-wrapper {
   display: flex;
@@ -6,44 +25,64 @@
   background: #f5f7fb;
   position: relative;
   overflow-x: hidden;
+  align-items: stretch;
 }
 
-/* ============= MAIN AREA (Scrollable) ============= */
+/* ============= MAIN AREA (Scrollable Container) ============= */
 .admin-main-area {
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-width: 0; /* Critical for flexbox overflow */
+  min-width: 0;
   min-height: 100vh;
+  position: relative;            /* ← REQUIRED for sticky to work */
+  
   transition: margin-left 0.35s ease, width 0.35s ease;
 }
 
-/* Desktop: Push content based on sidebar */
-.admin-main-area.desktop.with-sidebar-open {
+/* Desktop - Sidebar Open */
+.admin-main-area.desktop.sidebar-open {
   margin-left: 240px;
   width: calc(100% - 240px);
 }
 
-.admin-main-area.desktop.with-sidebar-closed {
+/* Desktop - Sidebar Collapsed */
+.admin-main-area.desktop.si.admin-dashboard-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  background: #f5f7fb;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.admin-main-area {
+  min-height: 100vh;
+  padding-top: 76px;
+  transition: margin-left 0.35s ease, width 0.35s ease;
+}
+
+.admin-main-area.desktop.sidebar-open {
+  margin-left: 240px;
+  width: calc(100% - 240px);
+}
+
+.admin-main-area.desktop.sidebar-closed {
   margin-left: 76px;
   width: calc(100% - 76px);
 }
 
-/* Mobile: Full width, no margin */
 .admin-main-area.mobile {
   margin-left: 0 !important;
   width: 100% !important;
+  padding-top: 64px;
 }
 
-/* ============= CONTENT (Scrolls independently) ============= */
 .admin-content {
-  flex: 1;
   background: #f5f7fb;
-  padding: 20px 28px 28px;
-  box-sizing: border-box;
+  padding: 24px 32px;
   width: 100%;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  min-height: calc(100vh - 76px);
+  overflow-x: hidden;
 }
 
 /* ============= SIDEBAR OVERLAY ============= */
@@ -235,39 +274,32 @@
 }
 
 /* =========================================
-   RESPONSIVE - TABLET
+   RESPONSIVE
    ========================================= */
 @media (max-width: 1024px) {
   .admin-content {
-    padding: 18px 20px;
+    padding: 20px;
   }
-
   .admin-cards-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-
   .admin-selection-cards {
     grid-template-columns: 1fr;
   }
 }
 
-/* =========================================
-   RESPONSIVE - MOBILE
-   ========================================= */
 @media (max-width: 768px) {
   .sidebar-overlay {
     display: block;
   }
-
   .admin-content {
-    padding: 14px 14px 90px !important; /* Bottom padding for mobile browser */
+    padding: 16px 14px 90px !important;
+    min-height: calc(100vh - 64px);
   }
-
   .admin-cards-grid {
     grid-template-columns: 1fr;
     gap: 14px;
   }
-
   .admin-content h1 {
     font-size: 24px;
   }
@@ -277,29 +309,10 @@
   .admin-content {
     padding: 12px 12px 100px !important;
   }
-
   .admin-content h1 {
     font-size: 20px;
   }
-
   .admin-cards-grid {
     gap: 12px;
-  }
-}
-
-/* =========================================
-   GLOBAL SCROLL FIX
-   ========================================= */
-html, body {
-  overflow-x: hidden;
-  margin: 0;
-  padding: 0;
-}
-
-@media (max-width: 768px) {
-  html, body {
-    overflow-y: auto !important;
-    height: auto !important;
-    -webkit-overflow-scrolling: touch;
   }
 }
