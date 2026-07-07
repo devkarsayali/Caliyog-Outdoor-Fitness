@@ -14,10 +14,10 @@ function Sidebar({ isOpen, isMobile, activeTab, setActiveTab, onClose, onToggle 
     navigate("/admin-login");
   };
 
-  // Handle tab click - close sidebar on BOTH mobile and desktop
+  // Handle tab click - close sidebar on mobile
   const handleTabClick = (tab) => {
     setActiveTab(tab);
-    if (onClose) onClose();
+    if (isMobile && onClose) onClose();
   };
 
   const menuItems = [
@@ -32,22 +32,25 @@ function Sidebar({ isOpen, isMobile, activeTab, setActiveTab, onClose, onToggle 
     { key: "enquiries", icon: "📩", label: "Enquiries" },
     { key: "reports", icon: "📋", label: "Reports" },
     { key: "members", icon: "👥", label: "Members" },
+    { key: "settings", icon: "⚙️", label: "Settings" }, // ⚙️ SETTINGS added to menu
   ];
 
   return (
     <>
-      {/* TOGGLE BUTTON - Floating on sidebar edge */}
-      <button
-        type="button"
-        className={`sidebar-toggle-floating ${isOpen ? "is-open" : "is-closed"}`}
-        onClick={onToggle}
-        aria-label={isOpen ? "Close Sidebar" : "Open Sidebar"}
-        title={isOpen ? "Close Sidebar" : "Open Sidebar"}
-      >
-        {isOpen ? "‹" : "›"}
-      </button>
+      {/* TOGGLE BUTTON - ONLY on Desktop (NOT on mobile) */}
+      {!isMobile && (
+        <button
+          type="button"
+          className={`sidebar-toggle-floating ${isOpen ? "is-open" : "is-closed"}`}
+          onClick={onToggle}
+          aria-label={isOpen ? "Close Sidebar" : "Open Sidebar"}
+          title={isOpen ? "Close Sidebar" : "Open Sidebar"}
+        >
+          {isOpen ? "‹" : "›"}
+        </button>
+      )}
 
-      <aside className={`admin-sidebar ${isOpen ? "open" : "closed"}`}>
+      <aside className={`admin-sidebar ${isOpen ? "open" : "closed"} ${isMobile ? "mobile-mode" : "desktop-mode"}`}>
         <div className="admin-sidebar-title"></div>
 
         <div className="sidebar-menu">

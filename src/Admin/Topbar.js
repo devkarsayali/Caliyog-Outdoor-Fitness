@@ -2,17 +2,29 @@ import React from "react";
 import "../style/Admin/Topbar.css";
 import logo from "../assets/CaliYog-Logo.png";
 
-function Topbar({ isMobile, onToggleSidebar, onOpenSettings }) {
+function Topbar({ isMobile, onToggleSidebar }) {
   return (
     <div className="admin-main-topbar">
-      {/* Hamburger button - only shows on mobile */}
+      {/* Hamburger button - ONLY on mobile */}
       {isMobile && (
         <button
           className="hamburger-btn"
           onClick={onToggleSidebar}
           aria-label="Toggle Menu"
         >
-          ☰
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          >
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
         </button>
       )}
 
@@ -24,18 +36,28 @@ function Topbar({ isMobile, onToggleSidebar, onOpenSettings }) {
         </div>
       </div>
 
-      <div className="admin-topbar-search">
-        <span>🔍</span>
-        <input type="text" placeholder="Search dashboard..." />
-      </div>
+      {/* Search - ONLY on desktop */}
+      {!isMobile && (
+        <div className="admin-topbar-search">
+          <span>🔍</span>
+          <input type="text" placeholder="Search dashboard..." />
+        </div>
+      )}
 
-      <button
-        className="admin-topbar-settings"
-        onClick={onOpenSettings}
-        aria-label="Settings"
-      >
-        ⚙️ Settings
-      </button>
+      {/* Settings button - ONLY on desktop (moved to sidebar on mobile) */}
+      {!isMobile && (
+        <button
+          className="admin-topbar-settings"
+          onClick={() => {
+            /* Settings opens via sidebar on mobile */
+            const event = new CustomEvent("openSettings");
+            window.dispatchEvent(event);
+          }}
+          aria-label="Settings"
+        >
+          ⚙️ Settings
+        </button>
+      )}
     </div>
   );
 }

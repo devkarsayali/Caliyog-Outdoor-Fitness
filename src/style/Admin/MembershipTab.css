@@ -180,27 +180,37 @@
   grid-column: 1 / -1;
 }
 
-/* MODAL */
+/* ============= MODAL (FIXED) ============= */
 .admin-modal-overlay {
-  position: fixed;
-  inset: 0;
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 99999;
   background: rgba(2, 6, 23, 0.55);
   backdrop-filter: blur(6px);
   display: flex;
-  justify-content: flex-end;
-  align-items: stretch;
+  justify-content: center;       /* Center horizontally */
+  align-items: center;           /* Center vertically */
+  padding: 20px;
+  overflow-y: auto;             /* Allow scrolling if modal is too tall */
+  -webkit-overflow-scrolling: touch;
 }
 
 .admin-modal {
   width: 440px;
-  max-width: 440px;
-  height: 100vh;
+  max-width: 100%;
+  max-height: 90vh;             /* Never exceed 90% of screen height */
   background: #ffffff;
-  border-radius: 24px 0 0 24px;
-  overflow-y: auto;
+  border-radius: 24px;
+  overflow-y: auto;             /* Modal scrolls internally */
   border-left: 1px solid rgba(34, 197, 94, 0.35);
   box-shadow: -20px 0 60px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  margin: auto;                 /* Center properly */
+  position: relative;
 }
 
 .admin-modal-header {
@@ -212,12 +222,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0;               /* Don't shrink */
 }
 
 .admin-modal-title {
   color: white;
   font-size: 22px;
   font-weight: 900;
+  margin: 0;
 }
 
 .admin-modal-close {
@@ -229,10 +241,17 @@
   color: #fecaca;
   font-size: 20px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .admin-modal-body {
   padding: 22px;
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .admin-form-group {
@@ -256,6 +275,7 @@
   color: #0f172a;
   font-size: 14px;
   outline: none;
+  box-sizing: border-box;
 }
 
 .admin-form-control:focus {
@@ -284,6 +304,7 @@
   gap: 10px;
   background: #ffffff;
   border-top: 1px solid #e5e7eb;
+  flex-shrink: 0;
 }
 
 .admin-btn {
@@ -305,41 +326,9 @@
   color: #0f172a;
 }
 
-@media (max-width: 768px) {
-  .membership-header-box {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .membership-add-btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .admin-cards-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .admin-modal-overlay {
-    justify-content: center;
-    align-items: center;
-    padding: 15px;
-  }
-
-  .admin-modal {
-    width: 92%;
-    max-width: 92%;
-    height: auto;
-    max-height: 92vh;
-    border-radius: 22px;
-  }
-}
-
 /* =========================================
-   ENHANCED MOBILE RESPONSIVE
+   MOBILE RESPONSIVE
    ========================================= */
-
-/* Tablet (900px and below) */
 @media (max-width: 900px) {
   .membership-header-box {
     padding: 22px;
@@ -353,15 +342,8 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 18px;
   }
-
-  /* Modal stays as right-side panel on tablet */
-  .admin-modal {
-    width: 420px;
-    max-width: 420px;
-  }
 }
 
-/* Mobile (768px and below) */
 @media (max-width: 768px) {
   .membership-header-box {
     flex-direction: column;
@@ -407,19 +389,19 @@
     font-size: 30px;
   }
 
-  /* Modal: switch to centered full-screen style */
+  /* MODAL: Full screen on mobile */
   .admin-modal-overlay {
-    justify-content: center;
-    align-items: center;
-    padding: 15px;
+    padding: 0 !important;
+    align-items: stretch;
   }
 
   .admin-modal {
-    width: 92%;
-    max-width: 92%;
-    height: auto;
-    max-height: 92vh;
-    border-radius: 22px;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
   }
 
   .admin-modal-header {
@@ -445,7 +427,6 @@
   }
 }
 
-/* Small Mobile (480px and below) - additional improvements */
 @media (max-width: 480px) {
   .membership-header-box {
     padding: 16px;
@@ -516,20 +497,6 @@
     width: 38px;
     height: 38px;
     font-size: 16px;
-  }
-
-  /* Modal mobile adjustments */
-  .admin-modal {
-    width: 100% !important;
-    max-width: 100% !important;
-    height: 100vh !important;
-    max-height: 100vh !important;
-    border-radius: 0 !important;
-    margin: 0 !important;
-  }
-
-  .admin-modal-overlay {
-    padding: 0 !important;
   }
 
   .admin-modal-header {

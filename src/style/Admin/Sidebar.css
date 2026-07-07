@@ -2,9 +2,9 @@
 .admin-sidebar {
   position: fixed;
   left: 0;
-  top: 76px;                                 /* Starts below topbar */
+  top: 76px;
   width: 240px;
-  height: calc(100vh - 76px);                /* Height = screen - topbar */
+  height: calc(100vh - 76px);
   background: #ffffff;
   padding: 18px;
   display: flex;
@@ -15,6 +15,7 @@
   border-right: 1px solid #e5e7eb;
   transition: transform 0.35s ease, width 0.35s ease;
   z-index: 2000;
+  -webkit-overflow-scrolling: touch;
 }
 
 .admin-sidebar::-webkit-scrollbar {
@@ -25,11 +26,12 @@
   border-radius: 4px;
 }
 
-.admin-sidebar.open {
+/* Desktop States */
+.admin-sidebar.desktop-mode.open {
   width: 240px;
 }
 
-.admin-sidebar.closed {
+.admin-sidebar.desktop-mode.closed {
   width: 76px;
   padding: 18px 9px;
 }
@@ -240,36 +242,7 @@
 }
 
 /* =========================================
-   SIDEBAR - MOBILE RESPONSIVE
-   ========================================= */
-@media (max-width: 768px) {
-  .admin-sidebar {
-    top: 76px;                              /* Keep below topbar on mobile */
-    height: calc(100vh - 76px);
-    transform: translateX(-100%);
-  }
-
-  .admin-sidebar.open {
-    transform: translateX(0);
-    width: 260px;
-  }
-
-  .admin-sidebar.closed {
-    transform: translateX(-100%);
-  }
-}
-
-@media (max-width: 480px) {
-  .admin-sidebar.open {
-    width: 240px;
-  }
-}
-
-
-
-
-/* =========================================
-   FLOATING TOGGLE BUTTON (‹ / ›)
+   FLOATING TOGGLE BUTTON (‹ / ›) - DESKTOP ONLY
    ========================================= */
 .sidebar-toggle-floating {
   position: fixed;
@@ -297,12 +270,10 @@
   transition: all 0.35s ease;
 }
 
-/* When sidebar is OPEN - button on the right edge of sidebar (240px) */
 .sidebar-toggle-floating.is-open {
   left: 240px;
 }
 
-/* When sidebar is CLOSED - button on the right edge of collapsed sidebar (76px) */
 .sidebar-toggle-floating.is-closed {
   left: 76px;
 }
@@ -314,53 +285,54 @@
   transform: translateY(-50%) scale(1.1);
 }
 
-/* Smooth transition when sidebar opens/closes */
-.sidebar-toggle-floating {
-  transition: left 0.35s ease, background 0.25s ease, color 0.25s ease, transform 0.25s ease;
-}
-
 /* =========================================
-   MOBILE - Toggle button positioning
+   SIDEBAR - MOBILE RESPONSIVE
    ========================================= */
 @media (max-width: 768px) {
+  /* HIDE floating toggle button on mobile - topbar has the hamburger */
   .sidebar-toggle-floating {
-    top: 100px;                    /* Below topbar */
-    width: 36px;
-    height: 36px;
-    font-size: 24px;
+    display: none !important;
   }
 
-  /* When sidebar is open on mobile (260px wide) */
-  .sidebar-toggle-floating.is-open {
-    left: 260px;
+  .admin-sidebar {
+    top: 76px;
+    height: calc(100vh - 76px);
+    transform: translateX(-100%);
+    width: 280px;
+    z-index: 1500;
   }
 
-  /* When sidebar is closed on mobile (off-screen) */
-  .sidebar-toggle-floating.is-closed {
-    left: 0;                       /* At the very left edge */
+  .admin-sidebar.mobile-mode.open {
+    transform: translateX(0);
+    width: 280px;
+    box-shadow: 8px 0 30px rgba(0, 0, 0, 0.25);
+  }
+
+  .admin-sidebar.mobile-mode.closed {
+    transform: translateX(-100%);
+    width: 280px;
+  }
+
+  /* When sidebar is open on mobile, show full width items */
+  .admin-sidebar.mobile-mode button b {
+    display: block !important;
+  }
+
+  .admin-sidebar.mobile-mode button {
+    justify-content: flex-start !important;
+    padding: 12px 14px !important;
+    width: 100% !important;
   }
 }
 
 @media (max-width: 480px) {
-  .sidebar-toggle-floating {
-    top: 90px;
-    width: 34px;
-    height: 34px;
-    font-size: 22px;
+  .admin-sidebar,
+  .admin-sidebar.mobile-mode.open,
+  .admin-sidebar.mobile-mode.closed {
+    width: 260px;
   }
 
-  .sidebar-toggle-floating.is-open {
-    left: 240px;                   /* Match smaller sidebar width */
-  }
-}
-
-/* =========================================
-   MOBILE SCROLL FIX
-   ========================================= */
-@media (max-width: 768px) {
-  .admin-sidebar {
-    /* Allow sidebar to scroll if it's taller than screen */
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch;
+  .admin-sidebar.mobile-mode.open {
+    transform: translateX(0);
   }
 }
