@@ -8,6 +8,9 @@ import logo from "../assets/CaliYog-Logo.png";
 function AdminRegister() {
   const navigate = useNavigate();
 
+  const API_URL =
+    "https://caliyog-fitness-backend-production-2144.up.railway.app";
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -32,33 +35,26 @@ function AdminRegister() {
     }
 
     try {
-      const response = await axios.post(
-"https://caliyog-fitness-backend-production-2144.up.railway.app/api/admin",        {
-          name: formData.name,
-          email: formData.email,
-          mobile: formData.mobile,
-          password: formData.password,
-        }
-      );
+      const response = await axios.post(`${API_URL}/api/admin/register`, {
+        name: formData.name,
+        email: formData.email,
+        mobile: formData.mobile,
+        password: formData.password,
+      });
 
-      alert(
-        response.data.message ||
-          "Admin Registered Successfully"
-      );
+      alert(response.data.message || "Admin Registered Successfully");
 
       navigate("/admin-login");
     } catch (error) {
-      alert(
-        error.response?.data?.message ||
-          "Registration Failed"
-      );
+      console.error("Registration Error:", error.response?.data || error);
+
+      alert(error.response?.data?.message || "Registration Failed");
     }
   };
 
   return (
     <div className="admin-login-page">
       <div className="admin-login-card admin-register-card">
-
         <div className="admin-login-header">
           <img
             src={logo}
@@ -67,15 +63,12 @@ function AdminRegister() {
           />
 
           <h1>REGISTER</h1>
-
           <p>Create CaliYog Admin Account</p>
         </div>
 
         <form onSubmit={registerAdmin}>
-
           <div className="admin-form-group">
             <label>Full Name</label>
-
             <input
               type="text"
               name="name"
@@ -88,7 +81,6 @@ function AdminRegister() {
 
           <div className="admin-form-group">
             <label>Email Address</label>
-
             <input
               type="email"
               name="email"
@@ -101,7 +93,6 @@ function AdminRegister() {
 
           <div className="admin-form-group">
             <label>Mobile Number</label>
-
             <input
               type="tel"
               name="mobile"
@@ -114,7 +105,6 @@ function AdminRegister() {
 
           <div className="admin-form-group">
             <label>Password</label>
-
             <input
               type="password"
               name="password"
@@ -127,7 +117,6 @@ function AdminRegister() {
 
           <div className="admin-form-group">
             <label>Confirm Password</label>
-
             <input
               type="password"
               name="confirmPassword"
@@ -138,13 +127,9 @@ function AdminRegister() {
             />
           </div>
 
-          <button
-            type="submit"
-            className="admin-login-btn"
-          >
+          <button type="submit" className="admin-login-btn">
             Register Admin
           </button>
-
         </form>
 
         <p className="admin-login-footer">
@@ -156,7 +141,6 @@ function AdminRegister() {
             Login Here
           </span>
         </p>
-
       </div>
     </div>
   );
