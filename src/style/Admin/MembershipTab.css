@@ -182,7 +182,7 @@
   grid-column: 1 / -1;
 }
 
-/* ============= MODAL (FIXED - PROPER SCROLLING) ============= */
+/* ============= MODAL (DESKTOP) ============= */
 .admin-modal-overlay {
   position: fixed !important;
   top: 0;
@@ -248,7 +248,7 @@
 
 .admin-modal-body {
   padding: 22px;
-  flex: 1;
+  flex: 1 1 auto;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   min-height: 0;
@@ -325,7 +325,7 @@
 }
 
 /* =========================================
-   TABLET RESPONSIVE
+   TABLET (max-width: 900px)
    ========================================= */
 @media (max-width: 900px) {
   .membership-header-box {
@@ -341,7 +341,7 @@
 }
 
 /* =========================================
-   MOBILE RESPONSIVE - CRITICAL FIX
+   MOBILE (max-width: 768px) - CRITICAL SCROLL FIX
    ========================================= */
 @media (max-width: 768px) {
   .membership-header-box {
@@ -380,10 +380,11 @@
     font-size: 30px;
   }
 
-  /* ✅ MODAL: Full screen on mobile with proper scrolling */
+  /* ✅ MODAL - Full screen on mobile WITH SCROLLING */
   .admin-modal-overlay {
     padding: 0 !important;
     align-items: stretch !important;
+    justify-content: flex-start !important;
   }
 
   .admin-modal {
@@ -391,27 +392,32 @@
     max-width: 100% !important;
     height: 100vh !important;
     max-height: 100vh !important;
+    min-height: 100vh !important;
     border-radius: 0 !important;
     margin: 0 !important;
   }
 
   .admin-modal-header {
-    padding: 18px 20px;
+    padding: 18px 20px !important;
   }
   .admin-modal-title {
     font-size: 19px;
   }
+  
+  /* ✅ THIS IS THE FIX - Body must scroll on mobile */
   .admin-modal-body {
-    padding: 18px 20px;
-    /* ✅ Force the body to scroll on mobile */
+    padding: 18px 20px !important;
     overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch;
-    flex: 1;
-    min-height: 0;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
   }
+  
   .admin-modal-footer {
-    padding: 14px 20px 20px;
-    flex-direction: column-reverse;
+    padding: 14px 20px 20px !important;
+    flex-direction: column-reverse !important;
     gap: 10px;
   }
   .admin-modal-footer button {
@@ -420,7 +426,7 @@
 }
 
 /* =========================================
-   SMALL MOBILE
+   SMALL MOBILE (max-width: 480px)
    ========================================= */
 @media (max-width: 480px) {
   .membership-header-box {
@@ -481,22 +487,24 @@
     font-size: 16px;
   }
   .admin-modal-header {
-    padding: 16px 18px !important;
+    padding: 14px 16px !important;
   }
   .admin-modal-title {
-    font-size: 17px !important;
+    font-size: 16px !important;
   }
   .admin-modal-close {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     font-size: 18px;
   }
+  
+  /* ✅ Keep body scrolling on small mobile */
   .admin-modal-body {
-    padding: 16px 18px !important;
-    /* ✅ Keep scroll on small mobile too */
+    padding: 14px 16px !important;
     overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch !important;
   }
+  
   .admin-form-group {
     margin-bottom: 14px;
   }
@@ -506,7 +514,7 @@
   }
   .admin-form-control {
     padding: 11px 12px;
-    font-size: 13px;
+    font-size: 14px;        /* 14px prevents iOS zoom on focus */
     border-radius: 12px;
   }
   .features-input-item {
@@ -523,10 +531,10 @@
     border-radius: 10px !important;
   }
   .admin-modal-footer {
-    padding: 14px 18px 18px !important;
+    padding: 12px 16px 16px !important;
   }
   .admin-btn {
     padding: 12px 16px;
-    font-size: 13px;
+    font-size: 14px;        /* 14px prevents iOS zoom */
   }
 }
