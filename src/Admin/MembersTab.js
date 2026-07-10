@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import { FiUserPlus } from "react-icons/fi";
 import "../style/Admin/MembersTab.css";
+import AddMemberForm from "./AddMemberForm";
 
-const API_URL =
-  "https://caliyog-fitness-backend-production-2144.up.railway.app";
+const API_URL = "https://caliyog-fitness-backend-production-2144.up.railway.app";
 
 function MembersTab() {
   const [members, setMembers] = useState([]);
   const [kidsMembers, setKidsMembers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [showAddModal, setShowAddModal] = useState(false);
 
   const getToken = () => {
     return localStorage.getItem("adminToken") || localStorage.getItem("token");
@@ -33,22 +34,17 @@ function MembersTab() {
     );
   };
 
-  const loadData = async () => {
+  // ⭐ Fetch from backend
+  const fetchFromBackend = useCallback(async () => {
     try {
-      setLoading(true);
-
       const token = getToken();
 
       const [memberResponse, kidsResponse] = await Promise.all([
         fetch(`${API_URL}/api/members`, {
-          headers: {
-            Authorization: token ? `Bearer ${token}` : "",
-          },
+          headers: { Authorization: token ? `Bearer ${token}` : "" },
         }),
         fetch(`${API_URL}/api/batch-members`, {
-          headers: {
-            Authorization: token ? `Bearer ${token}` : "",
-          },
+          headers: { Authorization: token ? `Bearer ${token}` : "" },
         }),
       ]);
 
@@ -58,28 +54,39 @@ function MembersTab() {
       const allMembers = memberResponse.ok ? getArrayData(memberData) : [];
       const batchKids = kidsResponse.ok ? getArrayData(kidsData) : [];
 
-      const normalMembers = allMembers.filter(
-        (member) => !isKidsMember(member)
-      );
-      const kidsFromMembers = allMembers.filter((member) =>
-        isKidsMember(member)
-      );
+      const normalMembers = allMembers.filter((m) => !isKidsMember(m));
+      const kidsFromMembers = allMembers.filter((m) => isKidsMember(m));
 
       setMembers(normalMembers);
       setKidsMembers([...kidsFromMembers, ...batchKids]);
     } catch (error) {
-      console.error("Members Load Error:", error);
-      alert("Failed to load members from backend.");
-    } finally {
-      setLoading(false);
+      console.error("Load error:", error);
+    }
+  }, []);
+
+  // ⭐ Add member to local state (frontend-only)
+  const handleMemberAdded = (newMember) => {
+    console.log("📥 Adding member to list:", newMember);
+
+    if (!newMember) {
+      fetchFromBackend();
+      return;
+    }
+
+    // Check if it's a kids member
+    if (isKidsMember(newMember)) {
+      setKidsMembers((prev) => [newMember, ...prev]);
+    } else {
+      setMembers((prev) => [newMember, ...prev]);
     }
   };
 
   useEffect(() => {
-    loadData();
+    fetchFromBackend();
 
+    // Listen for custom event
     const refreshMembers = () => {
-      loadData();
+      fetchFromBackend();
     };
 
     window.addEventListener("membersUpdated", refreshMembers);
@@ -87,9 +94,7 @@ function MembersTab() {
     return () => {
       window.removeEventListener("membersUpdated", refreshMembers);
     };
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchFromBackend]);
 
   const getMembershipDays = (membership = "") => {
     if (membership.includes("Weekly")) return 7;
@@ -117,24 +122,16 @@ function MembersTab() {
 
   const formatDate = (dateValue) => {
     if (!dateValue) return "-";
-
     const date = new Date(dateValue);
-
     if (isNaN(date.getTime())) return "-";
-
     return date.toLocaleDateString();
   };
 
   const deleteMember = async (id, type) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this member?"
-    );
-
-    if (!confirmDelete) return;
+    if (!window.confirm("Are you sure you want to delete this member?")) return;
 
     try {
       const token = getToken();
-
       const url =
         type === "kids"
           ? `${API_URL}/api/batch-members/${id}`
@@ -142,26 +139,24 @@ function MembersTab() {
 
       const response = await fetch(url, {
         method: "DELETE",
-        headers: {
-          Authorization: token ? `Bearer ${token}` : "",
-        },
+        headers: { Authorization: token ? `Bearer ${token}` : "" },
       });
 
       const data = await response.json();
 
       if (response.ok) {
         alert(data.message || "Member deleted successfully");
-        loadData();
+        fetchFromBackend();
       } else {
         alert(data.message || "Failed to delete member");
       }
     } catch (error) {
-      console.error("Delete Member Error:", error);
+      console.error("Delete error:", error);
       alert("Backend connection failed");
     }
   };
 
-  // ==================== DESKTOP TABLE (unchanged) ====================
+  // ==================== DESKTOP TABLE ====================
   const renderMembersTable = () => {
     return (
       <div className="members-table-wrapper">
@@ -193,9 +188,7 @@ function MembersTab() {
             ) : (
               members.map((member) => (
                 <tr key={member._id || member.id}>
-                  <td>
-                    <strong>{member.name || "-"}</strong>
-                  </td>
+                  <td><strong>{member.name || "-"}</strong></td>
                   <td>{member.email || "-"}</td>
                   <td>{member.contact || member.mobile || "-"}</td>
                   <td>{member.address || "-"}</td>
@@ -213,9 +206,7 @@ function MembersTab() {
                   <td>
                     <button
                       className="member-delete-btn"
-                      onClick={() =>
-                        deleteMember(member._id || member.id, "member")
-                      }
+                      onClick={() => deleteMember(member._id || member.id, "member")}
                     >
                       Delete
                     </button>
@@ -261,9 +252,7 @@ function MembersTab() {
             ) : (
               kidsMembers.map((member) => (
                 <tr key={member._id || member.id}>
-                  <td>
-                    <strong>{member.name || "-"}</strong>
-                  </td>
+                  <td><strong>{member.name || "-"}</strong></td>
                   <td>{member.parentName || "-"}</td>
                   <td>{member.parentEmail || member.email || "-"}</td>
                   <td>{member.parentContact || member.contact || "-"}</td>
@@ -282,9 +271,7 @@ function MembersTab() {
                   <td>
                     <button
                       className="member-delete-btn"
-                      onClick={() =>
-                        deleteMember(member._id || member.id, "kids")
-                      }
+                      onClick={() => deleteMember(member._id || member.id, "kids")}
                     >
                       Delete
                     </button>
@@ -298,7 +285,7 @@ function MembersTab() {
     );
   };
 
-  // ==================== MOBILE CARDS (new) ====================
+  // ==================== MOBILE CARDS ====================
   const renderMembersCards = () => {
     if (members.length === 0) {
       return <div className="empty-members">No members found.</div>;
@@ -322,15 +309,11 @@ function MembersTab() {
               </div>
               <div className="member-card-row">
                 <span className="member-card-label">Contact</span>
-                <span className="member-card-value">
-                  {member.contact || member.mobile || "-"}
-                </span>
+                <span className="member-card-value">{member.contact || member.mobile || "-"}</span>
               </div>
               <div className="member-card-row">
                 <span className="member-card-label">Address</span>
-                <span className="member-card-value">
-                  {member.address || "-"}
-                </span>
+                <span className="member-card-value">{member.address || "-"}</span>
               </div>
               <div className="member-card-row">
                 <span className="member-card-label">Batch</span>
@@ -338,37 +321,24 @@ function MembersTab() {
               </div>
               <div className="member-card-row">
                 <span className="member-card-label">Timing</span>
-                <span className="member-card-value">
-                  {member.timingType || "-"} • {member.timing || "-"}
-                </span>
+                <span className="member-card-value">{member.timingType || "-"} • {member.timing || "-"}</span>
               </div>
               <div className="member-card-row">
                 <span className="member-card-label">Membership</span>
-                <span className="member-card-value">
-                  {member.membership || "-"}
-                </span>
+                <span className="member-card-value">{member.membership || "-"}</span>
               </div>
               <div className="member-card-row">
                 <span className="member-card-label">Payment</span>
-                <span className="member-card-value">
-                  {member.transactionType || "-"}
-                </span>
+                <span className="member-card-value">{member.transactionType || "-"}</span>
               </div>
               <div className="member-card-row">
                 <span className="member-card-label">Start Date</span>
-                <span className="member-card-value">
-                  {formatDate(member.startDate || member.createdAt)}
-                </span>
+                <span className="member-card-value">{formatDate(member.startDate || member.createdAt)}</span>
               </div>
             </div>
 
             <div className="member-card-footer">
-              <button
-                className="member-delete-btn"
-                onClick={() =>
-                  deleteMember(member._id || member.id, "member")
-                }
-              >
+              <button className="member-delete-btn" onClick={() => deleteMember(member._id || member.id, "member")}>
                 Delete
               </button>
             </div>
@@ -397,27 +367,19 @@ function MembersTab() {
             <div className="member-card-body">
               <div className="member-card-row">
                 <span className="member-card-label">Parent Name</span>
-                <span className="member-card-value">
-                  {member.parentName || "-"}
-                </span>
+                <span className="member-card-value">{member.parentName || "-"}</span>
               </div>
               <div className="member-card-row">
                 <span className="member-card-label">Parent Email</span>
-                <span className="member-card-value">
-                  {member.parentEmail || member.email || "-"}
-                </span>
+                <span className="member-card-value">{member.parentEmail || member.email || "-"}</span>
               </div>
               <div className="member-card-row">
                 <span className="member-card-label">Parent Contact</span>
-                <span className="member-card-value">
-                  {member.parentContact || member.contact || "-"}
-                </span>
+                <span className="member-card-value">{member.parentContact || member.contact || "-"}</span>
               </div>
               <div className="member-card-row">
                 <span className="member-card-label">Address</span>
-                <span className="member-card-value">
-                  {member.address || "-"}
-                </span>
+                <span className="member-card-value">{member.address || "-"}</span>
               </div>
               <div className="member-card-row">
                 <span className="member-card-label">Batch</span>
@@ -425,37 +387,24 @@ function MembersTab() {
               </div>
               <div className="member-card-row">
                 <span className="member-card-label">Timing</span>
-                <span className="member-card-value">
-                  {member.timingType || "-"} • {member.timing || "-"}
-                </span>
+                <span className="member-card-value">{member.timingType || "-"} • {member.timing || "-"}</span>
               </div>
               <div className="member-card-row">
                 <span className="member-card-label">Membership</span>
-                <span className="member-card-value">
-                  {member.membership || "-"}
-                </span>
+                <span className="member-card-value">{member.membership || "-"}</span>
               </div>
               <div className="member-card-row">
                 <span className="member-card-label">Payment</span>
-                <span className="member-card-value">
-                  {member.transactionType || "-"}
-                </span>
+                <span className="member-card-value">{member.transactionType || "-"}</span>
               </div>
               <div className="member-card-row">
                 <span className="member-card-label">Start Date</span>
-                <span className="member-card-value">
-                  {formatDate(member.startDate || member.createdAt)}
-                </span>
+                <span className="member-card-value">{formatDate(member.startDate || member.createdAt)}</span>
               </div>
             </div>
 
             <div className="member-card-footer">
-              <button
-                className="member-delete-btn"
-                onClick={() =>
-                  deleteMember(member._id || member.id, "kids")
-                }
-              >
+              <button className="member-delete-btn" onClick={() => deleteMember(member._id || member.id, "kids")}>
                 Delete
               </button>
             </div>
@@ -465,36 +414,32 @@ function MembersTab() {
     );
   };
 
-  if (loading) {
-    return (
-      <div>
-        <div className="members-header">
-          <h1>Members Management</h1>
-          <p>Loading members from backend...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div>
+      
+        <button type="button" className="add-member-btn" onClick={() => setShowAddModal(true)}>
+          <FiUserPlus /> Add Member
+        </button>
       
 
       <div className="members-box">
         <h2>All Members ({members.length})</h2>
-        {/* Desktop view */}
         <div className="members-desktop-view">{renderMembersTable()}</div>
-        {/* Mobile view */}
         <div className="members-mobile-view">{renderMembersCards()}</div>
       </div>
 
       <div className="members-box">
         <h2>Kids Batch Members ({kidsMembers.length})</h2>
-        {/* Desktop view */}
         <div className="members-desktop-view">{renderKidsTable()}</div>
-        {/* Mobile view */}
         <div className="members-mobile-view">{renderKidsCards()}</div>
       </div>
+
+      {showAddModal && (
+        <AddMemberForm
+          closeForm={() => setShowAddModal(false)}
+          onMemberAdded={handleMemberAdded}
+        />
+      )}
     </div>
   );
 }
