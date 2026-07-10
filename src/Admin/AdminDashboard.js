@@ -30,9 +30,6 @@ function AdminDashboard() {
   const [searchResults, setSearchResults] = useState([]);
   const [allSearchData, setAllSearchData] = useState([]);
 
-  // =========================================
-  // HANDLE RESIZE
-  // =========================================
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth <= 768;
@@ -44,9 +41,6 @@ function AdminDashboard() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // =========================================
-  // LOAD GLOBAL SEARCH DATA
-  // =========================================
   useEffect(() => {
     const getArray = (data) => {
       if (Array.isArray(data)) return data;
@@ -144,69 +138,59 @@ function AdminDashboard() {
           { type: "Transformations", tab: "transformations", icon: "🔥", url: `${API_URL}/api/transformations` },
         ];
 
-        // ✅ Step 1: Fetch all responses first
         const responses = await Promise.allSettled(
           urls.map((item) => fetch(item.url, { headers }).catch(() => null))
         );
 
-        // ✅ Step 2: Parse all responses into a normalized shape (no loop closures)
-        const parsedPayloads = responses.map((res, i) => {
-          const urlInfo = urls[i];
-          if (res.status === "fulfilled" && res.value && res.value.ok) {
-            return res.value.json().then((data) => ({
-              ok: true,
-              urlInfo,
-              records: getArray(data),
-            })).catch(() => ({ ok: false, urlInfo, records: [] }));
-          }
-          return { ok: false, urlInfo, records: [] };
-        });
-
-        const allPayloads = await Promise.all(parsedPayloads);
-
-        // ✅ Step 3: Collect member emails FIRST (no loop functions)
         const memberEmails = new Set();
-        allPayloads.forEach((payload) => {
-          if (!payload.ok) return;
-          if (
-            payload.urlInfo.type === "Members" ||
-            payload.urlInfo.type === "Batch Members"
-          ) {
-            payload.records.forEach((r) => {
-              if (r.email) {
-                memberEmails.add(r.email.toLowerCase().trim());
+        let finalData = [];
+
+        for (let i = 0; i < responses.length; i++) {
+          const res = responses[i];
+          const urlInfo = urls[i];
+
+          if (res.status === "fulfilled" && res.value && res.value.ok) {
+            try {
+              const data = await res.value.json();
+              const records = getArray(data);
+
+              // Collect member emails first
+              if (urlInfo.type === "Members" || urlInfo.type === "Batch Members") {
+                records.forEach((r) => {
+                  if (r.email) memberEmails.add(r.email.toLowerCase().trim());
+                });
               }
-            });
-          }
-        });
 
-        // ✅ Step 4: Build final data with filter logic inline (no external filter closure)
-        const finalData = [];
-        allPayloads.forEach((payload) => {
-          if (!payload.ok) return;
-          const { urlInfo, records } = payload;
-
-          records.forEach((record) => {
-            // Skip Join Requests that have a matching member email
-            if (urlInfo.type === "Join Requests") {
-              const email = (record.email || "").toLowerCase().trim();
-              if (memberEmails.has(email)) return;
+              // ⭐ FIXED: Process records outside the loop using for...of
+              const newRecords = [];
+              for (const record of records) {
+                const formatted = {
+                  ...record,
+                  type: urlInfo.type,
+                  tab: urlInfo.tab,
+                  icon: urlInfo.icon,
+                  _searchText: getSearchableText(record),
+                  _displayTitle: getDisplayTitle(record),
+                  _displaySubtitle: getDisplaySubtitle(record),
+                  _priority:
+                    urlInfo.type === "Members" || urlInfo.type === "Batch Members" ? 1 : 2,
+                };
+                newRecords.push(formatted);
+              }
+              finalData = finalData.concat(newRecords);
+            } catch (err) {
+              console.warn(`Error parsing ${urlInfo.type}:`, err);
             }
+          }
+        }
 
-            finalData.push({
-              ...record,
-              type: urlInfo.type,
-              tab: urlInfo.tab,
-              icon: urlInfo.icon,
-              _searchText: getSearchableText(record),
-              _displayTitle: getDisplayTitle(record),
-              _displaySubtitle: getDisplaySubtitle(record),
-              _priority:
-                urlInfo.type === "Members" || urlInfo.type === "Batch Members"
-                  ? 1
-                  : 2,
-            });
-          });
+        // Remove Join Requests that have matching Member email
+        finalData = finalData.filter((item) => {
+          if (item.type === "Join Requests") {
+            const email = (item.email || "").toLowerCase().trim();
+            return !memberEmails.has(email);
+          }
+          return true;
         });
 
         console.log("✅ Global Search Data Loaded:", finalData.length, "records");
@@ -220,9 +204,6 @@ function AdminDashboard() {
     loadSearchData();
   }, []);
 
-  // =========================================
-  // FILTER SEARCH RESULTS
-  // =========================================
   useEffect(() => {
     if (!searchText.trim()) {
       setSearchResults([]);
@@ -233,18 +214,18 @@ function AdminDashboard() {
     const queryWords = query.split(/\s+/).filter(Boolean);
 
     const filtered = allSearchData.filter((item) => {
-      const itemSearchText = item._searchText || "";
+      const searchText = item._searchText || "";
 
-      if (itemSearchText.includes(query)) return true;
+      if (searchText.includes(query)) return true;
 
       if (queryWords.length > 1) {
-        return queryWords.some((word) => itemSearchText.includes(word));
+        return queryWords.some((word) => searchText.includes(word));
       }
 
       if (query.length >= 3) {
         let searchIndex = 0;
-        for (let i = 0; i < itemSearchText.length && searchIndex < query.length; i++) {
-          if (itemSearchText[i] === query[searchIndex]) {
+        for (let i = 0; i < searchText.length && searchIndex < query.length; i++) {
+          if (searchText[i] === query[searchIndex]) {
             searchIndex++;
           }
         }
@@ -275,9 +256,6 @@ function AdminDashboard() {
     setSearchResults(sorted.slice(0, 15));
   }, [searchText, allSearchData]);
 
-  // =========================================
-  // HANDLERS
-  // =========================================
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     if (isMobile) setIsSidebarOpen(false);
