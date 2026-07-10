@@ -10,7 +10,7 @@ function GlobalSearchResults({ searchText, results, onResultClick }) {
         <div className="global-search-empty">
           <span className="empty-icon">🔍</span>
           <p>No result found for "{searchText}"</p>
-          <small>Try searching with different keywords</small>
+          <small>Try different keywords</small>
         </div>
       ) : (
         <>
@@ -40,6 +40,18 @@ function GlobalSearchResults({ searchText, results, onResultClick }) {
               item.parentEmail ||
               "";
 
+            // ⭐ Show which section this will open
+            const tabLabel = {
+              members: "Members",
+              reports: "Reports",
+              experts: "Experts",
+              events: "Events",
+              enquiries: "Enquiries",
+              batches: "Batches",
+              transformations: "Transformations",
+              membership: "Membership",
+            }[item.tab] || item.tab;
+
             return (
               <button
                 key={item._id || item.id || index}
@@ -50,11 +62,14 @@ function GlobalSearchResults({ searchText, results, onResultClick }) {
 
                 <div className="global-search-content">
                   <h4>{title}</h4>
-                  {subtitle && <p className="global-search-subtitle">{subtitle}</p>}
+                  {subtitle && (
+                    <p className="global-search-subtitle">{subtitle}</p>
+                  )}
                 </div>
 
                 <div className="global-search-meta">
                   <span className="global-search-type">{item.type}</span>
+                  <span className="global-search-tab">→ {tabLabel}</span>
                 </div>
               </button>
             );

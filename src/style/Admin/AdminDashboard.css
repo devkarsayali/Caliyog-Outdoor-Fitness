@@ -316,3 +316,12 @@ html, body {
     gap: 12px;
   }
 }
+
+.global-search-tab {
+  display: block;
+  font-size: 10px;
+  color: #16a34a;
+  font-weight: 700;
+  margin-top: 3px;
+  opacity: 0.8;
+}

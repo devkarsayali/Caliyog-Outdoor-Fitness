@@ -30,6 +30,9 @@ function AdminDashboard() {
   const [searchResults, setSearchResults] = useState([]);
   const [allSearchData, setAllSearchData] = useState([]);
 
+  // =========================================
+  // HANDLE RESIZE
+  // =========================================
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth <= 768;
@@ -41,6 +44,9 @@ function AdminDashboard() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // =========================================
+  // LOAD GLOBAL SEARCH DATA
+  // =========================================
   useEffect(() => {
     const getArray = (data) => {
       if (Array.isArray(data)) return data;
@@ -60,7 +66,6 @@ function AdminDashboard() {
       return [];
     };
 
-    // ⭐ Helper: Create searchable text from a record
     const getSearchableText = (record) => {
       const fields = [
         record.name,
@@ -90,7 +95,6 @@ function AdminDashboard() {
       return fields.filter(Boolean).join(" ").toLowerCase();
     };
 
-    // ⭐ Helper: Get display title for record
     const getDisplayTitle = (record) => {
       return (
         record.name ||
@@ -105,7 +109,6 @@ function AdminDashboard() {
       );
     };
 
-    // ⭐ Helper: Get display subtitle
     const getDisplaySubtitle = (record) => {
       return (
         record.email ||
@@ -129,102 +132,85 @@ function AdminDashboard() {
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
         const urls = [
-          {
-            type: "Experts",
-            tab: "experts",
-            icon: "👨‍🏫",
-            url: `${API_URL}/api/experts`,
-          },
-          {
-            type: "Gallery Events",
-            tab: "events",
-            icon: "🎉",
-            url: `${API_URL}/api/events/gallery`,
-          },
-          {
-            type: "Events",
-            tab: "events",
-            icon: "📅",
-            url: `${API_URL}/api/events`,
-          },
-          {
-            type: "Membership",
-            tab: "membership",
-            icon: "💳",
-            url: `${API_URL}/api/memberships`,
-          },
-          {
-            type: "Join Requests",
-            tab: "reports",
-            icon: "📋",
-            url: `${API_URL}/api/join`,
-          },
-          {
-            type: "Members",
-            tab: "members",
-            icon: "👥",
-            url: `${API_URL}/api/members`,
-          },
-          {
-            type: "Batch Members",
-            tab: "members",
-            icon: "🏋️",
-            url: `${API_URL}/api/batch-members`,
-          },
-          {
-            type: "Enquiries",
-            tab: "enquiries",
-            icon: "📩",
-            url: `${API_URL}/api/contacts`,
-          },
-          {
-            type: "Batches",
-            tab: "batches",
-            icon: "📚",
-            url: `${API_URL}/api/batches`,
-          },
-          {
-            type: "Transformations",
-            tab: "transformations",
-            icon: "🔥",
-            url: `${API_URL}/api/transformations`,
-          },
+          { type: "Experts", tab: "experts", icon: "👨‍🏫", url: `${API_URL}/api/experts` },
+          { type: "Gallery Events", tab: "events", icon: "🎉", url: `${API_URL}/api/events/gallery` },
+          { type: "Events", tab: "events", icon: "📅", url: `${API_URL}/api/events` },
+          { type: "Membership", tab: "membership", icon: "💳", url: `${API_URL}/api/memberships` },
+          { type: "Join Requests", tab: "reports", icon: "📋", url: `${API_URL}/api/join` },
+          { type: "Members", tab: "members", icon: "👥", url: `${API_URL}/api/members` },
+          { type: "Batch Members", tab: "members", icon: "🏋️", url: `${API_URL}/api/batch-members` },
+          { type: "Enquiries", tab: "enquiries", icon: "📩", url: `${API_URL}/api/contacts` },
+          { type: "Batches", tab: "batches", icon: "📚", url: `${API_URL}/api/batches` },
+          { type: "Transformations", tab: "transformations", icon: "🔥", url: `${API_URL}/api/transformations` },
         ];
 
+        // ✅ Step 1: Fetch all responses first
         const responses = await Promise.allSettled(
-          urls.map((item) =>
-            fetch(item.url, { headers }).catch(() => null)
-          )
+          urls.map((item) => fetch(item.url, { headers }).catch(() => null))
         );
 
-        let finalData = [];
-
-        for (let i = 0; i < responses.length; i++) {
-          const res = responses[i];
-
+        // ✅ Step 2: Parse all responses into a normalized shape (no loop closures)
+        const parsedPayloads = responses.map((res, i) => {
+          const urlInfo = urls[i];
           if (res.status === "fulfilled" && res.value && res.value.ok) {
-            try {
-              const data = await res.value.json();
-              const records = getArray(data);
-
-              const formatted = records.map((record) => ({
-                ...record,
-                type: urls[i].type,
-                tab: urls[i].tab,
-                icon: urls[i].icon,
-                _searchText: getSearchableText(record),
-                _displayTitle: getDisplayTitle(record),
-                _displaySubtitle: getDisplaySubtitle(record),
-              }));
-
-              finalData = [...finalData, ...formatted];
-            } catch (err) {
-              console.warn(`Error parsing ${urls[i].type}:`, err);
-            }
+            return res.value.json().then((data) => ({
+              ok: true,
+              urlInfo,
+              records: getArray(data),
+            })).catch(() => ({ ok: false, urlInfo, records: [] }));
           }
-        }
+          return { ok: false, urlInfo, records: [] };
+        });
+
+        const allPayloads = await Promise.all(parsedPayloads);
+
+        // ✅ Step 3: Collect member emails FIRST (no loop functions)
+        const memberEmails = new Set();
+        allPayloads.forEach((payload) => {
+          if (!payload.ok) return;
+          if (
+            payload.urlInfo.type === "Members" ||
+            payload.urlInfo.type === "Batch Members"
+          ) {
+            payload.records.forEach((r) => {
+              if (r.email) {
+                memberEmails.add(r.email.toLowerCase().trim());
+              }
+            });
+          }
+        });
+
+        // ✅ Step 4: Build final data with filter logic inline (no external filter closure)
+        const finalData = [];
+        allPayloads.forEach((payload) => {
+          if (!payload.ok) return;
+          const { urlInfo, records } = payload;
+
+          records.forEach((record) => {
+            // Skip Join Requests that have a matching member email
+            if (urlInfo.type === "Join Requests") {
+              const email = (record.email || "").toLowerCase().trim();
+              if (memberEmails.has(email)) return;
+            }
+
+            finalData.push({
+              ...record,
+              type: urlInfo.type,
+              tab: urlInfo.tab,
+              icon: urlInfo.icon,
+              _searchText: getSearchableText(record),
+              _displayTitle: getDisplayTitle(record),
+              _displaySubtitle: getDisplaySubtitle(record),
+              _priority:
+                urlInfo.type === "Members" || urlInfo.type === "Batch Members"
+                  ? 1
+                  : 2,
+            });
+          });
+        });
 
         console.log("✅ Global Search Data Loaded:", finalData.length, "records");
+        console.log("📊 Member emails collected:", memberEmails.size);
         setAllSearchData(finalData);
       } catch (error) {
         console.error("Global Search Load Error:", error);
@@ -234,7 +220,9 @@ function AdminDashboard() {
     loadSearchData();
   }, []);
 
-  // ⭐ IMPROVED SEARCH with fuzzy matching
+  // =========================================
+  // FILTER SEARCH RESULTS
+  // =========================================
   useEffect(() => {
     if (!searchText.trim()) {
       setSearchResults([]);
@@ -245,67 +233,58 @@ function AdminDashboard() {
     const queryWords = query.split(/\s+/).filter(Boolean);
 
     const filtered = allSearchData.filter((item) => {
-      const searchText = item._searchText || "";
+      const itemSearchText = item._searchText || "";
 
-      // Exact match check
-      if (searchText.includes(query)) return true;
+      if (itemSearchText.includes(query)) return true;
 
-      // Word-by-word match (any word matches)
       if (queryWords.length > 1) {
-        return queryWords.some((word) => searchText.includes(word));
+        return queryWords.some((word) => itemSearchText.includes(word));
       }
 
-      // ⭐ Fuzzy match - check if characters appear in order
       if (query.length >= 3) {
         let searchIndex = 0;
-        for (let i = 0; i < searchText.length && searchIndex < query.length; i++) {
-          if (searchText[i] === query[searchIndex]) {
+        for (let i = 0; i < itemSearchText.length && searchIndex < query.length; i++) {
+          if (itemSearchText[i] === query[searchIndex]) {
             searchIndex++;
           }
         }
-        // If 80%+ of characters matched in order
         if (searchIndex >= query.length * 0.8) return true;
       }
 
       return false;
     });
 
-    // ⭐ Sort by relevance (exact match first)
     const sorted = filtered.sort((a, b) => {
+      if (a._priority !== b._priority) {
+        return (a._priority || 99) - (b._priority || 99);
+      }
+
       const aTitle = (a._displayTitle || "").toLowerCase();
       const bTitle = (b._displayTitle || "").toLowerCase();
 
-      // Exact title match first
       if (aTitle === query) return -1;
       if (bTitle === query) return 1;
-
-      // Title starts with query
       if (aTitle.startsWith(query) && !bTitle.startsWith(query)) return -1;
       if (!aTitle.startsWith(query) && bTitle.startsWith(query)) return 1;
-
-      // Title contains query
       if (aTitle.includes(query) && !bTitle.includes(query)) return -1;
       if (!aTitle.includes(query) && bTitle.includes(query)) return 1;
 
       return 0;
     });
 
-    // Limit to top 15 results
     setSearchResults(sorted.slice(0, 15));
   }, [searchText, allSearchData]);
 
+  // =========================================
+  // HANDLERS
+  // =========================================
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     if (isMobile) setIsSidebarOpen(false);
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen((prev) => !prev);
-  };
-
-  const closeSidebar = () => {
-    setIsSidebarOpen(false);
-  };
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+  const closeSidebar = () => setIsSidebarOpen(false);
 
   const openSettings = () => {
     setActiveTab("settings");
