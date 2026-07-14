@@ -2,7 +2,7 @@
 .admin-sidebar {
   position: fixed;
   left: 0;
-  top: 76px;
+  top: 30px;
   width: 240px;
   height: calc(100vh - 76px);
   background: #ffffff;
